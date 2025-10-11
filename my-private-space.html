@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>my-private-space</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+    body {
+      margin: 0;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      background: url('/home/cosmic_swordfish/Downloads/chihiro036.jpeg') center center/cover no-repeat;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle overlay for readability */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      z-index: 0;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 1rem 2rem;
+      margin: 0.6rem 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      z-index: 1;
+      width: fit-content;
+      min-width: 260px;
+    }
+
+    .top, .center, .bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .top {
+      margin-top: 6vh;
+    }
+
+    .center {
+      flex-grow: 1;
+      justify-content: center;
+    }
+
+    .time {
+      font-size: 6rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+    }
+
+    .date {
+      font-size: 1.4rem;
+      opacity: 0.85;
+      margin-top: -0.5rem;
+    }
+
+    .weather {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    .crypto, .ticker {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .ticker {
+      white-space: nowrap;
+      overflow: hidden;
+      width: 80vw;
+      text-align: center;
+      animation: tickerScroll 20s linear infinite;
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .footer {
+      font-size: 0.8rem;
+      opacity: 0.6;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top glass">
+    <div class="time" id="time">--:--</div>
+    <div class="date" id="date">Loading...</div>
+  </div>
+
+  <div class="center">
+    <div class="glass weather" id="weather">Fetching weather...</div>
+    <div class="glass crypto" id="crypto">Ethereum: -- | Pi Network: --</div>
+  </div>
+
+  <div class="bottom">
+    <div class="glass ticker" id="ticker">Welcome back, Ruben. Stay curious 💫</div>
+    <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
+  </div>
+
+  <!-- Oneko Cat -->
+ <script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
+  <script>
+    // TIME + DATE
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time').textContent = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      document.getElementById('date').textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+     // WEATHER (Open-Meteo)
+    async function loadWeather() {
+      try {
+        const res = await fetch(
+          "https://api.open-meteo.com/v1/forecast?latitude=27.7172&longitude=85.3240&current=temperature_2m,relative_humidity_2m,dew_point_2m,pressure_msl,wind_speed_10m"
+        );
+        const data = await res.json();
+        const w = data.current;
+        const html = `
+           Temperature: ${w.temperature_2m}°C<br>
+           Humidity: ${w.relative_humidity_2m}%<br>
+           Dew Point: ${w.dew_point_2m}°C<br>
+           Wind: ${w.wind_speed_10m} km/h<br>
+           Pressure: ${w.pressure_msl} hPa
+        `;
+        document.getElementById("weather").innerHTML = html;
+      } catch (e) {
+        document.getElementById("weather").textContent = "Unable to load weather data.";
+      }
+    }
+    loadWeather();
+    setInterval(loadWeather, 300000); // update every 5 min
+
+    // CRYPTO (CoinGecko)
+    async function getCrypto() {
+      const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum,pi-network&vs_currencies=usd");
+      const data = await res.json();
+      const eth = data.ethereum.usd;
+      const pi = data["pi-network"]?.usd ?? "N/A";
+      document.getElementById("crypto").textContent = `Ethereum: $${eth} | Pi Network: $${pi}`;
+    }
+    getCrypto();
+    setInterval(getCrypto, 60000);
+  </script>
+</body>
+</html>
