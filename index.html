@@ -149,7 +149,7 @@ body {
   #time { font-size: 80px; }
   .date { font-size: 20px; }
 
-  /* Panels stack nicely on mobile */
+  /* Panels now move above and below time */
   .panel-left, .panel-right {
     position: static;
     transform: none;
@@ -158,10 +158,10 @@ body {
     margin: 10px auto;
     text-align: center;
   }
-  #infoPanel, #weatherPanel {
-    min-width: auto;
-    padding: 12px;
-  }
+  #infoPanel { order: -1; } /* above time */
+  #weatherPanel { order: 1; } /* below time */
+  .container { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  #infoPanel, #weatherPanel { min-width: auto; padding: 12px; }
 }
 
 @media (max-width: 600px) {
