@@ -88,7 +88,7 @@ body {
   display:flex; align-items:center;
 }
 
-/* Center Time + Pomodoro */
+/* Center Time */
 .center {
   text-align:center;
   display:flex;
@@ -99,25 +99,25 @@ body {
 #time { font-size:140px; font-weight:700; line-height:1; }
 .date { font-size:28px; font-weight:500; margin-top:6px; color: rgba(255,255,255,0.85); }
 
-#pomodoro { margin-top:20px; display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center; }
-.pomContainer { position: relative; width:140px; height:140px; }
-.pomCanvas { position:absolute; top:0; left:0; width:100%; height:100%; }
-#pomodoroTime { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-weight:600; font-size:1.3rem; }
-
-#pomControls { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
-#pomSelect, #manualInput, #startPom, #resetPom {
-  padding:10px 14px;
-  border:none;
-  border-radius:24px;
-  background: rgba(255,255,255,0.08);
-  color:#fff;
-  cursor:pointer;
-  font-size:1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+/* Dynamic Island Pomodoro */
+#dynamicIsland {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin-top:20px;
+  border-radius:80px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transform: scale(0.5);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
-#pomSelect:hover, #manualInput:hover, #startPom:hover, #resetPom:hover {
-  background: var(--primary-color); color:#fff;
-}
+#dynamicIsland.show { opacity:1; transform: scale(1); }
+#dynamicIsland canvas { position:absolute; top:0; left:0; width:100%; height:100%; border-radius:80px; }
+#dynamicIslandTime { position:absolute; font-weight:600; font-size:1.2rem; text-align:center; }
 
 /* Gear + Settings */
 .gear { position:fixed; top:20px; right:20px; cursor:pointer; font-size:28px; z-index:5; color: rgba(255,255,255,0.85); transition: transform 0.3s ease,color 0.3s ease; }
@@ -153,12 +153,8 @@ body {
 @keyframes pulse {0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-3px) scale(1.05);}}
 
 /* Responsive */
-@media(max-width:900px){ .container{flex-direction:column; justify-content:flex-start; gap:16px; padding-top:30px;} .panel-left,.panel-right{width:90%; margin:0 auto;} #time{font-size:90px;} .date{font-size:20px;} #pomodoro{flex-direction:column; gap:12px;} }
-@media(max-width:600px){ #time{font-size:70px;} .date{font-size:18px;} .panel-left,.panel-right{font-size:0.8rem;} }
-
-/* Oneko scaling */
-@media(max-width:900px){canvas{transform:scale(0.7)!important; transform-origin:left bottom!important;}}
-@media(max-width:600px){canvas{transform:scale(0.5)!important; transform-origin:left bottom!important;}}
+@media(max-width:900px){ .container{flex-direction:column; justify-content:flex-start; gap:16px; padding-top:30px;} .panel-left,.panel-right{width:90%; margin:0 auto;} #time{font-size:90px;} .date{font-size:20px;} }
+@media(max-width:600px){ #time{font-size:70px;} .date{font-size:18px;} .panel-left,.panel-right{font-size:0.8rem;} canvas{transform:scale(0.5)!important; transform-origin:left bottom!important;} }
 </style>
 </head>
 <body>
@@ -172,26 +168,18 @@ body {
     <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
   </div>
 
-  <!-- Center Time + Pomodoro -->
+  <!-- Center Time + Dynamic Island Pomodoro -->
   <div class="center">
     <div id="time">00:00</div>
     <div id="date" class="date">-- -- ----</div>
-    <div id="pomodoro">
-      <div class="pomContainer">
-        <canvas class="pomCanvas" id="pomCanvas"></canvas>
-        <div id="pomodoroTime">25:00</div>
-      </div>
-      <div id="pomControls">
-        <select id="pomSelect">
-          <option value="5">5 min</option>
-          <option value="10">10 min</option>
-          <option value="15">15 min</option>
-          <option value="20">20 min</option>
-          <option value="25" selected>25 min</option>
-        </select>
-        <input type="number" id="manualInput" placeholder="Custom min" min="1">
-        <button id="startPom">Start</button>
-        <button id="resetPom">Reset</button>
+    <div id="dynamicIsland">
+      <canvas id="pomCanvas"></canvas>
+      <div id="dynamicIslandTime">25:00</div>
+      <div id="pomControlsIsland" style="position:absolute; bottom:-50px; display:flex; gap:10px;">
+        <input type="number" id="pomCustomTime" placeholder="Min" style="width:50px; border:none; border-radius:12px; padding:4px 6px; text-align:center;">
+        <button id="pomStartBtn" style="padding:4px 8px; border:none; border-radius:12px; background:var(--primary-color); color:#fff; cursor:pointer;">Start</button>
+        <button id="pomPauseBtn" style="padding:4px 8px; border:none; border-radius:12px; background:var(--accent-color); color:#fff; cursor:pointer;">Pause</button>
+        <button id="pomResetBtn" style="padding:4px 8px; border:none; border-radius:12px; background:#444; color:#fff; cursor:pointer;">Reset</button>
       </div>
     </div>
   </div>
@@ -224,23 +212,56 @@ body {
 <script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
 <script>
 // --- Time ---
-function updateTime(){const now=new Date(); document.getElementById('time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}); const options={ weekday:'short', month:'short', day:'numeric', year:'numeric'}; document.getElementById('date').textContent=now.toLocaleDateString([],options);}
+function updateTime(){
+  const now=new Date();
+  document.getElementById('time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+  const options={ weekday:'short', month:'short', day:'numeric', year:'numeric'};
+  document.getElementById('date').textContent=now.toLocaleDateString([],options);
+}
 setInterval(updateTime,1000); updateTime();
 
 // --- Crypto ---
-async function fetchCrypto(){try{const res=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network&vs_currencies=usd"); const data=await res.json(); document.getElementById('btc').textContent="$"+data.bitcoin.usd.toLocaleString(); document.getElementById('eth').textContent="$"+data.ethereum.usd.toLocaleString(); document.getElementById('pi').textContent="$"+data["pi-network"].usd.toLocaleString();}catch(e){console.error(e);}}
+async function fetchCrypto(){
+  try{
+    const res=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network&vs_currencies=usd");
+    const data=await res.json();
+    document.getElementById('btc').textContent="$"+data.bitcoin.usd.toLocaleString();
+    document.getElementById('eth').textContent="$"+data.ethereum.usd.toLocaleString();
+    document.getElementById('pi').textContent="$"+data["pi-network"].usd.toLocaleString();
+  }catch(e){console.error(e);}
+}
 fetchCrypto(); setInterval(fetchCrypto,60000);
 
 // --- Weather ---
 const WEATHER_API_KEY="d81009d2cbae458bbdb51509251210"; const CITY="Lalitpur";
-async function fetchWeather(){try{const res=await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`); const data=await res.json(); document.getElementById('temp').textContent=data.current.temp_c.toFixed(1)+"°C"; document.getElementById('humidity').textContent="Humidity: "+data.current.humidity+"%"; document.getElementById('dew').textContent="Dew: "+(data.current.dewpoint_c??0).toFixed(1)+"°C"; document.getElementById('wind').textContent="Wind: "+data.current.wind_kph+" km/h"; document.getElementById('pressure').textContent="Pressure: "+data.current.pressure_mb+" hPa";}catch(e){console.error(e);}}
+async function fetchWeather(){
+  try{
+    const res=await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`);
+    const data=await res.json();
+    document.getElementById('temp').textContent=data.current.temp_c.toFixed(1)+"°C";
+    document.getElementById('humidity').textContent="Humidity: "+data.current.humidity+"%";
+    document.getElementById('dew').textContent="Dew: "+(data.current.dewpoint_c??0).toFixed(1)+"°C";
+    document.getElementById('wind').textContent="Wind: "+data.current.wind_kph+" km/h";
+    document.getElementById('pressure').textContent="Pressure: "+data.current.pressure_mb+" hPa";
+  }catch(e){console.error(e);}
+}
 fetchWeather(); setInterval(fetchWeather,1800000);
 
 // --- Settings toggles ---
-const gear=document.getElementById('gearIcon'); const settings=document.getElementById('settings'); const toggles={ info:document.getElementById('toggleInfo'), weather:document.getElementById('toggleWeather'), oneko:document.getElementById('toggleOneko')};
-Object.keys(toggles).forEach(k=>{const saved=localStorage.getItem(`show_${k}`); if(saved!==null) toggles[k].checked=saved==='true';});
+const gear=document.getElementById('gearIcon');
+const settings=document.getElementById('settings');
+const toggles={ info:document.getElementById('toggleInfo'), weather:document.getElementById('toggleWeather'), oneko:document.getElementById('toggleOneko')};
+Object.keys(toggles).forEach(k=>{
+  const saved=localStorage.getItem(`show_${k}`);
+  if(saved!==null) toggles[k].checked=saved==='true';
+});
 function fadePanel(el,show){el.style.opacity=show?'1':'0'; el.style.pointerEvents=show?'all':'none';}
-function applyToggles(){fadePanel(document.getElementById('infoPanel'), toggles.info.checked); fadePanel(document.getElementById('weatherPanel'), toggles.weather.checked); Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked)); applyOnekoToggle();}
+function applyToggles(){
+  fadePanel(document.getElementById('infoPanel'), toggles.info.checked);
+  fadePanel(document.getElementById('weatherPanel'), toggles.weather.checked);
+  Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked));
+  applyOnekoToggle();
+}
 Object.values(toggles).forEach(i=>i.addEventListener('change',applyToggles));
 gear.addEventListener('click',()=>settings.classList.toggle('show'));
 
@@ -250,34 +271,54 @@ function stopOneko(){document.querySelectorAll("canvas").forEach(c=>c.style.disp
 function applyOnekoToggle(){toggles.oneko.checked?startOneko():stopOneko();}
 applyToggles();
 
-// --- Pomodoro ---
-const pomCanvas=document.getElementById('pomCanvas'); const ctx=pomCanvas.getContext('2d'); let pomTime=25*60; let pomInterval=null; const pomSelect=document.getElementById('pomSelect'); const manualInput=document.getElementById('manualInput'); const pomDisplay=document.getElementById('pomodoroTime');
+// --- Dynamic Island Pomodoro ---
+const pomCanvas=document.getElementById('pomCanvas'); const ctx=pomCanvas.getContext('2d');
+const dynamicIsland=document.getElementById('dynamicIsland');
+const pomDisplay=document.getElementById('dynamicIslandTime');
+let pomTimeTotal=25*60; let pomTime=pomTimeTotal; let pomInterval=null; let isPaused=false; let angleOffset=0;
 
-function updatePomTime(){const val=manualInput.value?parseInt(manualInput.value):parseInt(pomSelect.value); pomTime=val*60; let m=Math.floor(pomTime/60); let s=pomTime%60; pomDisplay.textContent=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0');}
-pomSelect.addEventListener('change',updatePomTime); manualInput.addEventListener('input',updatePomTime);
-updatePomTime(); pomCanvas.width=pomCanvas.height=140;
-
-let angleOffset=0;
-function drawPomProgress(){const w=pomCanvas.width,h=pomCanvas.height,cx=w/2,cy=h/2,r=w/2-12; ctx.clearRect(0,0,w,h);
-// Background
-ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.strokeStyle="rgba(255,255,255,0.1)"; ctx.lineWidth=12; ctx.stroke();
-
-// Dynamic rotating gradient
-angleOffset+=0.02;
-const grad=ctx.createConicGradient(-Math.PI/2+angleOffset,cx,cy);
-grad.addColorStop(0,'#5e5ce6'); grad.addColorStop(0.33,'#ff6b6b'); grad.addColorStop(0.66,'#5e5ce6'); grad.addColorStop(1,'#5e5ce6');
-ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+2*Math.PI*(1-(pomTime/(pomSelect.value||25*60)))); ctx.strokeStyle=grad; ctx.lineWidth=12; ctx.lineCap='round'; ctx.stroke();
-requestAnimationFrame(drawPomProgress);}
+function drawPomProgress(){
+  const w=pomCanvas.width,h=pomCanvas.height,cx=w/2,cy=h/2,r=w/2-12;
+  ctx.clearRect(0,0,w,h);
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI);
+  ctx.strokeStyle="rgba(255,255,255,0.1)"; ctx.lineWidth=12; ctx.stroke();
+  angleOffset+=0.02;
+  const grad=ctx.createConicGradient(-Math.PI/2+angleOffset,cx,cy);
+  grad.addColorStop(0,'#5e5ce6'); grad.addColorStop(0.33,'#ff6b6b'); grad.addColorStop(0.66,'#5e5ce6'); grad.addColorStop(1,'#5e5ce6');
+  ctx.beginPath();
+  const progress=1-(pomTime/pomTimeTotal);
+  ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+2*Math.PI*progress);
+  ctx.strokeStyle=grad; ctx.lineWidth=12; ctx.lineCap='round'; ctx.stroke();
+  requestAnimationFrame(drawPomProgress);
+}
 drawPomProgress();
-
-function startPom(){if(pomInterval) return; const total=pomTime; pomInterval=setInterval(()=>{pomTime--; if(pomTime<0){clearInterval(pomInterval);pomInterval=null; showNotification(); updatePomTime(); return;} let m=Math.floor(pomTime/60),s=pomTime%60; pomDisplay.textContent=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0');},1000);}
-function resetPom(){clearInterval(pomInterval); pomInterval=null; updatePomTime();}
-document.getElementById('startPom').addEventListener('click',startPom);
-document.getElementById('resetPom').addEventListener('click',resetPom);
+function updatePomDisplay(){ const m=Math.floor(pomTime/60), s=pomTime%60; pomDisplay.textContent=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0'); }
+function startPom(custom=false){
+  if(pomInterval) return;
+  dynamicIsland.classList.add('show');
+  if(custom){
+    const val=parseInt(document.getElementById('pomCustomTime').value);
+    if(val>0){ pomTimeTotal=val*60; pomTime=pomTimeTotal; }
+  }
+  pomInterval=setInterval(()=>{
+    if(!isPaused){
+      pomTime--; updatePomDisplay();
+      if(pomTime<0){ clearInterval(pomInterval);pomInterval=null; pomTime=pomTimeTotal; dynamicIsland.classList.remove('show'); showNotification(); updatePomDisplay(); }
+    }
+  },1000);
+}
+function pausePom(){ isPaused=!isPaused; document.getElementById('pomPauseBtn').textContent=isPaused?'Resume':'Pause'; }
+function resetPom(){ clearInterval(pomInterval); pomInterval=null; pomTime=pomTimeTotal; isPaused=false; pomDisplay.textContent=(pomTimeTotal/60).toString().padStart(2,'0')+":00"; dynamicIsland.classList.remove('show'); document.getElementById('pomPauseBtn').textContent='Pause'; }
+document.getElementById('pomStartBtn').addEventListener('click',()=>startPom(true));
+document.getElementById('pomPauseBtn').addEventListener('click',pausePom);
+document.getElementById('pomResetBtn').addEventListener('click',resetPom);
 
 // --- Notification ---
-const notif=document.getElementById('notification'); const notifSound=document.getElementById('notifSound');
-function showNotification(){notif.classList.add('show'); notifSound.play(); setTimeout(()=>{notif.classList.remove('show');},4000);}
+function showNotification(){
+  const notif=document.getElementById('notification');
+  notif.classList.add('show'); document.getElementById('notifSound').play();
+  setTimeout(()=>notif.classList.remove('show'),3500);
+}
 </script>
 </body>
 </html>
