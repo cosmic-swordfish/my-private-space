@@ -160,6 +160,41 @@ body {
   font-size: 0.8rem;
   opacity: 0.7;
 }
+
+/* 🔹 Responsive Scaling */
+@media (max-width: 1200px) {
+  #time { font-size: 110px; }
+  .date { font-size: 24px; }
+  .glass { padding: 16px; min-width: 200px; }
+}
+
+@media (max-width: 900px) {
+  #time { font-size: 80px; }
+  .date { font-size: 20px; }
+  #infoPanel, #weatherPanel { 
+    top: auto; 
+    bottom: 120px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  #time { font-size: 60px; }
+  .date { font-size: 18px; }
+  .gear { font-size: 24px; }
+  .ticker { width: 90%; font-size: 0.95rem; }
+}
+
+/* Oneko responsive scaling */
+@media (max-width: 900px) {
+  canvas { transform: scale(0.7) !important; transform-origin: left bottom !important; }
+}
+@media (max-width: 600px) {
+  canvas { transform: scale(0.5) !important; transform-origin: left bottom !important; }
+}
 </style>
 </head>
 
@@ -226,7 +261,7 @@ async function fetchWeather() {
     const temp = data.current.temp_c;
     const humidity = data.current.humidity;
     let dewPoint = data.current.dewpoint_c;
-    if(dewPoint === undefined) dewPoint = temp - ((100 - humidity)/5); // approximate
+    if(dewPoint === undefined) dewPoint = temp - ((100 - humidity)/5);
     document.getElementById('temp').textContent = temp.toFixed(1);
     document.getElementById('humidity').textContent = humidity;
     document.getElementById('dew').textContent = dewPoint.toFixed(1);
@@ -294,10 +329,18 @@ function startOneko() {
     onekoScriptEl = document.createElement("script");
     onekoScriptEl.src = ONEKO_SRC;
     onekoScriptEl.dataset.cat = ONEKO_CAT;
-    onekoScriptEl.onload = () => { try { window.oneko && window.oneko(); } catch{} };
+    onekoScriptEl.onload = () => { 
+      try { 
+        window.oneko(); 
+        applyOnekoResponsive();
+      } catch{} 
+    };
     document.body.appendChild(onekoScriptEl);
   } else {
-    document.querySelectorAll("canvas").forEach(c => c.style.display = 'block');
+    document.querySelectorAll("canvas").forEach(c => {
+      c.style.display = 'block';
+      applyOnekoResponsive();
+    });
   }
 }
 
@@ -310,6 +353,21 @@ function applyOnekoToggle() {
   if(toggles.oneko.checked) startOneko();
   else stopOneko();
 }
+
+function applyOnekoResponsive() {
+  const canvases = document.querySelectorAll("canvas");
+  canvases.forEach(c => {
+    const width = window.innerWidth;
+    if(width <= 600) c.style.transform = "scale(0.5)";
+    else if(width <= 900) c.style.transform = "scale(0.7)";
+    else c.style.transform = "scale(1)";
+    c.style.transformOrigin = "left bottom";
+  });
+}
+
+window.addEventListener('resize', () => {
+  if(onekoActive) applyOnekoResponsive();
+});
 
 applyToggles();
 </script>
