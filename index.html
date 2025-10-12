@@ -31,51 +31,47 @@ body {
   z-index: 1;
 }
 
+/* Common glass panel style */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   border-radius: 20px;
   padding: 20px;
-  min-width: 240px;
   color: #fff;
-}
-
-/* Panels */
-#infoPanel {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#weatherPanel {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Center Time */
-.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
   z-index: 2;
 }
 
-#time {
-  font-size: 140px;
-  font-weight: 700;
+/* Panel containers */
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.date {
-  font-size: 28px;
-  font-weight: 400;
-  margin-top: 8px;
-  color: rgba(255, 255, 255, 0.85);
+/* Left and right panels */
+.panel-left, .panel-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  min-width: 240px;
 }
+
+/* Left panel */
+.panel-left { left: 20px; }
+/* Right panel */
+.panel-right { right: 20px; }
+
+/* Center Time */
+.center {
+  text-align: center;
+  z-index: 3;
+}
+
+#time { font-size: 140px; font-weight: 700; }
+.date { font-size: 28px; font-weight: 400; margin-top: 8px; color: rgba(255,255,255,0.85); }
 
 /* ⚙️ Settings Gear */
 .gear {
@@ -88,11 +84,7 @@ body {
   z-index: 5;
   color: rgba(255, 255, 255, 0.85);
 }
-
-.gear:hover {
-  transform: rotate(90deg) scale(1.1);
-  color: #fff;
-}
+.gear:hover { transform: rotate(90deg) scale(1.1); color: #fff; }
 
 /* Settings Panel */
 #settings {
@@ -107,22 +99,12 @@ body {
   color: white;
   min-width: 220px;
   z-index: 6;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
+#settings label { display:flex; align-items:center; gap:8px; margin:6px 0; font-size:16px; }
+#settings input { transform: scale(1.3); }
 
-#settings label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 0;
-  font-size: 16px;
-}
-
-#settings input {
-  transform: scale(1.3);
-}
-
-/* Bottom ticker and footer */
+/* Bottom ticker */
 .bottom {
   position: fixed;
   bottom: 15px;
@@ -134,7 +116,6 @@ body {
   align-items: center;
   gap: 6px;
 }
-
 .ticker {
   white-space: nowrap;
   overflow: hidden;
@@ -144,22 +125,10 @@ body {
   animation: tickerScroll 18s linear infinite;
   font-size: 1.1rem;
   letter-spacing: 0.5px;
-  will-change: transform;
 }
-
-.ticker:hover {
-  animation-play-state: paused;
-}
-
-@keyframes tickerScroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-.footer {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
+.ticker:hover { animation-play-state: paused; }
+@keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+.footer { font-size: 0.8rem; opacity: 0.7; }
 
 /* 🔹 Responsive Scaling */
 @media (max-width: 1200px) {
@@ -171,14 +140,7 @@ body {
 @media (max-width: 900px) {
   #time { font-size: 80px; }
   .date { font-size: 20px; }
-  #infoPanel, #weatherPanel { 
-    top: auto; 
-    bottom: 120px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    width: 80%;
-    text-align: center;
-  }
+  .panel-left, .panel-right { position: static; transform: none; width: 80%; margin: 10px auto; text-align:center; }
 }
 
 @media (max-width: 600px) {
@@ -189,107 +151,96 @@ body {
 }
 
 /* Oneko responsive scaling */
-@media (max-width: 900px) {
-  canvas { transform: scale(0.7) !important; transform-origin: left bottom !important; }
-}
-@media (max-width: 600px) {
-  canvas { transform: scale(0.5) !important; transform-origin: left bottom !important; }
-}
+@media (max-width: 900px) { canvas { transform: scale(0.7) !important; transform-origin: left bottom !important; } }
+@media (max-width: 600px) { canvas { transform: scale(0.5) !important; transform-origin: left bottom !important; } }
+
 </style>
 </head>
 
 <body>
 <div class="overlay"></div>
 
-<!-- Crypto Panel -->
-<div class="glass info" id="infoPanel">
-  <div><span class="material-icons-outlined">currency_bitcoin</span> BTC: <span id="btc">...</span></div>
-  <div><span class="material-icons-outlined">token</span> ETH: <span id="eth">...</span></div>
-  <div><span class="material-icons-outlined">currency_exchange</span> PI: <span id="pi">...</span></div>
+<div class="container">
+  <!-- Left panel: Crypto -->
+  <div class="glass panel-left" id="infoPanel">
+    <div><span class="material-icons-outlined">currency_bitcoin</span> BTC: <span id="btc">...</span></div>
+    <div><span class="material-icons-outlined">token</span> ETH: <span id="eth">...</span></div>
+    <div><span class="material-icons-outlined">currency_exchange</span> PI: <span id="pi">...</span></div>
+  </div>
+
+  <!-- Center Time -->
+  <div class="center">
+    <div id="time">00:00</div>
+    <div id="date" class="date">-- -- ----</div>
+  </div>
+
+  <!-- Right panel: Weather -->
+  <div class="glass panel-right" id="weatherPanel">
+    <div><span class="material-icons-outlined">cloud</span> <span id="temp">--</span>°C</div>
+    <div><span class="material-icons-outlined">water_drop</span> Humidity: <span id="humidity">--</span>%</div>
+    <div><span class="material-icons-outlined">waves</span> Dew Point: <span id="dew">--</span>°C</div>
+    <div><span class="material-icons-outlined">air</span> Wind: <span id="wind">--</span> km/h</div>
+    <div><span class="material-icons-outlined">speed</span> Pressure: <span id="pressure">--</span> hPa</div>
+  </div>
 </div>
 
-<!-- Center Time -->
-<div class="center">
-  <div id="time">00:00</div>
-  <div id="date" class="date">-- -- ----</div>
-</div>
-
-<!-- Weather Panel -->
-<div class="glass weather" id="weatherPanel">
-  <div><span class="material-icons-outlined">cloud</span> <span id="temp">--</span>°C</div>
-  <div><span class="material-icons-outlined">water_drop</span> Humidity: <span id="humidity">--</span>%</div>
-  <div><span class="material-icons-outlined">waves</span> Dew Point: <span id="dew">--</span>°C</div>
-  <div><span class="material-icons-outlined">air</span> Wind: <span id="wind">--</span> km/h</div>
-  <div><span class="material-icons-outlined">speed</span> Pressure: <span id="pressure">--</span> hPa</div>
-</div>
-
-<!-- ⚙️ Settings Gear -->
+<!-- Gear + Settings -->
 <span class="material-icons-outlined gear" id="gearIcon">settings</span>
-
-<!-- ⚙️ Settings Panel -->
 <div id="settings">
   <label><input type="checkbox" id="toggleInfo" checked> Show Crypto</label>
   <label><input type="checkbox" id="toggleWeather" checked> Show Weather</label>
   <label><input type="checkbox" id="toggleOneko" checked> Show Cat</label>
 </div>
 
-<!-- Bottom Ticker -->
+<!-- Bottom ticker -->
 <div class="bottom">
   <div class="glass ticker" id="ticker">Welcome back, Ruben. Stay curious 💫</div>
   <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
 </div>
 
 <script>
-const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210"; // Replace with your key
+const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210";
 const CITY = "Lalitpur";
 
-// 🕒 Time + Date
+// Time + Date
 function updateTime() {
   const now = new Date();
-  document.getElementById('time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-  const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-  document.getElementById('date').textContent = now.toLocaleDateString([], options);
+  document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false});
+  const options = { weekday:'short', month:'short', day:'numeric', year:'numeric' };
+  document.getElementById('date').textContent = now.toLocaleDateString([],options);
 }
-setInterval(updateTime, 1000);
-updateTime();
+setInterval(updateTime,1000); updateTime();
 
-// 🌦 WeatherAPI
-async function fetchWeather() {
+// Weather
+async function fetchWeather(){
   try {
     const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`);
     const data = await res.json();
     const temp = data.current.temp_c;
     const humidity = data.current.humidity;
-    let dewPoint = data.current.dewpoint_c;
-    if(dewPoint === undefined) dewPoint = temp - ((100 - humidity)/5);
+    let dew = data.current.dewpoint_c || temp - ((100-humidity)/5);
     document.getElementById('temp').textContent = temp.toFixed(1);
     document.getElementById('humidity').textContent = humidity;
-    document.getElementById('dew').textContent = dewPoint.toFixed(1);
+    document.getElementById('dew').textContent = dew.toFixed(1);
     document.getElementById('wind').textContent = data.current.wind_kph;
     document.getElementById('pressure').textContent = data.current.pressure_mb;
-  } catch(err) {
-    console.error("Weather error:", err);
-  }
+  } catch(err){ console.error("Weather error:",err); }
 }
-fetchWeather();
-setInterval(fetchWeather, 30*60*1000);
+fetchWeather(); setInterval(fetchWeather,30*60*1000);
 
-// 💹 Crypto Prices
-async function fetchCrypto() {
-  try {
+// Crypto
+async function fetchCrypto(){
+  try{
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network&vs_currencies=usd");
     const data = await res.json();
-    document.getElementById('btc').textContent = "$" + data.bitcoin.usd.toLocaleString();
-    document.getElementById('eth').textContent = "$" + data.ethereum.usd.toLocaleString();
-    document.getElementById('pi').textContent = "$" + data["pi-network"].usd.toLocaleString();
-  } catch(err) {
-    console.error("Crypto error:", err);
-  }
+    document.getElementById('btc').textContent = "$"+data.bitcoin.usd.toLocaleString();
+    document.getElementById('eth').textContent = "$"+data.ethereum.usd.toLocaleString();
+    document.getElementById('pi').textContent = "$"+data["pi-network"].usd.toLocaleString();
+  }catch(err){ console.error("Crypto error:",err); }
 }
-fetchCrypto();
-setInterval(fetchCrypto, 60*1000);
+fetchCrypto(); setInterval(fetchCrypto,60*1000);
 
-// ⚙ Settings Panel
+// Settings toggles
 const gear = document.getElementById('gearIcon');
 const settings = document.getElementById('settings');
 const toggles = {
@@ -298,77 +249,47 @@ const toggles = {
   oneko: document.getElementById('toggleOneko')
 };
 
-// Load saved states
-Object.keys(toggles).forEach(key => {
-  const saved = localStorage.getItem(`show_${key}`);
-  if(saved !== null) toggles[key].checked = saved === 'true';
+Object.keys(toggles).forEach(k=>{
+  const saved = localStorage.getItem(`show_${k}`);
+  if(saved!==null) toggles[k].checked = saved==='true';
 });
 
-function applyToggles() {
+function applyToggles(){
   document.getElementById('infoPanel').style.display = toggles.info.checked ? 'block' : 'none';
   document.getElementById('weatherPanel').style.display = toggles.weather.checked ? 'block' : 'none';
-  Object.keys(toggles).forEach(key => localStorage.setItem(`show_${key}`, toggles[key].checked));
+  Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked));
   applyOnekoToggle();
 }
+Object.values(toggles).forEach(i=>i.addEventListener('change',applyToggles));
+gear.addEventListener('click',()=>{settings.style.display = settings.style.display==='block'?'none':'block';});
 
-Object.values(toggles).forEach(input => input.addEventListener('change', applyToggles));
-gear.addEventListener('click', () => {
-  settings.style.display = settings.style.display === 'block' ? 'none' : 'block';
-});
+// Oneko Cat
+const ONEKO_SRC="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js";
+const ONEKO_CAT="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
+let onekoActive=false,onekoScriptEl=null;
 
-// 🐾 Oneko Cat
-const ONEKO_SRC = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js";
-const ONEKO_CAT = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
-let onekoActive = false;
-let onekoScriptEl = null;
-
-function startOneko() {
-  if(onekoActive) return;
-  onekoActive = true;
+function startOneko(){
+  if(onekoActive) return; onekoActive=true;
   if(!window.oneko){
-    onekoScriptEl = document.createElement("script");
-    onekoScriptEl.src = ONEKO_SRC;
-    onekoScriptEl.dataset.cat = ONEKO_CAT;
-    onekoScriptEl.onload = () => { 
-      try { 
-        window.oneko(); 
-        applyOnekoResponsive();
-      } catch{} 
-    };
+    onekoScriptEl=document.createElement("script");
+    onekoScriptEl.src=ONEKO_SRC; onekoScriptEl.dataset.cat=ONEKO_CAT;
+    onekoScriptEl.onload=()=>{ try{ window.oneko(); applyOnekoResponsive(); } catch{} };
     document.body.appendChild(onekoScriptEl);
-  } else {
-    document.querySelectorAll("canvas").forEach(c => {
-      c.style.display = 'block';
-      applyOnekoResponsive();
-    });
-  }
+  } else { document.querySelectorAll("canvas").forEach(c=>{ c.style.display='block'; applyOnekoResponsive(); }); }
 }
-
-function stopOneko() {
-  onekoActive = false;
-  document.querySelectorAll("canvas").forEach(c => c.style.display = 'none');
-}
-
-function applyOnekoToggle() {
-  if(toggles.oneko.checked) startOneko();
-  else stopOneko();
-}
-
-function applyOnekoResponsive() {
-  const canvases = document.querySelectorAll("canvas");
-  canvases.forEach(c => {
-    const width = window.innerWidth;
-    if(width <= 600) c.style.transform = "scale(0.5)";
-    else if(width <= 900) c.style.transform = "scale(0.7)";
-    else c.style.transform = "scale(1)";
-    c.style.transformOrigin = "left bottom";
+function stopOneko(){ onekoActive=false; document.querySelectorAll("canvas").forEach(c=>c.style.display='none'); }
+function applyOnekoToggle(){ toggles.oneko.checked ? startOneko() : stopOneko(); }
+function applyOnekoResponsive(){
+  const canvases=document.querySelectorAll("canvas");
+  canvases.forEach(c=>{
+    const w=window.innerWidth;
+    if(w<=600) c.style.transform="scale(0.5)";
+    else if(w<=900) c.style.transform="scale(0.7)";
+    else c.style.transform="scale(1)";
+    c.style.transformOrigin="left bottom";
   });
 }
-
-window.addEventListener('resize', () => {
-  if(onekoActive) applyOnekoResponsive();
-});
-
+window.addEventListener('resize',()=>{ if(onekoActive) applyOnekoResponsive(); });
 applyToggles();
 </script>
 </body>
