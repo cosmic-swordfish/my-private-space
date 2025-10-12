@@ -24,178 +24,82 @@ body {
   position: relative;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 1;
-}
-
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border-radius: 20px;
-  padding: 20px;
-  color: #fff;
-  z-index: 2;
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
+.overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index:1; }
+.glass { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border-radius: 20px; padding: 20px; color: #fff; z-index:2; opacity:1; transform:translateY(0); transition: opacity 0.5s ease, transform 0.5s ease; font-size:1rem; }
 
 /* Panels */
-.container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.panel-left, .panel-right {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Left panel */
-.panel-left { left: 20px; }
-/* Right panel */
-.panel-right { right: 20px; }
+.container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+.panel-left, .panel-right { position: absolute; top: 50%; transform: translateY(-50%); }
+.panel-left { left: 20px; } .panel-right { right: 20px; }
 
 /* Center Time */
-.center {
-  text-align: center;
-  z-index: 3;
-}
+.center { text-align: center; z-index:3; }
+#time { font-size:140px; font-weight:700; }
+.date { font-size:28px; font-weight:400; margin-top:8px; color: rgba(255,255,255,0.85); }
 
-#time { font-size: 140px; font-weight: 700; }
-.date { font-size: 28px; font-weight: 400; margin-top: 8px; color: rgba(255,255,255,0.85); }
+/* Pomodoro Timer */
+#pomodoro { margin-top: 20px; font-size: 1.5rem; display: flex; justify-content: center; gap: 12px; }
+#pomodoro button { padding: 6px 12px; font-size: 1rem; border:none; border-radius:10px; cursor:pointer; background: rgba(255,255,255,0.2); color:#fff; transition: background 0.3s; }
+#pomodoro button:hover { background: rgba(255,255,255,0.35); }
 
-/* ⚙️ Settings Gear */
-.gear {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
-  font-size: 28px;
-  transition: transform 0.3s ease, color 0.3s ease;
-  z-index: 5;
-  color: rgba(255, 255, 255, 0.85);
-}
-.gear:hover { transform: rotate(90deg) scale(1.1); color: #fff; }
-
-/* Settings Panel */
-#settings {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border-radius: 16px;
-  padding: 16px;
-  display: block;
-  color: white;
-  min-width: 220px;
-  z-index: 6;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-}
-#settings.show {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: all;
-}
+/* Gear + Settings */
+.gear { position: fixed; top: 20px; right: 20px; cursor:pointer; font-size:28px; transition: transform 0.3s ease,color 0.3s ease; z-index:5; color: rgba(255,255,255,0.85);}
+.gear:hover { transform: rotate(90deg) scale(1.1); color:#fff; }
+#settings { position: fixed; top:70px; right:20px; background:var(--glass-bg); backdrop-filter:blur(var(--glass-blur)); border-radius:16px; padding:16px; display:block; color:white; min-width:220px; z-index:6; box-shadow:0 4px 16px rgba(0,0,0,0.25); opacity:0; transform:translateY(-20px); pointer-events:none; }
+#settings.show { opacity:1; transform:translateY(0); pointer-events:all; }
 #settings label { display:flex; align-items:center; gap:8px; margin:6px 0; font-size:16px; }
 #settings input { transform: scale(1.3); }
 
 /* Bottom ticker */
-.bottom {
-  position: fixed;
-  bottom: 15px;
-  width: 100%;
-  text-align: center;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-.ticker {
-  white-space: nowrap;
-  overflow: hidden;
-  width: 75%;
-  max-width: 800px;
-  margin: 0 auto;
-  animation: tickerScroll 18s linear infinite;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-.ticker:hover { animation-play-state: paused; }
-@keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-.footer { font-size: 0.8rem; opacity: 0.7; }
+.bottom { position: fixed; bottom: 15px; width: 100%; text-align:center; z-index:3; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.ticker { white-space: nowrap; overflow:hidden; width:75%; max-width:800px; margin:0 auto; animation: tickerScroll 18s linear infinite; font-size:1.1rem; letter-spacing:0.5px; }
+.ticker:hover { animation-play-state:paused; }
+@keyframes tickerScroll { 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
+.footer { font-size:0.8rem; opacity:0.7; }
 
-/* 🔹 Responsive Scaling */
-@media (max-width: 1200px) {
-  #time { font-size: 110px; }
-  .date { font-size: 24px; }
-  .glass { padding: 16px; min-width: 200px; }
+/* Responsive scaling */
+@media (max-width:1200px){ #time{font-size:110px;} .date{font-size:24px;} .glass{padding:16px; min-width:200px; font-size:0.9rem;} }
+@media (max-width:900px){
+  #time{font-size:90px;} .date{font-size:22px;}
+  .container { flex-direction: column; justify-content: center; align-items: center; }
+  .panel-left,.panel-right { position: static; transform:none; width:85%; margin:8px auto; text-align:center; }
+  #infoPanel,#weatherPanel { font-size:0.8rem; padding:10px; }
+}
+@media (max-width:600px){
+  #time{font-size:70px;} .date{font-size:18px;}
+  #infoPanel,#weatherPanel{font-size:0.75rem; padding:8px;}
+  #pomodoro{flex-direction:column; gap:8px;}
 }
 
-@media (max-width: 900px) {
-  #time { font-size: 80px; }
-  .date { font-size: 20px; }
-
-  /* Panels now move above and below time */
-  .panel-left, .panel-right {
-    position: static;
-    transform: none;
-    width: 90%;
-    max-width: none;
-    margin: 10px auto;
-    text-align: center;
-  }
-  #infoPanel { order: -1; } /* above time */
-  #weatherPanel { order: 1; } /* below time */
-  .container { display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  #infoPanel, #weatherPanel { min-width: auto; padding: 12px; }
-}
-
-@media (max-width: 600px) {
-  #time { font-size: 60px; }
-  .date { font-size: 18px; }
-  .gear { font-size: 24px; }
-  .ticker { width: 90%; font-size: 0.95rem; }
-  #infoPanel, #weatherPanel { padding: 10px; }
-}
-
-/* Oneko responsive scaling */
-@media (max-width: 900px) { canvas { transform: scale(0.7) !important; transform-origin: left bottom !important; } }
-@media (max-width: 600px) { canvas { transform: scale(0.5) !important; transform-origin: left bottom !important; } }
+/* Oneko scaling */
+@media (max-width:900px){canvas{transform:scale(0.7)!important; transform-origin:left bottom!important;}}
+@media (max-width:600px){canvas{transform:scale(0.5)!important; transform-origin:left bottom!important;}}
 </style>
 </head>
-
 <body>
 <div class="overlay"></div>
 
 <div class="container">
-  <!-- Left panel: Crypto -->
+  <!-- Crypto Panel -->
   <div class="glass panel-left" id="infoPanel">
     <div><span class="material-icons-outlined">currency_bitcoin</span> BTC: <span id="btc">...</span></div>
     <div><span class="material-icons-outlined">token</span> ETH: <span id="eth">...</span></div>
     <div><span class="material-icons-outlined">currency_exchange</span> PI: <span id="pi">...</span></div>
   </div>
 
-  <!-- Center Time -->
+  <!-- Center Time + Pomodoro -->
   <div class="center">
     <div id="time">00:00</div>
     <div id="date" class="date">-- -- ----</div>
+    <!-- Pomodoro Timer -->
+    <div id="pomodoro">
+      <div id="pomodoroTime">25:00</div>
+      <button id="startPom">Start</button>
+      <button id="resetPom">Reset</button>
+    </div>
   </div>
 
-  <!-- Right panel: Weather -->
+  <!-- Weather Panel -->
   <div class="glass panel-right" id="weatherPanel">
     <div><span class="material-icons-outlined">cloud</span> <span id="temp">--</span>°C</div>
     <div><span class="material-icons-outlined">water_drop</span> Humidity: <span id="humidity">--</span>%</div>
@@ -220,26 +124,23 @@ body {
 </div>
 
 <script>
-const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210";
-const CITY = "Lalitpur";
-
 // Time
-function updateTime() {
-  const now = new Date();
-  document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false});
-  const options = { weekday:'short', month:'short', day:'numeric', year:'numeric' };
-  document.getElementById('date').textContent = now.toLocaleDateString([],options);
+function updateTime(){
+  const now=new Date();
+  document.getElementById('time').textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false});
+  const options={ weekday:'short', month:'short', day:'numeric', year:'numeric' };
+  document.getElementById('date').textContent=now.toLocaleDateString([], options);
 }
 setInterval(updateTime,1000); updateTime();
 
 // Weather
+const WEATHER_API_KEY="d81009d2cbae458bbdb51509251210"; const CITY="Lalitpur";
 async function fetchWeather(){
   try{
-    const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`);
-    const data = await res.json();
-    const temp=data.current.temp_c;
-    const humidity=data.current.humidity;
-    const dew = data.current.dewpoint_c !== undefined ? data.current.dewpoint_c : temp - ((100 - humidity)/5);
+    const res=await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`);
+    const data=await res.json();
+    const temp=data.current.temp_c, humidity=data.current.humidity;
+    const dew=data.current.dewpoint_c ?? temp - ((100-humidity)/5);
     document.getElementById('temp').textContent=temp.toFixed(1);
     document.getElementById('humidity').textContent=humidity;
     document.getElementById('dew').textContent=dew.toFixed(1);
@@ -261,61 +162,36 @@ async function fetchCrypto(){
 }
 fetchCrypto(); setInterval(fetchCrypto,60*1000);
 
-// Settings toggles with smooth fade + slide
-const gear=document.getElementById('gearIcon');
-const settings=document.getElementById('settings');
-const toggles={
-  info:document.getElementById('toggleInfo'),
-  weather:document.getElementById('toggleWeather'),
-  oneko:document.getElementById('toggleOneko')
-};
-Object.keys(toggles).forEach(k=>{
-  const saved=localStorage.getItem(`show_${k}`);
-  if(saved!==null) toggles[k].checked=saved==='true';
-});
-
-function fadeSlidePanel(el, show){
-  el.style.opacity = show ? '1' : '0';
-  el.style.transform = show ? 'translateY(0)' : 'translateY(20px)';
-  el.style.pointerEvents = show ? 'all' : 'none';
-}
-
-function applyToggles(){
-  fadeSlidePanel(document.getElementById('infoPanel'), toggles.info.checked);
-  fadeSlidePanel(document.getElementById('weatherPanel'), toggles.weather.checked);
-  Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked));
-  applyOnekoToggle();
-}
-Object.values(toggles).forEach(i=>i.addEventListener('change',applyToggles));
-
-gear.addEventListener('click',()=>{
-  settings.classList.toggle('show');
-});
+// Settings
+const gear=document.getElementById('gearIcon'); const settings=document.getElementById('settings');
+const toggles={ info:document.getElementById('toggleInfo'), weather:document.getElementById('toggleWeather'), oneko:document.getElementById('toggleOneko')};
+Object.keys(toggles).forEach(k=>{const saved=localStorage.getItem(`show_${k}`); if(saved!==null) toggles[k].checked=saved==='true';});
+function fadeSlidePanel(el,show){ el.style.opacity=show?'1':'0'; el.style.transform=show?'translateY(0)':'translateY(20px)'; el.style.pointerEvents=show?'all':'none';}
+function applyToggles(){ fadeSlidePanel(document.getElementById('infoPanel'), toggles.info.checked); fadeSlidePanel(document.getElementById('weatherPanel'), toggles.weather.checked); Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked)); applyOnekoToggle();}
+Object.values(toggles).forEach(i=>i.addEventListener('change',applyToggles)); gear.addEventListener('click',()=>{settings.classList.toggle('show');});
 
 // Oneko
-const ONEKO_SRC="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js";
-const ONEKO_CAT="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
+const ONEKO_SRC="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js"; const ONEKO_CAT="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
 let onekoActive=false,onekoScriptEl=null;
-function startOneko(){
-  if(onekoActive) return; onekoActive=true;
-  if(!window.oneko){
-    onekoScriptEl=document.createElement("script");
-    onekoScriptEl.src=ONEKO_SRC; onekoScriptEl.dataset.cat=ONEKO_CAT;
-    onekoScriptEl.onload=()=>{ try{ window.oneko(); applyOnekoResponsive(); } catch{} };
-    document.body.appendChild(onekoScriptEl);
-  } else document.querySelectorAll("canvas").forEach(c=>{c.style.display='block'; applyOnekoResponsive();});
-}
+function startOneko(){ if(onekoActive) return; onekoActive=true; if(!window.oneko){onekoScriptEl=document.createElement("script"); onekoScriptEl.src=ONEKO_SRC; onekoScriptEl.dataset.cat=ONEKO_CAT; onekoScriptEl.onload=()=>{try{window.oneko(); applyOnekoResponsive();}catch{} }; document.body.appendChild(onekoScriptEl);} else document.querySelectorAll("canvas").forEach(c=>{c.style.display='block'; applyOnekoResponsive();});}
 function stopOneko(){ onekoActive=false; document.querySelectorAll("canvas").forEach(c=>c.style.display='none'); }
 function applyOnekoToggle(){ toggles.oneko.checked ? startOneko() : stopOneko(); }
-function applyOnekoResponsive(){
-  document.querySelectorAll("canvas").forEach(c=>{
-    const w=window.innerWidth;
-    c.style.transform = w<=600 ? "scale(0.5)" : w<=900 ? "scale(0.7)" : "scale(1)";
-    c.style.transformOrigin="left bottom";
-  });
-}
+function applyOnekoResponsive(){ document.querySelectorAll("canvas").forEach(c=>{ const w=window.innerWidth; c.style.transform=w<=600?"scale(0.5)":w<=900?"scale(0.7)":"scale(1)"; c.style.transformOrigin="left bottom";}); }
 window.addEventListener('resize',()=>{ if(onekoActive) applyOnekoResponsive(); });
 applyToggles();
+
+// Pomodoro
+let pomTime=25*60, pomInterval=null;
+const pomDisplay=document.getElementById('pomodoroTime');
+document.getElementById('startPom').addEventListener('click',()=>{
+  if(pomInterval) return;
+  pomInterval=setInterval(()=>{
+    if(pomTime<=0){ clearInterval(pomInterval); pomInterval=null; alert("Pomodoro finished!"); return; }
+    pomTime--; let m=Math.floor(pomTime/60); let s=pomTime%60;
+    pomDisplay.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  },1000);
+});
+document.getElementById('resetPom').addEventListener('click',()=>{ clearInterval(pomInterval); pomInterval=null; pomTime=25*60; pomDisplay.textContent="25:00"; });
 </script>
 </body>
 </html>
