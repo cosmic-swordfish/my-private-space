@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>my-private-space</title>
+<title>Apple-Style Liquid Pomodoro</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 <style>
@@ -13,152 +13,105 @@
   --primary-color: #5e5ce6;
   --accent-color: #ff6b6b;
   --text-color: #fff;
-  --panel-radius: 30px;
+  --panel-radius: 36px;
   --notif-color: #5e5ce6;
-  --transition-speed: 0.6s;
+  --transition-speed: 0.4s;
 }
 
-/* Body & background */
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Roboto',sans-serif; }
+
 body {
-  margin:0;
-  font-family:'Roboto',sans-serif;
-  color: var(--text-color);
   background: url('assets/chihiro036.jpeg') center/cover no-repeat;
-  overflow-x:hidden;
-  position:relative;
-}
-.overlay {
-  position:absolute; inset:0;
-  background: rgba(0,0,0,0.35);
-  z-index:1;
+  color: var(--text-color);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
 }
 
-/* Glass Panel Style with shimmer */
 .glass {
-  position: relative;
-  overflow: hidden;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   border-radius: var(--panel-radius);
   padding: 20px;
-  color: var(--text-color);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  opacity:1;
-  transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
-}
-.glass::before {
-  content:'';
-  position: absolute;
-  top:0; left:-50%;
-  width:200%;
-  height:100%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.05) 100%);
-  transform: skewX(-20deg);
-  pointer-events:none;
-  animation: shimmer 2.5s infinite;
-}
-@keyframes shimmer {0%{left:-100%;}100%{left:100%;}}
-
-/* Panels layout */
-.container {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding-top: 50px;
-}
-.panel-left, .panel-right {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 220px;
-  opacity:1;
-}
-.panel-left div, .panel-right div {
-  display:flex; align-items:center; gap:10px;
-  font-weight:500;
-}
-.panel-left div span.icon, .panel-right div span.icon {
-  font-size:1.4rem;
-  color: var(--primary-color);
-  display:flex; align-items:center;
-}
-
-/* Center Time */
-.center {
-  text-align:center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  color:#fff;
   display:flex;
-  flex-direction: column;
-  align-items:center;
-  z-index:3;
+  flex-direction:column;
+  gap:12px;
+  min-width:220px;
+  transition: all var(--transition-speed) ease;
 }
-#time { font-size:140px; font-weight:700; line-height:1; }
-.date { font-size:28px; font-weight:500; margin-top:6px; color: rgba(255,255,255,0.85); }
 
-/* Dynamic Island Pomodoro */
+/* Panels */
+.container { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:20px; }
+.panel-left, .panel-right { display:flex; flex-direction:column; gap:12px; }
+.panel-left div, .panel-right div {
+  display:flex; align-items:center; gap:10px; font-weight:500;
+}
+.panel-left div span.icon, .panel-right div span.icon { font-size:1.4rem; color:#fff; }
+
+/* Center */
+.center { display:flex; flex-direction:column; align-items:center; gap:20px; }
+#time { font-size:120px; font-weight:700; }
+.date { font-size:24px; opacity:0.85; }
+
+/* Dynamic Island / Pomodoro */
 #dynamicIsland {
   position: relative;
-  width: 160px;
-  height: 160px;
-  margin-top:20px;
-  border-radius:80px;
+  width:180px;
+  height:180px;
+  border-radius:90px;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  opacity:0;
-  transform: scale(0.5);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, opacity 0.4s ease;
 }
-#dynamicIsland.show { opacity:1; transform: scale(1); }
-#dynamicIsland canvas { position:absolute; top:0; left:0; width:100%; height:100%; border-radius:80px; }
-#dynamicIslandTime { position:absolute; font-weight:600; font-size:1.2rem; text-align:center; }
 
-/* Gear + Settings */
-.gear { position:fixed; top:20px; right:20px; cursor:pointer; font-size:28px; z-index:5; color: rgba(255,255,255,0.85); transition: transform 0.3s ease,color 0.3s ease; }
-.gear:hover { transform: rotate(90deg) scale(1.1); color: var(--primary-color); }
-#settings {
-  position:fixed; top:70px; right:20px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border-radius:var(--panel-radius);
-  padding:16px;
-  min-width:220px;
-  z-index:6;
-  opacity:0;
-  transform:translateY(-20px);
-  pointer-events:none;
-  transition:opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+#dynamicIsland.pulse { animation: pulseIsland 1.5s infinite alternate; }
+@keyframes pulseIsland {
+  0% { transform: scale(0.98); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(0.98); }
 }
-#settings.show { opacity:1; transform:translateY(0); pointer-events:auto; }
-#settings label { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:16px; }
-#settings input { transform: scale(1.3); }
 
-/* Bottom ticker */
-.bottom { position:fixed; bottom:15px; width:100%; text-align:center; z-index:3; display:flex; flex-direction:column; align-items:center; gap:6px; }
-.ticker { white-space:nowrap; overflow:hidden; width:75%; max-width:800px; margin:0 auto; position: relative; }
-.tickerContent { display:inline-block; padding-left:100%; animation: tickerScroll 18s linear infinite; font-size:1.1rem; letter-spacing:0.5px; opacity:0; animation: tickerFade 0.5s ease forwards, tickerScroll 18s linear infinite 0.5s; }
-@keyframes tickerScroll {0%{transform:translateX(0);} 100%{transform:translateX(-100%);}}
-@keyframes tickerFade {0%{opacity:0;} 100%{opacity:1;}}
-.footer { font-size:0.8rem; opacity:0.7; }
+#dynamicIsland canvas { position:absolute; top:0; left:0; width:100%; height:100%; border-radius:90px; }
+#dynamicIslandTime { font-size:1.5rem; font-weight:600; z-index:2; }
+
+/* Pomodoro Controls */
+#pomControlsIsland { display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center; transition: opacity 0.3s ease; }
+button { padding:6px 12px; border:none; border-radius:12px; cursor:pointer; font-weight:500; }
+#pomStartBtn { background: var(--primary-color); color:#fff; }
+#pomPauseBtn { background: var(--accent-color); color:#fff; display:none; }
+#pomResetBtn { background:#444; color:#fff; display:none; }
 
 /* Notification */
-#notification { position:fixed; bottom:30px; right:30px; background: var(--notif-color); color: #fff; padding:14px 24px; border-radius:28px; opacity:0; transform:translateY(20px); pointer-events:none; transition: opacity 0.4s ease, transform 0.4s ease; font-weight:500; z-index:100; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
-#notification.show { opacity:1; transform:translateY(0); animation:pulse 1.2s infinite; }
-@keyframes pulse {0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-3px) scale(1.05);}}
+#notification { position:fixed; bottom:30px; right:30px; background: var(--notif-color); color:#fff; padding:14px 24px; border-radius:28px; opacity:0; transform:translateY(20px); transition: all 0.4s ease; font-weight:500; z-index:100; }
+#notification.show { opacity:1; transform:translateY(0); }
 
-/* Responsive */
-@media(max-width:900px){ .container{flex-direction:column; justify-content:flex-start; gap:16px; padding-top:30px;} .panel-left,.panel-right{width:90%; margin:0 auto;} #time{font-size:90px;} .date{font-size:20px;} }
-@media(max-width:600px){ #time{font-size:70px;} .date{font-size:18px;} .panel-left,.panel-right{font-size:0.8rem;} canvas{transform:scale(0.5)!important; transform-origin:left bottom!important;} }
+/* Ticker */
+.bottom { position:fixed; bottom:10px; width:100%; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.ticker { white-space: nowrap; overflow: hidden; width:80vw; text-align:left; position: relative; border-radius: 12px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding:6px 12px; }
+.tickerContent { display:inline-block; padding-left:100%; animation:tickerScroll 20s linear infinite; }
+@keyframes tickerScroll { 0%{ transform: translateX(0);} 100%{ transform: translateX(-100%);} }
+.footer { font-size:0.8rem; opacity:0.6; text-align:center; }
+
+/* Media */
+@media(max-width:600px){
+  #time{font-size:70px;}
+  .date{font-size:18px;}
+  #dynamicIsland{width:140px;height:140px;}
+  #pomControlsIsland{margin-top:150px;}
+}
 </style>
 </head>
 <body>
-<div class="overlay"></div>
 
 <div class="container">
   <!-- Crypto -->
@@ -168,19 +121,21 @@ body {
     <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
   </div>
 
-  <!-- Center Time + Dynamic Island Pomodoro -->
+  <!-- Center -->
   <div class="center">
     <div id="time">00:00</div>
     <div id="date" class="date">-- -- ----</div>
+
     <div id="dynamicIsland">
       <canvas id="pomCanvas"></canvas>
       <div id="dynamicIslandTime">25:00</div>
-      <div id="pomControlsIsland" style="position:absolute; bottom:-50px; display:flex; gap:10px;">
-        <input type="number" id="pomCustomTime" placeholder="Min" style="width:50px; border:none; border-radius:12px; padding:4px 6px; text-align:center;">
-        <button id="pomStartBtn" style="padding:4px 8px; border:none; border-radius:12px; background:var(--primary-color); color:#fff; cursor:pointer;">Start</button>
-        <button id="pomPauseBtn" style="padding:4px 8px; border:none; border-radius:12px; background:var(--accent-color); color:#fff; cursor:pointer;">Pause</button>
-        <button id="pomResetBtn" style="padding:4px 8px; border:none; border-radius:12px; background:#444; color:#fff; cursor:pointer;">Reset</button>
-      </div>
+    </div>
+
+    <div id="pomControlsIsland">
+      <input type="number" id="pomCustomTime" placeholder="Min" style="width:60px; text-align:center; border:none; border-radius:12px; padding:4px 6px;">
+      <button id="pomStartBtn">Start</button>
+      <button id="pomPauseBtn">Pause</button>
+      <button id="pomResetBtn">Reset</button>
     </div>
   </div>
 
@@ -194,29 +149,22 @@ body {
   </div>
 </div>
 
-<span class="material-icons-outlined gear" id="gearIcon">settings</span>
-<div id="settings">
-  <label><input type="checkbox" id="toggleInfo" checked> Show Crypto</label>
-  <label><input type="checkbox" id="toggleWeather" checked> Show Weather</label>
-  <label><input type="checkbox" id="toggleOneko" checked> Show Cat</label>
-</div>
-
 <div class="bottom">
-  <div class="glass ticker"><div class="tickerContent" id="ticker">Welcome back, Ruben. Stay curious 💫</div></div>
+  <div class="glass ticker">
+    <div class="tickerContent">Welcome back, Ruben. Stay curious 💫</div>
+  </div>
   <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
 </div>
 
 <div id="notification">Pomodoro finished! ⏰</div>
 <audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
 
-<script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
 <script>
 // --- Time ---
 function updateTime(){
   const now=new Date();
-  document.getElementById('time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-  const options={ weekday:'short', month:'short', day:'numeric', year:'numeric'};
-  document.getElementById('date').textContent=now.toLocaleDateString([],options);
+  document.getElementById('time').textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('date').textContent=now.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
 }
 setInterval(updateTime,1000); updateTime();
 
@@ -240,83 +188,87 @@ async function fetchWeather(){
     const data=await res.json();
     document.getElementById('temp').textContent=data.current.temp_c.toFixed(1)+"°C";
     document.getElementById('humidity').textContent="Humidity: "+data.current.humidity+"%";
-    document.getElementById('dew').textContent="Dew: "+(data.current.dewpoint_c??0).toFixed(1)+"°C";
+    document.getElementById('dew').textContent="Dew: "+data.current.dewpoint_c.toFixed(1)+"°C";
     document.getElementById('wind').textContent="Wind: "+data.current.wind_kph+" km/h";
     document.getElementById('pressure').textContent="Pressure: "+data.current.pressure_mb+" hPa";
   }catch(e){console.error(e);}
 }
 fetchWeather(); setInterval(fetchWeather,1800000);
 
-// --- Settings toggles ---
-const gear=document.getElementById('gearIcon');
-const settings=document.getElementById('settings');
-const toggles={ info:document.getElementById('toggleInfo'), weather:document.getElementById('toggleWeather'), oneko:document.getElementById('toggleOneko')};
-Object.keys(toggles).forEach(k=>{
-  const saved=localStorage.getItem(`show_${k}`);
-  if(saved!==null) toggles[k].checked=saved==='true';
-});
-function fadePanel(el,show){el.style.opacity=show?'1':'0'; el.style.pointerEvents=show?'all':'none';}
-function applyToggles(){
-  fadePanel(document.getElementById('infoPanel'), toggles.info.checked);
-  fadePanel(document.getElementById('weatherPanel'), toggles.weather.checked);
-  Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked));
-  applyOnekoToggle();
-}
-Object.values(toggles).forEach(i=>i.addEventListener('change',applyToggles));
-gear.addEventListener('click',()=>settings.classList.toggle('show'));
-
-// --- Oneko ---
-function startOneko(){if(!window.oneko) return; window.oneko();}
-function stopOneko(){document.querySelectorAll("canvas").forEach(c=>c.style.display='none');}
-function applyOnekoToggle(){toggles.oneko.checked?startOneko():stopOneko();}
-applyToggles();
-
-// --- Dynamic Island Pomodoro ---
-const pomCanvas=document.getElementById('pomCanvas'); const ctx=pomCanvas.getContext('2d');
-const dynamicIsland=document.getElementById('dynamicIsland');
+// --- Pomodoro ---
+const canvas=document.getElementById('pomCanvas'); const ctx=canvas.getContext('2d');
 const pomDisplay=document.getElementById('dynamicIslandTime');
-let pomTimeTotal=25*60; let pomTime=pomTimeTotal; let pomInterval=null; let isPaused=false; let angleOffset=0;
+const dynamicIsland=document.getElementById('dynamicIsland');
 
-function drawPomProgress(){
-  const w=pomCanvas.width,h=pomCanvas.height,cx=w/2,cy=h/2,r=w/2-12;
+let pomTotal=25*60, pomTime=pomTotal, pomInterval=null, isPaused=false;
+
+function resizeCanvas(){ canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight; }
+resizeCanvas(); window.addEventListener('resize',resizeCanvas);
+
+function drawPom(){
+  const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=w/2-12;
   ctx.clearRect(0,0,w,h);
   ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI);
   ctx.strokeStyle="rgba(255,255,255,0.1)"; ctx.lineWidth=12; ctx.stroke();
-  angleOffset+=0.02;
-  const grad=ctx.createConicGradient(-Math.PI/2+angleOffset,cx,cy);
+
+  const grad=ctx.createConicGradient(-Math.PI/2,cx,cy);
   grad.addColorStop(0,'#5e5ce6'); grad.addColorStop(0.33,'#ff6b6b'); grad.addColorStop(0.66,'#5e5ce6'); grad.addColorStop(1,'#5e5ce6');
+
   ctx.beginPath();
-  const progress=1-(pomTime/pomTimeTotal);
+  const progress=1-(pomTime/pomTotal);
   ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+2*Math.PI*progress);
   ctx.strokeStyle=grad; ctx.lineWidth=12; ctx.lineCap='round'; ctx.stroke();
-  requestAnimationFrame(drawPomProgress);
+
+  requestAnimationFrame(drawPom);
 }
-drawPomProgress();
-function updatePomDisplay(){ const m=Math.floor(pomTime/60), s=pomTime%60; pomDisplay.textContent=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0'); }
-function startPom(custom=false){
+drawPom();
+
+function updatePomDisplay(){
+  const m=Math.floor(pomTime/60), s=pomTime%60;
+  pomDisplay.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function startPom(){
+  const val=parseInt(document.getElementById('pomCustomTime').value);
+  if(val>0){ pomTotal=val*60; pomTime=pomTotal; updatePomDisplay(); }
+  dynamicIsland.classList.add('pulse');
+  document.getElementById('pomStartBtn').style.display='none';
+  document.getElementById('pomPauseBtn').style.display='inline-block';
+  document.getElementById('pomResetBtn').style.display='inline-block';
   if(pomInterval) return;
-  dynamicIsland.classList.add('show');
-  if(custom){
-    const val=parseInt(document.getElementById('pomCustomTime').value);
-    if(val>0){ pomTimeTotal=val*60; pomTime=pomTimeTotal; }
-  }
   pomInterval=setInterval(()=>{
     if(!isPaused){
-      pomTime--; updatePomDisplay();
-      if(pomTime<0){ clearInterval(pomInterval);pomInterval=null; pomTime=pomTimeTotal; dynamicIsland.classList.remove('show'); showNotification(); updatePomDisplay(); }
+      pomTime--;
+      updatePomDisplay();
+      if(pomTime<0){ clearInterval(pomInterval); pomInterval=null; pomTime=pomTotal; dynamicIsland.classList.remove('pulse'); showNotification(); updatePomDisplay(); document.getElementById('pomStartBtn').style.display='inline-block'; document.getElementById('pomPauseBtn').style.display='none'; }
     }
   },1000);
 }
-function pausePom(){ isPaused=!isPaused; document.getElementById('pomPauseBtn').textContent=isPaused?'Resume':'Pause'; }
-function resetPom(){ clearInterval(pomInterval); pomInterval=null; pomTime=pomTimeTotal; isPaused=false; pomDisplay.textContent=(pomTimeTotal/60).toString().padStart(2,'0')+":00"; dynamicIsland.classList.remove('show'); document.getElementById('pomPauseBtn').textContent='Pause'; }
-document.getElementById('pomStartBtn').addEventListener('click',()=>startPom(true));
+
+function pausePom(){
+  isPaused=!isPaused;
+  document.getElementById('pomPauseBtn').textContent=isPaused?'Resume':'Pause';
+  if(isPaused){ dynamicIsland.classList.remove('pulse'); } else { dynamicIsland.classList.add('pulse'); }
+}
+
+function resetPom(){
+  clearInterval(pomInterval); pomInterval=null; pomTime=pomTotal; isPaused=false; updatePomDisplay();
+  dynamicIsland.classList.remove('pulse');
+  document.getElementById('pomPauseBtn').textContent='Pause';
+  document.getElementById('pomStartBtn').style.display='inline-block';
+  document.getElementById('pomPauseBtn').style.display='none';
+  document.getElementById('pomResetBtn').style.display='none';
+}
+
+document.getElementById('pomStartBtn').addEventListener('click',startPom);
 document.getElementById('pomPauseBtn').addEventListener('click',pausePom);
 document.getElementById('pomResetBtn').addEventListener('click',resetPom);
 
 // --- Notification ---
 function showNotification(){
   const notif=document.getElementById('notification');
-  notif.classList.add('show'); document.getElementById('notifSound').play();
+  notif.classList.add('show');
+  document.getElementById('notifSound').play();
   setTimeout(()=>notif.classList.remove('show'),3500);
 }
 </script>
