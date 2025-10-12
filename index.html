@@ -1,92 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>my-private-space</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 <style>
 :root {
-  --md-sys-primary: #6750A4;
-  --md-sys-on-primary: #FFFFFF;
-  --md-sys-surface: rgba(255,255,255,0.1);
-  --md-sys-on-surface: #FFFFFF;
-  --md-sys-surface-variant: rgba(255,255,255,0.08);
-  --glass-blur: 16px;
+  --glass-bg: rgba(255,255,255,0.1);
+  --glass-blur: 30px;
+  --primary-color: #5e5ce6;
+  --accent-color: #ff6b6b;
+  --text-color: #fff;
+  --panel-radius: 30px;
+  --notif-color: #5e5ce6;
+  --transition-speed: 0.6s;
 }
 
+/* Body & background */
 body {
-  margin:0; font-family:'Roboto',sans-serif; color:var(--md-sys-on-surface);
-  background: url('assets/chihiro036.jpeg') center/cover no-repeat; overflow:hidden; position:relative;
+  margin:0;
+  font-family:'Roboto',sans-serif;
+  color: var(--text-color);
+  background: url('assets/chihiro036.jpeg') center/cover no-repeat;
+  overflow-x:hidden;
+  position:relative;
 }
-.overlay { position:absolute; inset:0; background: rgba(0,0,0,0.35); z-index:1; }
+.overlay {
+  position:absolute; inset:0;
+  background: rgba(0,0,0,0.35);
+  z-index:1;
+}
 
-/* Glass Panels with M3 elevation */
+/* Glass Panel Style with shimmer */
 .glass {
-  background: var(--md-sys-surface);
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
-  border-radius: 28px;
+  border-radius: var(--panel-radius);
   padding: 20px;
-  color: var(--md-sys-on-surface);
-  z-index:2;
+  color: var(--text-color);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   opacity:1;
-  transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  font-size: 1rem;
+  transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+}
+.glass::before {
+  content:'';
+  position: absolute;
+  top:0; left:-50%;
+  width:200%;
+  height:100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.05) 100%);
+  transform: skewX(-20deg);
+  pointer-events:none;
+  animation: shimmer 2.5s infinite;
+}
+@keyframes shimmer {0%{left:-100%;}100%{left:100%;}}
+
+/* Panels layout */
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-top: 50px;
+}
+.panel-left, .panel-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+  opacity:1;
+}
+.panel-left div, .panel-right div {
+  display:flex; align-items:center; gap:10px;
+  font-weight:500;
+}
+.panel-left div span.icon, .panel-right div span.icon {
+  font-size:1.4rem;
+  color: var(--primary-color);
+  display:flex; align-items:center;
 }
 
-/* Panels */
-.container { position:relative; width:100%; height:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; }
-.panel-left, .panel-right { display:flex; flex-direction:column; gap:12px; position:absolute; top:50%; transform:translateY(-50%); min-width:200px; }
-.panel-left { left:20px; } .panel-right { right:20px; }
-.panel-left div, .panel-right div { display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-weight:500; }
-.panel-left div span.icon, .panel-right div span.icon { margin-right:8px; font-size:1.3rem; display:inline-flex; align-items:center; color:var(--md-sys-primary); }
-
-/* Center Time & Date */
-.center { text-align:center; z-index:3; }
+/* Center Time + Pomodoro */
+.center {
+  text-align:center;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  z-index:3;
+}
 #time { font-size:140px; font-weight:700; line-height:1; }
 .date { font-size:28px; font-weight:500; margin-top:6px; color: rgba(255,255,255,0.85); }
 
-/* Pomodoro Timer */
-#pomodoro { margin-top:20px; display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap; }
-#pomodoro select, #pomodoro button, #pomodoro div#pomodoroTime {
-  padding:8px 16px; font-size:1rem; border:none; border-radius:24px;
-  background: var(--md-sys-surface-variant); color:var(--md-sys-on-surface); cursor:pointer; transition: all 0.3s;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+#pomodoro { margin-top:20px; display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center; }
+.pomContainer { position: relative; width:140px; height:140px; }
+.pomCanvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+#pomodoroTime { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-weight:600; font-size:1.3rem; }
+
+#pomControls { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+#pomSelect, #manualInput, #startPom, #resetPom {
+  padding:10px 14px;
+  border:none;
+  border-radius:24px;
+  background: rgba(255,255,255,0.08);
+  color:#fff;
+  cursor:pointer;
+  font-size:1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-#pomodoro select:hover, #pomodoro button:hover { background: var(--md-sys-primary); color: var(--md-sys-on-primary); }
-#pomodoroTime { min-width:80px; text-align:center; font-weight:600; background: var(--md-sys-surface); }
+#pomSelect:hover, #manualInput:hover, #startPom:hover, #resetPom:hover {
+  background: var(--primary-color); color:#fff;
+}
 
 /* Gear + Settings */
-.gear { position:fixed; top:20px; right:20px; cursor:pointer; font-size:28px; transition: transform 0.3s ease,color 0.3s ease; z-index:5; color: rgba(255,255,255,0.85);}
-.gear:hover { transform: rotate(90deg) scale(1.1); color: var(--md-sys-primary); }
-#settings { position:fixed; top:70px; right:20px; background: var(--md-sys-surface); backdrop-filter: blur(var(--glass-blur)); border-radius:28px; padding:16px; display:block; min-width:220px; z-index:6; box-shadow:0 4px 16px rgba(0,0,0,0.3); opacity:0; transform:translateY(-20px); pointer-events:none; transition:opacity 0.5s ease, transform 0.5s ease;}
-#settings.show { opacity:1; transform:translateY(0); pointer-events:all; }
+.gear { position:fixed; top:20px; right:20px; cursor:pointer; font-size:28px; z-index:5; color: rgba(255,255,255,0.85); transition: transform 0.3s ease,color 0.3s ease; }
+.gear:hover { transform: rotate(90deg) scale(1.1); color: var(--primary-color); }
+#settings {
+  position:fixed; top:70px; right:20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border-radius:var(--panel-radius);
+  padding:16px;
+  min-width:220px;
+  z-index:6;
+  opacity:0;
+  transform:translateY(-20px);
+  pointer-events:none;
+  transition:opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+}
+#settings.show { opacity:1; transform:translateY(0); pointer-events:auto; }
 #settings label { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:16px; }
 #settings input { transform: scale(1.3); }
 
 /* Bottom ticker */
 .bottom { position:fixed; bottom:15px; width:100%; text-align:center; z-index:3; display:flex; flex-direction:column; align-items:center; gap:6px; }
-.ticker { white-space:nowrap; overflow:hidden; width:75%; max-width:800px; margin:0 auto; animation:tickerScroll 18s linear infinite; font-size:1.1rem; letter-spacing:0.5px; }
-.ticker:hover { animation-play-state:paused; }
-@keyframes tickerScroll { 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
+.ticker { white-space:nowrap; overflow:hidden; width:75%; max-width:800px; margin:0 auto; position: relative; }
+.tickerContent { display:inline-block; padding-left:100%; animation: tickerScroll 18s linear infinite; font-size:1.1rem; letter-spacing:0.5px; opacity:0; animation: tickerFade 0.5s ease forwards, tickerScroll 18s linear infinite 0.5s; }
+@keyframes tickerScroll {0%{transform:translateX(0);} 100%{transform:translateX(-100%);}}
+@keyframes tickerFade {0%{opacity:0;} 100%{opacity:1;}}
 .footer { font-size:0.8rem; opacity:0.7; }
 
-/* Notification Snackbar */
-#notification {
-  position:fixed; bottom:30px; right:30px; background: var(--md-sys-primary);
-  color: var(--md-sys-on-primary); padding:14px 24px; border-radius:28px;
-  opacity:0; transform:translateY(20px); pointer-events:none;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  font-weight:500; z-index:100;
-}
-#notification.show { opacity:1; transform:translateY(0); pointer-events:auto; }
+/* Notification */
+#notification { position:fixed; bottom:30px; right:30px; background: var(--notif-color); color: #fff; padding:14px 24px; border-radius:28px; opacity:0; transform:translateY(20px); pointer-events:none; transition: opacity 0.4s ease, transform 0.4s ease; font-weight:500; z-index:100; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+#notification.show { opacity:1; transform:translateY(0); animation:pulse 1.2s infinite; }
+@keyframes pulse {0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-3px) scale(1.05);}}
 
 /* Responsive */
-@media(max-width:900px){ .panel-left,.panel-right{position:static; transform:none; width:90%; margin:8px auto; text-align:center;}}
-@media(max-width:600px){#time{font-size:70px;} .date{font-size:18px;} #pomodoro{flex-direction:column; gap:8px;} .panel-left,.panel-right{font-size:0.75rem; padding:8px;}}
+@media(max-width:900px){ .container{flex-direction:column; justify-content:flex-start; gap:16px; padding-top:30px;} .panel-left,.panel-right{width:90%; margin:0 auto;} #time{font-size:90px;} .date{font-size:20px;} #pomodoro{flex-direction:column; gap:12px;} }
+@media(max-width:600px){ #time{font-size:70px;} .date{font-size:18px;} .panel-left,.panel-right{font-size:0.8rem;} }
+
 /* Oneko scaling */
 @media(max-width:900px){canvas{transform:scale(0.7)!important; transform-origin:left bottom!important;}}
 @media(max-width:600px){canvas{transform:scale(0.5)!important; transform-origin:left bottom!important;}}
@@ -94,8 +163,9 @@ body {
 </head>
 <body>
 <div class="overlay"></div>
+
 <div class="container">
-  <!-- Crypto Panel -->
+  <!-- Crypto -->
   <div class="glass panel-left" id="infoPanel">
     <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
     <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
@@ -107,20 +177,26 @@ body {
     <div id="time">00:00</div>
     <div id="date" class="date">-- -- ----</div>
     <div id="pomodoro">
-      <select id="pomSelect">
-        <option value="5">5 min</option>
-        <option value="10">10 min</option>
-        <option value="15">15 min</option>
-        <option value="20">20 min</option>
-        <option value="25" selected>25 min</option>
-      </select>
-      <div id="pomodoroTime">25:00</div>
-      <button id="startPom">Start</button>
-      <button id="resetPom">Reset</button>
+      <div class="pomContainer">
+        <canvas class="pomCanvas" id="pomCanvas"></canvas>
+        <div id="pomodoroTime">25:00</div>
+      </div>
+      <div id="pomControls">
+        <select id="pomSelect">
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="15">15 min</option>
+          <option value="20">20 min</option>
+          <option value="25" selected>25 min</option>
+        </select>
+        <input type="number" id="manualInput" placeholder="Custom min" min="1">
+        <button id="startPom">Start</button>
+        <button id="resetPom">Reset</button>
+      </div>
     </div>
   </div>
 
-  <!-- Weather Panel -->
+  <!-- Weather -->
   <div class="glass panel-right" id="weatherPanel">
     <div><span class="material-icons-outlined icon">cloud</span><span id="temp">--°C</span></div>
     <div><span class="material-icons-outlined icon">water_drop</span><span id="humidity">Humidity: --%</span></div>
@@ -130,7 +206,6 @@ body {
   </div>
 </div>
 
-<!-- Gear + Settings -->
 <span class="material-icons-outlined gear" id="gearIcon">settings</span>
 <div id="settings">
   <label><input type="checkbox" id="toggleInfo" checked> Show Crypto</label>
@@ -138,78 +213,71 @@ body {
   <label><input type="checkbox" id="toggleOneko" checked> Show Cat</label>
 </div>
 
-<!-- Bottom ticker -->
 <div class="bottom">
-  <div class="glass ticker" id="ticker">Welcome back, Ruben. Stay curious 💫</div>
+  <div class="glass ticker"><div class="tickerContent" id="ticker">Welcome back, Ruben. Stay curious 💫</div></div>
   <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
 </div>
 
-<!-- Notification -->
 <div id="notification">Pomodoro finished! ⏰</div>
-
-<!-- Notification sound -->
 <audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
 
+<script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
 <script>
-// Time
-function updateTime(){const now=new Date(); document.getElementById('time').textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false}); const options={ weekday:'short', month:'short', day:'numeric', year:'numeric' }; document.getElementById('date').textContent=now.toLocaleDateString([], options);}
+// --- Time ---
+function updateTime(){const now=new Date(); document.getElementById('time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}); const options={ weekday:'short', month:'short', day:'numeric', year:'numeric'}; document.getElementById('date').textContent=now.toLocaleDateString([],options);}
 setInterval(updateTime,1000); updateTime();
 
-// Weather
+// --- Crypto ---
+async function fetchCrypto(){try{const res=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network&vs_currencies=usd"); const data=await res.json(); document.getElementById('btc').textContent="$"+data.bitcoin.usd.toLocaleString(); document.getElementById('eth').textContent="$"+data.ethereum.usd.toLocaleString(); document.getElementById('pi').textContent="$"+data["pi-network"].usd.toLocaleString();}catch(e){console.error(e);}}
+fetchCrypto(); setInterval(fetchCrypto,60000);
+
+// --- Weather ---
 const WEATHER_API_KEY="d81009d2cbae458bbdb51509251210"; const CITY="Lalitpur";
-async function fetchWeather(){try{const res=await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`); const data=await res.json(); document.getElementById('temp').textContent=data.current.temp_c.toFixed(1)+"°C"; document.getElementById('humidity').textContent="Humidity: "+data.current.humidity+"%"; document.getElementById('dew').textContent="Dew: "+(data.current.dewpoint_c??0).toFixed(1)+"°C"; document.getElementById('wind').textContent="Wind: "+data.current.wind_kph+" km/h"; document.getElementById('pressure').textContent="Pressure: "+data.current.pressure_mb+" hPa"; }catch(e){console.error("Weather error:",e);}}
-fetchWeather(); setInterval(fetchWeather,30*60*1000);
+async function fetchWeather(){try{const res=await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`); const data=await res.json(); document.getElementById('temp').textContent=data.current.temp_c.toFixed(1)+"°C"; document.getElementById('humidity').textContent="Humidity: "+data.current.humidity+"%"; document.getElementById('dew').textContent="Dew: "+(data.current.dewpoint_c??0).toFixed(1)+"°C"; document.getElementById('wind').textContent="Wind: "+data.current.wind_kph+" km/h"; document.getElementById('pressure').textContent="Pressure: "+data.current.pressure_mb+" hPa";}catch(e){console.error(e);}}
+fetchWeather(); setInterval(fetchWeather,1800000);
 
-// Crypto
-async function fetchCrypto(){try{const res=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network&vs_currencies=usd"); const data=await res.json(); document.getElementById('btc').textContent="BTC: $"+data.bitcoin.usd.toLocaleString(); document.getElementById('eth').textContent="ETH: $"+data.ethereum.usd.toLocaleString(); document.getElementById('pi').textContent="PI: $"+data["pi-network"].usd.toLocaleString(); }catch(e){console.error("Crypto error:",e);}}
-fetchCrypto(); setInterval(fetchCrypto,60*1000);
-
-// Settings & Toggles
-const gear=document.getElementById('gearIcon'); const settings=document.getElementById('settings');
-const toggles={ info:document.getElementById('toggleInfo'), weather:document.getElementById('toggleWeather'), oneko:document.getElementById('toggleOneko')};
+// --- Settings toggles ---
+const gear=document.getElementById('gearIcon'); const settings=document.getElementById('settings'); const toggles={ info:document.getElementById('toggleInfo'), weather:document.getElementById('toggleWeather'), oneko:document.getElementById('toggleOneko')};
 Object.keys(toggles).forEach(k=>{const saved=localStorage.getItem(`show_${k}`); if(saved!==null) toggles[k].checked=saved==='true';});
-function fadeSlidePanel(el, show){ el.style.opacity=show?'1':'0'; el.style.transform=show?'translateY(0)':'translateY(20px)'; el.style.pointerEvents=show?'all':'none'; }
-function fadeOneko(show){document.querySelectorAll("canvas").forEach(c=>{c.style.transition="opacity 0.5s ease"; c.style.opacity=show?'1':'0'; c.style.pointerEvents=show?'all':'none';});}
-function applyOnekoToggle(){ toggles.oneko.checked ? startOneko() : stopOneko(); }
-function applyToggles(){ fadeSlidePanel(document.getElementById('infoPanel'), toggles.info.checked); fadeSlidePanel(document.getElementById('weatherPanel'), toggles.weather.checked); fadeOneko(toggles.oneko.checked); Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`, toggles[k].checked)); }
+function fadePanel(el,show){el.style.opacity=show?'1':'0'; el.style.pointerEvents=show?'all':'none';}
+function applyToggles(){fadePanel(document.getElementById('infoPanel'), toggles.info.checked); fadePanel(document.getElementById('weatherPanel'), toggles.weather.checked); Object.keys(toggles).forEach(k=>localStorage.setItem(`show_${k}`,toggles[k].checked)); applyOnekoToggle();}
 Object.values(toggles).forEach(i=>i.addEventListener('change',applyToggles));
-gear.addEventListener('click',()=>{settings.classList.toggle('show');});
+gear.addEventListener('click',()=>settings.classList.toggle('show'));
 
-// Oneko
-const ONEKO_SRC="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js"; const ONEKO_CAT="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
-let onekoActive=false,onekoScriptEl=null;
-function startOneko(){ if(onekoActive) return; onekoActive=true; if(!window.oneko){onekoScriptEl=document.createElement("script"); onekoScriptEl.src=ONEKO_SRC; onekoScriptEl.dataset.cat=ONEKO_CAT; onekoScriptEl.onload=()=>{try{window.oneko(); applyOnekoResponsive(); fadeOneko(true);}catch{} }; document.body.appendChild(onekoScriptEl);} else fadeOneko(true); }
-function stopOneko(){ onekoActive=false; fadeOneko(false); }
-function applyOnekoResponsive(){ document.querySelectorAll("canvas").forEach(c=>{ const w=window.innerWidth; c.style.transform=w<=600?"scale(0.5)":w<=900?"scale(0.7)":"scale(1)"; c.style.transformOrigin="left bottom";}); }
-window.addEventListener('resize',()=>{ if(onekoActive) applyOnekoResponsive(); });
+// --- Oneko ---
+function startOneko(){if(!window.oneko) return; window.oneko();}
+function stopOneko(){document.querySelectorAll("canvas").forEach(c=>c.style.display='none');}
+function applyOnekoToggle(){toggles.oneko.checked?startOneko():stopOneko();}
 applyToggles();
 
-// Pomodoro with notification
-let pomTime=25*60, pomInterval=null;
-const pomDisplay=document.getElementById('pomodoroTime');
-const pomSelect=document.getElementById('pomSelect');
-const notification=document.getElementById('notification');
-const notifSound=document.getElementById('notifSound');
+// --- Pomodoro ---
+const pomCanvas=document.getElementById('pomCanvas'); const ctx=pomCanvas.getContext('2d'); let pomTime=25*60; let pomInterval=null; const pomSelect=document.getElementById('pomSelect'); const manualInput=document.getElementById('manualInput'); const pomDisplay=document.getElementById('pomodoroTime');
 
-function showNotification(msg){
-  notification.textContent=msg;
-  notification.classList.add('show');
-  notifSound.play().catch(()=>{});
-  setTimeout(()=>{notification.classList.remove('show');},4000);
-}
+function updatePomTime(){const val=manualInput.value?parseInt(manualInput.value):parseInt(pomSelect.value); pomTime=val*60; let m=Math.floor(pomTime/60); let s=pomTime%60; pomDisplay.textContent=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0');}
+pomSelect.addEventListener('change',updatePomTime); manualInput.addEventListener('input',updatePomTime);
+updatePomTime(); pomCanvas.width=pomCanvas.height=140;
 
-function updatePomTime(){ pomTime=parseInt(pomSelect.value)*60; pomDisplay.textContent=`${pomSelect.value.toString().padStart(2,'0')}:00`; }
-pomSelect.addEventListener('change',()=>{ clearInterval(pomInterval); pomInterval=null; updatePomTime(); });
-document.getElementById('startPom').addEventListener('click',()=>{
-  if(pomInterval) return;
-  pomInterval=setInterval(()=>{
-    if(pomTime<=0){ clearInterval(pomInterval); pomInterval=null; showNotification("Pomodoro finished! ⏰"); return; }
-    pomTime--; let m=Math.floor(pomTime/60); let s=pomTime%60;
-    pomDisplay.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  },1000);
-});
-document.getElementById('resetPom').addEventListener('click',()=>{ clearInterval(pomInterval); pomInterval=null; updatePomTime(); });
-updatePomTime();
+let angleOffset=0;
+function drawPomProgress(){const w=pomCanvas.width,h=pomCanvas.height,cx=w/2,cy=h/2,r=w/2-12; ctx.clearRect(0,0,w,h);
+// Background
+ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.strokeStyle="rgba(255,255,255,0.1)"; ctx.lineWidth=12; ctx.stroke();
+
+// Dynamic rotating gradient
+angleOffset+=0.02;
+const grad=ctx.createConicGradient(-Math.PI/2+angleOffset,cx,cy);
+grad.addColorStop(0,'#5e5ce6'); grad.addColorStop(0.33,'#ff6b6b'); grad.addColorStop(0.66,'#5e5ce6'); grad.addColorStop(1,'#5e5ce6');
+ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+2*Math.PI*(1-(pomTime/(pomSelect.value||25*60)))); ctx.strokeStyle=grad; ctx.lineWidth=12; ctx.lineCap='round'; ctx.stroke();
+requestAnimationFrame(drawPomProgress);}
+drawPomProgress();
+
+function startPom(){if(pomInterval) return; const total=pomTime; pomInterval=setInterval(()=>{pomTime--; if(pomTime<0){clearInterval(pomInterval);pomInterval=null; showNotification(); updatePomTime(); return;} let m=Math.floor(pomTime/60),s=pomTime%60; pomDisplay.textContent=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0');},1000);}
+function resetPom(){clearInterval(pomInterval); pomInterval=null; updatePomTime();}
+document.getElementById('startPom').addEventListener('click',startPom);
+document.getElementById('resetPom').addEventListener('click',resetPom);
+
+// --- Notification ---
+const notif=document.getElementById('notification'); const notifSound=document.getElementById('notifSound');
+function showNotification(){notif.classList.add('show'); notifSound.play(); setTimeout(()=>{notif.classList.remove('show');},4000);}
 </script>
 </body>
 </html>
