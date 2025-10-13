@@ -174,31 +174,45 @@ function updateTime(){
 setInterval(updateTime,1000); updateTime();
 
 // --- Crypto ---
-async function fetchCrypto(){
-  try{
-    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether,nepali-rupee&vs_currencies=usd");
-    const data = await res.json();
+async function fetchCrypto() {
+  try {
+    const [cryptoRes, fxRes] = await Promise.all([
+      fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd"),
+      fetch("https://api.coingecko.com/api/v3/exchange_rates")
+    ]);
 
-    document.getElementById('btc').textContent = "BTC: $" + data.bitcoin.usd.toLocaleString();
-    document.getElementById('eth').textContent = "ETH: $" + data.ethereum.usd.toLocaleString();
+    const cryptoData = await cryptoRes.json();
+    const fxData = await fxRes.json();
+
+    // Crypto prices
+    document.getElementById('btc').textContent = "BTC: $" + cryptoData.bitcoin.usd.toLocaleString();
+    document.getElementById('eth').textContent = "ETH: $" + cryptoData.ethereum.usd.toLocaleString();
     document.getElementById('pi').textContent =
-      data["pi-network"] && data["pi-network"].usd != null
-        ? "PI: $" + data["pi-network"].usd.toLocaleString()
+      cryptoData["pi-network"] && cryptoData["pi-network"].usd != null
+        ? "PI: $" + cryptoData["pi-network"].usd.toLocaleString()
         : "PI: N/A";
-    document.getElementById('usdt').textContent = "USDT: $" + data.tether.usd.toLocaleString();
-    document.getElementById('npr').textContent = "NPR: $" + data["nepali-rupee"].usd.toLocaleString();
+    document.getElementById('usdt').textContent = "USDT: $" + cryptoData.tether.usd.toLocaleString();
 
+    // NPR exchange rate (1 USD to NPR)
+    const nprRate = fxData.rates.npr.value; // NPR per BTC
+    const usdRate = fxData.rates.usd.value; // USD per BTC
+    const nprPerUsd = nprRate / usdRate;
+
+    document.getElementById('npr').textContent = "1 USD = रु " + nprPerUsd.toFixed(2);
+    
   } catch (e) {
-    console.error(e);
-    document.getElementById('btc').textContent = "BTC: Error";
-    document.getElementById('eth').textContent = "ETH: Error";
-    document.getElementById('pi').textContent  = "PI: Error";
-    document.getElementById('usdt').textContent = "USDT: Error";
-    document.getElementById('npr').textContent = "NPR: Error";
+    console.error("Fetch error:", e);
+    ['btc', 'eth', 'pi', 'usdt', 'npr'].forEach(id => {
+      document.getElementById(id).textContent = id.toUpperCase() + ": Error";
+    });
   }
 }
+
+// Initial fetch
 fetchCrypto();
-setInterval(fetchCrypto, 60000);
+
+// Update every 30 seconds
+setInterval(fetchCrypto, 30000);
 
 // --- Weather ---
 const WEATHER_API_KEY="d81009d2cbae458bbdb51509251210"; const CITY="Lalitpur";
