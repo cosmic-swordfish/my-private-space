@@ -119,6 +119,9 @@ button { padding:6px 12px; border:none; border-radius:12px; cursor:pointer; font
     <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
     <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
     <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
+    <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
+    <div><span class="material-icons-outlined icon">monetization_on</span><span id="npr">NPR: ...</span></div>
+
   </div>
 
   <!-- Center -->
@@ -173,14 +176,29 @@ setInterval(updateTime,1000); updateTime();
 // --- Crypto ---
 async function fetchCrypto(){
   try{
-    const res=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network&vs_currencies=usd");
-    const data=await res.json();
-    document.getElementById('btc').textContent="$"+data.bitcoin.usd.toLocaleString();
-    document.getElementById('eth').textContent="$"+data.ethereum.usd.toLocaleString();
-    document.getElementById('pi').textContent="$"+data["pi-network"].usd.toLocaleString();
-  }catch(e){console.error(e);}
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether,nepali-rupee&vs_currencies=usd");
+    const data = await res.json();
+
+    document.getElementById('btc').textContent = "BTC: $" + data.bitcoin.usd.toLocaleString();
+    document.getElementById('eth').textContent = "ETH: $" + data.ethereum.usd.toLocaleString();
+    document.getElementById('pi').textContent =
+      data["pi-network"] && data["pi-network"].usd != null
+        ? "PI: $" + data["pi-network"].usd.toLocaleString()
+        : "PI: N/A";
+    document.getElementById('usdt').textContent = "USDT: $" + data.tether.usd.toLocaleString();
+    document.getElementById('npr').textContent = "NPR: $" + data["nepali-rupee"].usd.toLocaleString();
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('btc').textContent = "BTC: Error";
+    document.getElementById('eth').textContent = "ETH: Error";
+    document.getElementById('pi').textContent  = "PI: Error";
+    document.getElementById('usdt').textContent = "USDT: Error";
+    document.getElementById('npr').textContent = "NPR: Error";
+  }
 }
-fetchCrypto(); setInterval(fetchCrypto,60000);
+fetchCrypto();
+setInterval(fetchCrypto, 60000);
 
 // --- Weather ---
 const WEATHER_API_KEY="d81009d2cbae458bbdb51509251210"; const CITY="Lalitpur";
