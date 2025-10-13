@@ -351,10 +351,10 @@ const ctx = canvas.getContext("2d");
 const pomDisplay = document.getElementById("dynamicIslandTime");
 const dynamicIsland = document.getElementById("dynamicIsland");
 
-let pomTotal = 25 * 60,
-  pomTime = pomTotal,
-  pomInterval = null,
-  isPaused = false;
+let pomTotal = 25*60;
+let pomTime = pomTotal;
+let pomInterval = null;
+let isPaused = false;
 
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth;
@@ -363,19 +363,25 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-// --- Expressive Circular Progress (M3 style) ---
+function updatePomDisplay() {
+  const m = Math.floor(pomTime / 60);
+  const s = pomTime % 60;
+  pomDisplay.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+// --- Wavy M3-style Circular Progress ---
 function drawPom() {
-  const w = canvas.width,
-        h = canvas.height,
-        cx = w / 2,
-        cy = h / 2,
-        r = w / 2 - 12;
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w/2;
+  const cy = h/2;
+  const r = w/2 - 12;
 
   ctx.clearRect(0, 0, w, h);
 
-  // Base circle
+  // Base ring
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.arc(cx, cy, r, 0, 2*Math.PI);
   ctx.strokeStyle = "rgba(255,255,255,0.08)";
   ctx.lineWidth = 12;
   ctx.stroke();
@@ -383,12 +389,12 @@ function drawPom() {
   // Progress ratio
   const progress = 1 - pomTime / pomTotal;
 
-  // Wavy parameters
-  const waveAmp = isPaused ? 1.5 : 6;   // amplitude of wave
-  const waveFreq = 8;                    // number of waves around circle
-  const t = Date.now() / (isPaused ? 1200 : 300); // wave speed
+  // Wave parameters
+  const waveAmp = isPaused ? 2 : 8;
+  const waveFreq = 6;
+  const t = Date.now() / (isPaused ? 1500 : 300);
 
-  // Gradient (original colors)
+  // Gradient
   const grad = ctx.createConicGradient(-Math.PI/2, cx, cy);
   grad.addColorStop(0, "#5e5ce6");
   grad.addColorStop(0.4, "#ff6b6b");
@@ -398,19 +404,20 @@ function drawPom() {
   ctx.lineWidth = 10;
   ctx.lineCap = "round";
 
+  // Draw wavy circle
+  const steps = 500;
   ctx.beginPath();
-  const steps = 360;
-  for (let i = 0; i <= steps * progress; i++) {
-    const angle = -Math.PI/2 + (i / steps) * 2 * Math.PI;
-    const wave = Math.sin(angle * waveFreq + t) * waveAmp;
-    const x = cx + (r + wave) * Math.cos(angle);
-    const y = cy + (r + wave) * Math.sin(angle);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+  for (let i=0;i<=steps*progress;i++){
+    const angle = -Math.PI/2 + (i/steps)*2*Math.PI;
+    const wave = Math.sin(angle*waveFreq + t) * waveAmp;
+    const x = cx + (r+wave)*Math.cos(angle);
+    const y = cy + (r+wave)*Math.sin(angle);
+    if(i===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
   }
 
-  // Glow on pause
-  const glow = isPaused ? Math.sin(Date.now() / 3000 * Math.PI) * 6 + 8 : 0;
+  // Glow when paused
+  const glow = isPaused ? Math.sin(Date.now()/3000*Math.PI)*6+8 : 0;
   ctx.shadowBlur = glow;
   ctx.shadowColor = "rgba(255,255,255,0.4)";
   ctx.stroke();
@@ -418,33 +425,62 @@ function drawPom() {
 
   requestAnimationFrame(drawPom);
 }
+drawPom();
 
-function pausePom() {
-  isPaused = !isPaused;
-  document.getElementById("pomPauseBtn").textContent = isPaused
-    ? "Resume"
-    : "Pause";
-  if (isPaused) dynamicIsland.classList.remove("pulse");
+// --- Pomodoro Timer Logic ---
+function startPom(){
+  const val = parseInt(document.getElementById("pomCustomTime")?.value);
+  if(val>0){ pomTotal=val*60; pomTime=pomTotal; updatePomDisplay(); }
+  dynamicIsland.classList.add("pulse");
+  document.getElementById("pomStartBtn").style.display="none";
+  document.getElementById("pomPauseBtn").style.display="inline-block";
+  document.getElementById("pomResetBtn").style.display="inline-block";
+  if(pomInterval) return;
+  pomInterval = setInterval(()=>{
+    if(!isPaused){
+      pomTime--;
+      updatePomDisplay();
+      if(pomTime<0){
+        clearInterval(pomInterval);
+        pomInterval=null;
+        pomTime=pomTotal;
+        dynamicIsland.classList.remove("pulse");
+        updatePomDisplay();
+        document.getElementById("pomStartBtn").style.display="inline-block";
+        document.getElementById("pomPauseBtn").style.display="none";
+      }
+    }
+  },1000);
+}
+
+function pausePom(){
+  isPaused=!isPaused;
+  document.getElementById("pomPauseBtn").textContent = isPaused ? "Resume" : "Pause";
+  if(isPaused) dynamicIsland.classList.remove("pulse");
   else dynamicIsland.classList.add("pulse");
 }
 
-function resetPom() {
+function resetPom(){
   clearInterval(pomInterval);
-  pomInterval = null;
-  pomTime = pomTotal;
-  isPaused = false;
+  pomInterval=null;
+  pomTime=pomTotal;
+  isPaused=false;
   updatePomDisplay();
   dynamicIsland.classList.remove("pulse");
-  document.getElementById("pomPauseBtn").textContent = "Pause";
-  document.getElementById("pomStartBtn").style.display = "inline-block";
-  document.getElementById("pomPauseBtn").style.display = "none";
-  document.getElementById("pomResetBtn").style.display = "none";
+  document.getElementById("pomPauseBtn").textContent="Pause";
+  document.getElementById("pomStartBtn").style.display="inline-block";
+  document.getElementById("pomPauseBtn").style.display="none";
+  document.getElementById("pomResetBtn").style.display="none";
 }
 
-// Event bindings
-document.getElementById("pomStartBtn").addEventListener("click", startPom);
-document.getElementById("pomPauseBtn").addEventListener("click", pausePom);
-document.getElementById("pomResetBtn").addEventListener("click", resetPom);
+// Event listeners
+document.getElementById("pomStartBtn").addEventListener("click",startPom);
+document.getElementById("pomPauseBtn").addEventListener("click",pausePom);
+document.getElementById("pomResetBtn").addEventListener("click",resetPom);
+
+// Initial display
+updatePomDisplay();
+
 
 // --- Notification ---
 function showNotification(){
