@@ -87,51 +87,21 @@ body {
   opacity: 0.85;
 }
 
-* Dynamic Island / Pomodoro */
-#dynamicIsland {
-  position: relative;
-  width: 120px;            /* small circle */
-  height: 120px;
-  border-radius: 60px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, opacity 0.4s ease;
-  overflow: hidden; /* ensures the wavy stroke stays perfectly circular */
-  isolation: isolate; /* prevents backdrop-filter clipping the canvas */
-}
-
-#dynamicIsland.pulse {
-  animation: pulseIsland 1.5s infinite alternate;
-}
-
-@keyframes pulseIsland {
-  0% { transform: scale(0.98); }
-  50% { transform: scale(1.03); }
-  100% { transform: scale(0.98); }
-}
-
-#dynamicIsland canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 60px;
-  z-index: 1;
-  pointer-events: none; /* lets clicks pass through */
-  will-change: transform; /* boosts canvas performance */
-}
-
-#dynamicIslandTime {
-  font-size: 1rem;
-  font-weight: 600;
-  z-index: 2;
-}
+/* Dynamic Island / Pomodoro */ 
+  #dynamicIsland 
+  { position: relative; width: 120px; /* small circle */ height: 120px; border-radius: 60px; background: var(--glass-bg);
+   backdrop-filter: blur(var(--glass-blur)); 
+  display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(0,0,0,0.2); 
+  transition: transform 0.3s ease, opacity 0.4s ease; } 
+  
+  #dynamicIsland.pulse 
+  { animation: pulseIsland 1.5s infinite alternate; } 
+  @keyframes pulseIsland { 0% { transform: scale(0.98); } 50% { transform: scale(1.03); } 100% { transform: scale(0.98); } } 
+  
+  #dynamicIsland canvas 
+  { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 60px; } 
+  
+  #dynamicIslandTime { font-size: 1rem; font-weight: 600; z-index: 2; }
   
 /* Pomodoro Controls */
 #pomControlsIsland {
