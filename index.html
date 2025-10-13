@@ -46,12 +46,72 @@ body {
 }
 
 /* Panels */
-.container { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:20px; }
-.panel-left, .panel-right { display:flex; flex-direction:column; gap:12px; }
-.panel-left div, .panel-right div {
-  display:flex; align-items:center; gap:10px; font-weight:500;
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
-.panel-left div span.icon, .panel-right div span.icon { font-size:1.4rem; color:#fff; }
+
+.panel-left,
+.panel-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-left div,
+.panel-right div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #fff;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+/* Icons */
+.panel-left div span.icon,
+.panel-right div span.icon {
+  font-size: 1.4rem;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Live price animation styles */
+.price-up {
+  color: #4caf50 !important;
+  animation: blinkGreen 0.4s ease;
+}
+
+.price-down {
+  color: #f44336 !important;
+  animation: blinkRed 0.4s ease;
+}
+
+@keyframes blinkGreen {
+  0% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes blinkRed {
+  0% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 
 /* Center */
 .center { display:flex; flex-direction:column; align-items:center; gap:20px; }
@@ -120,9 +180,8 @@ button { padding:6px 12px; border:none; border-radius:12px; cursor:pointer; font
     <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
     <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
     <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
-    <div><span class="material-icons-outlined icon">monetization_on</span><span id="npr">NPR: ...</span></div>
-
   </div>
+</div>
 
   <!-- Center -->
   <div class="center">
@@ -173,36 +232,46 @@ function updateTime(){
 }
 setInterval(updateTime,1000); updateTime();
 
-// --- Crypto ---
+let previousPrices = {};
+
 async function fetchCrypto() {
   try {
-    const [cryptoRes, fxRes] = await Promise.all([
-      fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd"),
-      fetch("https://api.coingecko.com/api/v3/exchange_rates")
-    ]);
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd"
+    );
+    const data = await res.json();
 
-    const cryptoData = await cryptoRes.json();
-    const fxData = await fxRes.json();
+    function updateElement(id, newValue, symbol = "$") {
+      const el = document.getElementById(id);
+      const oldValue = previousPrices[id];
+      let arrow = "";
 
-    // Crypto prices
-    document.getElementById('btc').textContent = "BTC: $" + cryptoData.bitcoin.usd.toLocaleString();
-    document.getElementById('eth').textContent = "ETH: $" + cryptoData.ethereum.usd.toLocaleString();
-    document.getElementById('pi').textContent =
-      cryptoData["pi-network"] && cryptoData["pi-network"].usd != null
-        ? "PI: $" + cryptoData["pi-network"].usd.toLocaleString()
-        : "PI: N/A";
-    document.getElementById('usdt').textContent = "USDT: $" + cryptoData.tether.usd.toLocaleString();
+      if (oldValue !== undefined && !isNaN(oldValue)) {
+        if (newValue > oldValue) arrow = " ▲";
+        else if (newValue < oldValue) arrow = " ▼";
+      }
 
-    // NPR exchange rate (1 USD to NPR)
-    const nprRate = fxData.rates.npr.value; // NPR per BTC
-    const usdRate = fxData.rates.usd.value; // USD per BTC
-    const nprPerUsd = nprRate / usdRate;
+      // Add animation + color
+      el.classList.remove("price-up", "price-down");
+      if (arrow === " ▲") el.classList.add("price-up");
+      if (arrow === " ▼") el.classList.add("price-down");
 
-    document.getElementById('npr').textContent = "1 USD = रु " + nprPerUsd.toFixed(2);
-    
+      el.textContent = `${id.toUpperCase()}: ${symbol}${newValue.toLocaleString()}${arrow}`;
+      previousPrices[id] = newValue;
+    }
+
+    // Update each crypto
+    updateElement("btc", data.bitcoin.usd);
+    updateElement("eth", data.ethereum.usd);
+    if (data["pi-network"] && data["pi-network"].usd != null)
+      updateElement("pi", data["pi-network"].usd);
+    else
+      document.getElementById("pi").textContent = "PI: N/A";
+    updateElement("usdt", data.tether.usd);
+
   } catch (e) {
     console.error("Fetch error:", e);
-    ['btc', 'eth', 'pi', 'usdt', 'npr'].forEach(id => {
+    ["btc", "eth", "pi", "usdt"].forEach(id => {
       document.getElementById(id).textContent = id.toUpperCase() + ": Error";
     });
   }
@@ -210,7 +279,6 @@ async function fetchCrypto() {
 
 // Initial fetch
 fetchCrypto();
-
 // Update every 30 seconds
 setInterval(fetchCrypto, 30000);
 
