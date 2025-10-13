@@ -18,80 +18,98 @@
   --transition-speed: 0.4s;
 }
 
-* { box-sizing:border-box; margin:0; padding:0; font-family:'Roboto',sans-serif; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
 
 body {
   background: url('assets/chihiro036.jpeg') center/cover no-repeat;
   color: var(--text-color);
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
+/* Glass Panels */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   border-radius: var(--panel-radius);
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  min-width:220px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
   transition: all var(--transition-speed) ease;
 }
 
-/* Panels */.container {
+/* Panels Layout */
+.container {
   display: flex;
-  justify-content: space-between; /* pushes left & right apart */
-  align-items: flex-start;        /* align to the top */
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 20px;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;                 /* centers container itself */
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 20px;
 }
-.panel-left, .panel-right { display:flex; flex-direction:column; gap:12px; }
-.panel-left div, .panel-right div {
-  display:flex; align-items:center; gap:10px; font-weight:500;
-}
-.panel-left div span.icon, .panel-right div span.icon { font-size:1.4rem; color:#fff; }
+.panel-left, .panel-right { display: flex; flex-direction: column; gap: 12px; }
+.panel-left div, .panel-right div { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.panel-left div span.icon, .panel-right div span.icon { font-size: 1.4rem; color: #fff; }
 
-/* Center */
-.center { display:flex; flex-direction:column; align-items:center; gap:20px; }
-#time { font-size:120px; font-weight:700; }
-.date { font-size:24px; opacity:0.85; }
+/* Center Panel */
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex: 1;
+}
+#time {
+  font-size: 180px;        /* BIG main clock */
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.date {
+  font-size: 28px;
+  opacity: 0.85;
+}
 
 /* Dynamic Island / Pomodoro */
 #dynamicIsland {
   position: relative;
-  width: 120px;               /* smaller width */
-  height: 120px;              /* smaller height */
-  border-radius: 60px;        /* half of width/height */
+  width: 120px;            /* small circle */
+  height: 120px;
+  border-radius: 60px;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2); /* slightly smaller shadow */
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, opacity 0.4s ease;
 }
-
-#dynamicIsland.pulse { 
-  animation: pulseIsland 1.5s infinite alternate; 
+#dynamicIsland.pulse {
+  animation: pulseIsland 1.5s infinite alternate;
 }
-
 @keyframes pulseIsland {
   0% { transform: scale(0.98); }
   50% { transform: scale(1.03); }
   100% { transform: scale(0.98); }
 }
-
 #dynamicIsland canvas {
   position: absolute;
   top: 0;
@@ -100,9 +118,8 @@ body {
   height: 100%;
   border-radius: 60px;
 }
-
 #dynamicIslandTime {
-  font-size: 1rem;   /* smaller font */
+  font-size: 1rem;
   font-weight: 600;
   z-index: 2;
 }
@@ -110,43 +127,86 @@ body {
 /* Pomodoro Controls */
 #pomControlsIsland {
   display: flex;
-  gap: 6px;             /* smaller gap */
-  margin-top: 12px;     /* smaller margin */
+  gap: 6px;
+  margin-top: 12px;
   flex-wrap: wrap;
   justify-content: center;
   transition: opacity 0.3s ease;
 }
-
 #pomControlsIsland button {
-  padding: 4px 8px;     /* smaller buttons */
+  padding: 4px 8px;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 0.85rem;   /* smaller font */
+  font-size: 0.85rem;
 }
-
 #pomStartBtn { background: var(--primary-color); color: #fff; }
 #pomPauseBtn { background: var(--accent-color); color: #fff; display: none; }
 #pomResetBtn { background: #444; color: #fff; display: none; }
 
 /* Notification */
-#notification { position:fixed; bottom:30px; right:30px; background: var(--notif-color); color:#fff; padding:14px 24px; border-radius:28px; opacity:0; transform:translateY(20px); transition: all 0.4s ease; font-weight:500; z-index:100; }
-#notification.show { opacity:1; transform:translateY(0); }
+#notification {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--notif-color);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s ease;
+  font-weight: 500;
+  z-index: 100;
+}
+#notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* Ticker */
-.bottom { position:fixed; bottom:10px; width:100%; display:flex; flex-direction:column; align-items:center; gap:4px; }
-.ticker { white-space: nowrap; overflow: hidden; width:80vw; text-align:left; position: relative; border-radius: 12px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding:6px 12px; }
-.tickerContent { display:inline-block; padding-left:100%; animation:tickerScroll 20s linear infinite; }
-@keyframes tickerScroll { 0%{ transform: translateX(0);} 100%{ transform: translateX(-100%);} }
-.footer { font-size:0.8rem; opacity:0.6; text-align:center; }
+.bottom {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.ticker {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 80vw;
+  text-align: left;
+  position: relative;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding: 6px 12px;
+}
+.tickerContent {
+  display: inline-block;
+  padding-left: 100%;
+  animation: tickerScroll 20s linear infinite;
+}
+@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.footer { font-size: 0.8rem; opacity: 0.6; text-align: center; }
 
-/* Media */
+/* Media Queries */
+@media(max-width:900px){
+  #time { font-size:120px; }
+  .date { font-size:22px; }
+  #dynamicIsland { width:100px; height:100px; }
+  #pomControlsIsland { margin-top:10px; }
+}
 @media(max-width:600px){
-  #time{font-size:70px;}
-  .date{font-size:18px;}
-  #dynamicIsland{width:140px;height:140px;}
-  #pomControlsIsland{margin-top:150px;}
+  #time { font-size:80px; }
+  .date { font-size:18px; }
+  #dynamicIsland { width:80px; height:80px; }
+  #pomControlsIsland { margin-top:8px; }
+  .container { flex-direction: column; align-items: center; gap:15px; }
 }
 </style>
 </head>
