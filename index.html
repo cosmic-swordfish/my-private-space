@@ -54,17 +54,16 @@ body {
 /* Panels Layout */
 .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* left, center, right */
   align-items: flex-start;
   gap: 20px;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
 }
-.panel-left, .panel-right { display: flex; flex-direction: column; gap: 12px; }
-.panel-left div, .panel-right div { display: flex; align-items: center; gap: 10px; font-weight: 500; }
-.panel-left div span.icon, .panel-right div span.icon { font-size: 1.4rem; color: #fff; }
+
+.panel-left, .center, .panel-right {
+  flex: 1;           /* equal space */
+  min-width: 250px;  /* prevents collapsing */
+}
 
 /* Center Panel */
 .center {
