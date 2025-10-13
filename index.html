@@ -144,34 +144,31 @@ body {
   transform: translateY(0);
 }
 
-/* Ticker */
-.bottom {
+.topTicker {
   position: fixed;
-  bottom: 10px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.ticker {
+  top: 20px;
+  left: 20px;
+  width: 50vw;        /* half the screen width */
   white-space: nowrap;
   overflow: hidden;
-  width: 80vw;
-  text-align: left;
-  position: relative;
   border-radius: 12px;
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(10px);
   padding: 6px 12px;
+  z-index: 100;
 }
-.tickerContent {
+
+.topTicker .tickerContent {
   display: inline-block;
   padding-left: 100%;
-  animation: tickerScroll 20s linear infinite;
+  animation: topTickerScroll 20s linear infinite;
 }
-@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-.footer { font-size: 0.8rem; opacity: 0.6; text-align: center; }
+
+@keyframes topTickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
 
 /* Media Queries */
 @media(max-width:900px){
@@ -191,6 +188,13 @@ body {
 </head>
 <body>
 
+
+  <!-- Top-left scrolling ticker -->
+<div class="topTicker glass">
+  <div class="tickerContent">Welcome back, Ruben. Stay curious 💫</div>
+</div>
+
+  
 <div class="container">
   <!-- Left Panel: Crypto -->
   <div class="glass panel-left" id="infoPanel">
@@ -230,9 +234,7 @@ body {
 
 <!-- Bottom Section -->
 <div class="bottom">
-  <div class="glass ticker">
-    <div class="tickerContent">Welcome back, Ruben. Stay curious 💫</div>
-  </div>
+
   <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
 </div>
 
