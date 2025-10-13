@@ -87,32 +87,17 @@ body {
   opacity: 0.85;
 }
 
-/* Dynamic Island / Pomodoro */
+//* Dynamic Island / Pomodoro */
 #dynamicIsland {
   position: relative;
   width: 120px;            /* small circle */
   height: 120px;
-  border-radius: 60px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
+  border-radius: 50%;      /* perfect circle */
+  background: transparent; /* remove glass */
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, opacity 0.4s ease;
-  overflow: hidden; /* ensures the wavy stroke stays perfectly circular */
-  isolation: isolate; /* prevents backdrop-filter clipping the canvas */
-}
-
-#dynamicIsland.pulse {
-  animation: pulseIsland 1.5s infinite alternate;
-}
-
-@keyframes pulseIsland {
-  0% { transform: scale(0.98); }
-  50% { transform: scale(1.03); }
-  100% { transform: scale(0.98); }
+  overflow: hidden;        /* ensures wavy stroke stays within circle */
 }
 
 #dynamicIsland canvas {
@@ -121,18 +106,17 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 60px;
+  border-radius: 50%;
   z-index: 1;
-  pointer-events: none; /* lets clicks pass through */
-  will-change: transform; /* boosts canvas performance */
+  pointer-events: none;
 }
 
 #dynamicIslandTime {
-  font-size: 1rem;
+  font-size: 1rem; /* smaller time display */
   font-weight: 600;
+  color: #fff;
   z-index: 2;
 }
-
 /* Pomodoro Controls */
 #pomControlsIsland {
   display: flex;
