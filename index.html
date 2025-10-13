@@ -87,17 +87,32 @@ body {
   opacity: 0.85;
 }
 
-//* Dynamic Island / Pomodoro */
+* Dynamic Island / Pomodoro */
 #dynamicIsland {
   position: relative;
   width: 120px;            /* small circle */
   height: 120px;
-  border-radius: 50%;      /* perfect circle */
-  background: transparent; /* remove glass */
+  border-radius: 60px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;        /* ensures wavy stroke stays within circle */
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, opacity 0.4s ease;
+  overflow: hidden; /* ensures the wavy stroke stays perfectly circular */
+  isolation: isolate; /* prevents backdrop-filter clipping the canvas */
+}
+
+#dynamicIsland.pulse {
+  animation: pulseIsland 1.5s infinite alternate;
+}
+
+@keyframes pulseIsland {
+  0% { transform: scale(0.98); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(0.98); }
 }
 
 #dynamicIsland canvas {
@@ -106,17 +121,18 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 60px;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: none; /* lets clicks pass through */
+  will-change: transform; /* boosts canvas performance */
 }
 
 #dynamicIslandTime {
-  font-size: 1rem; /* smaller time display */
+  font-size: 1rem;
   font-weight: 600;
-  color: #fff;
   z-index: 2;
 }
+  
 /* Pomodoro Controls */
 #pomControlsIsland {
   display: flex;
@@ -335,6 +351,7 @@ fetchWeather(); setInterval(fetchWeather,1800000);
 const canvas = document.getElementById("pomCanvas");
 const ctx = canvas.getContext("2d");
 const pomDisplay = document.getElementById("dynamicIslandTime");
+const dynamicIsland = document.getElementById("dynamicIsland");
 
 let pomTotal = 25*60;
 let pomTime = pomTotal;
@@ -355,28 +372,51 @@ function updatePomDisplay() {
   pomDisplay.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
+// --- Draw expressive + smooth progress ---
 function drawPom() {
   const w = canvas.width;
   const h = canvas.height;
   const cx = w/2;
   const cy = h/2;
-  const r = w/2 - 10;
+  const r = w/2 - 12;
 
-  ctx.clearRect(0,0,w,h);
+  ctx.clearRect(0, 0, w, h);
 
-  // Remaining portion (smooth, desaturated)
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, 2*Math.PI);
-  ctx.strokeStyle = "rgba(94,92,230,0.2)"; // desaturated
-  ctx.lineWidth = 10;
-  ctx.stroke();
-
+  // Draw remaining portion (smooth, not wavy)
   if(started){
-    // Elapsed portion (small wavy gradient)
-    const progress = 1 - pomTime/pomTotal;
-    const waveAmp = isPaused ? 2 : 4;
+    const progress = 1 - pomTime/pomTotal; // fraction elapsed
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI/2 + 2*Math.PI*progress, 1.5*Math.PI);
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 12;
+    ctx.stroke();
+  }
+
+  // Draw completed portion (wavy)
+  if(!started){ 
+    // Before start → full wavy indeterminate
+    const waveAmp = 6;
     const waveFreq = 6;
-    const speed = Date.now() / (isPaused? 1200 : 300);
+    const speed = Date.now()/300;
+    const steps = 500;
+    ctx.beginPath();
+    for(let i=0;i<=steps;i++){
+      const angle = -Math.PI/2 + (i/steps)*2*Math.PI;
+      const wave = Math.sin(angle*waveFreq + speed) * waveAmp;
+      const x = cx + (r+wave)*Math.cos(angle);
+      const y = cy + (r+wave)*Math.sin(angle);
+      if(i===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle = ctx.createConicGradient(-Math.PI/2, cx, cy);
+    ctx.strokeStyle = "#5e5ce6"; // keep base color for indeterminate
+    ctx.stroke();
+  } else {
+    // Determinate wavy completed portion
+    const progress = 1 - pomTime/pomTotal;
+    const waveAmp = isPaused ? 2 : 6;
+    const waveFreq = 6;
+    const speed = Date.now() / (isPaused?1200:300);
     const steps = 500;
 
     const grad = ctx.createConicGradient(-Math.PI/2, cx, cy);
@@ -397,9 +437,9 @@ function drawPom() {
     }
 
     // Slow breathing glow when paused
-    const glow = isPaused ? Math.sin(Date.now()/3000*Math.PI)*4+4 : 0;
+    const glow = isPaused ? Math.sin(Date.now()/3000*Math.PI)*6+8 : 0;
     ctx.shadowBlur = glow;
-    ctx.shadowColor = "rgba(255,255,255,0.3)";
+    ctx.shadowColor = "rgba(255,255,255,0.4)";
     ctx.lineWidth = 10;
     ctx.lineCap = "round";
     ctx.stroke();
@@ -415,10 +455,10 @@ function startPom(){
   const val = parseInt(document.getElementById("pomCustomTime")?.value);
   if(val>0){ pomTotal=val*60; pomTime=pomTotal; updatePomDisplay(); }
   started = true;
+  dynamicIsland.classList.add("pulse");
   document.getElementById("pomStartBtn").style.display="none";
   document.getElementById("pomPauseBtn").style.display="inline-block";
   document.getElementById("pomResetBtn").style.display="inline-block";
-
   if(pomInterval) return;
   pomInterval = setInterval(()=>{
     if(!isPaused){
@@ -426,9 +466,10 @@ function startPom(){
       updatePomDisplay();
       if(pomTime<0){
         clearInterval(pomInterval);
-        pomInterval=null;
-        pomTime=pomTotal;
-        started=false;
+        pomInterval = null;
+        pomTime = pomTotal;
+        started = false;
+        dynamicIsland.classList.remove("pulse");
         updatePomDisplay();
         document.getElementById("pomStartBtn").style.display="inline-block";
         document.getElementById("pomPauseBtn").style.display="none";
@@ -440,6 +481,8 @@ function startPom(){
 function pausePom(){
   isPaused = !isPaused;
   document.getElementById("pomPauseBtn").textContent = isPaused ? "Resume" : "Pause";
+  if(isPaused) dynamicIsland.classList.remove("pulse");
+  else dynamicIsland.classList.add("pulse");
 }
 
 function resetPom(){
@@ -449,6 +492,8 @@ function resetPom(){
   isPaused = false;
   started = false;
   updatePomDisplay();
+  dynamicIsland.classList.remove("pulse");
+  document.getElementById("pomPauseBtn").textContent="Pause";
   document.getElementById("pomStartBtn").style.display="inline-block";
   document.getElementById("pomPauseBtn").style.display="none";
 }
@@ -459,7 +504,6 @@ document.getElementById("pomResetBtn").addEventListener("click",resetPom);
 
 // Initial display
 updatePomDisplay();
-
 
 // --- Notification ---
 function showNotification(){
