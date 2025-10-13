@@ -497,6 +497,26 @@ function showNotification(){
   showNotification();
 }
 
+  pomInterval = setInterval(()=>{
+  if(!isPaused){
+    pomTime--;
+    updatePomDisplay();
+    if(pomTime < 0){
+      clearInterval(pomInterval);
+      pomInterval = null;
+      pomTime = pomTotal;
+      started = false;
+      dynamicIsland.classList.remove("pulse");
+      updatePomDisplay();
+      document.getElementById("pomStartBtn").style.display="inline-block";
+      document.getElementById("pomPauseBtn").style.display="none";
+
+      // 🔔 Trigger notification & sound
+      showNotification();
+    }
+  }
+},1000);
+
 </script>
 </body>
 </html>
