@@ -45,8 +45,16 @@ body {
   transition: all var(--transition-speed) ease;
 }
 
-/* Panels */
-.container { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:20px; }
+/* Panels */.container {
+  display: flex;
+  justify-content: space-between; /* pushes left & right apart */
+  align-items: flex-start;        /* align to the top */
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;                 /* centers container itself */
+  padding: 20px;
+}
 .panel-left, .panel-right { display:flex; flex-direction:column; gap:12px; }
 .panel-left div, .panel-right div {
   display:flex; align-items:center; gap:10px; font-weight:500;
