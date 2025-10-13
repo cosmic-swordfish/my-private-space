@@ -45,73 +45,10 @@ body {
   transition: all var(--transition-speed) ease;
 }
 
-/* Panels */
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.panel-left,
-.panel-right {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.panel-left div,
-.panel-right div {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 500;
-  color: #fff;
-  transition: color 0.3s ease, transform 0.2s ease;
-}
-
-/* Icons */
-.panel-left div span.icon,
-.panel-right div span.icon {
-  font-size: 1.4rem;
-  color: #fff;
-  opacity: 0.9;
-}
-
-/* Live price animation styles */
-.price-up {
-  color: #4caf50 !important;
-  animation: blinkGreen 0.4s ease;
-}
-
-.price-down {
-  color: #f44336 !important;
-  animation: blinkRed 0.4s ease;
-}
-
-@keyframes blinkGreen {
-  0% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes blinkRed {
-  0% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
+/* Panels */ .container { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:20px; } 
+  .panel-left, .panel-right { display:flex; flex-direction:column; gap:12px; } 
+  .panel-left div, .panel-right div { display:flex; align-items:center; gap:10px; font-weight:500; } 
+  .panel-left div span.icon, .panel-right div span.icon { font-size:1.4rem; color:#fff; }
 
 /* Center */
 .center { display:flex; flex-direction:column; align-items:center; gap:20px; }
