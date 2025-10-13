@@ -69,35 +69,66 @@ body {
 /* Dynamic Island / Pomodoro */
 #dynamicIsland {
   position: relative;
-  width:180px;
-  height:180px;
-  border-radius:90px;
+  width: 120px;               /* smaller width */
+  height: 120px;              /* smaller height */
+  border-radius: 60px;        /* half of width/height */
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2); /* slightly smaller shadow */
   transition: transform 0.3s ease, opacity 0.4s ease;
 }
 
-#dynamicIsland.pulse { animation: pulseIsland 1.5s infinite alternate; }
+#dynamicIsland.pulse { 
+  animation: pulseIsland 1.5s infinite alternate; 
+}
+
 @keyframes pulseIsland {
   0% { transform: scale(0.98); }
   50% { transform: scale(1.03); }
   100% { transform: scale(0.98); }
 }
 
-#dynamicIsland canvas { position:absolute; top:0; left:0; width:100%; height:100%; border-radius:90px; }
-#dynamicIslandTime { font-size:1.5rem; font-weight:600; z-index:2; }
+#dynamicIsland canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 60px;
+}
+
+#dynamicIslandTime {
+  font-size: 1rem;   /* smaller font */
+  font-weight: 600;
+  z-index: 2;
+}
 
 /* Pomodoro Controls */
-#pomControlsIsland { display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center; transition: opacity 0.3s ease; }
-button { padding:6px 12px; border:none; border-radius:12px; cursor:pointer; font-weight:500; }
-#pomStartBtn { background: var(--primary-color); color:#fff; }
-#pomPauseBtn { background: var(--accent-color); color:#fff; display:none; }
-#pomResetBtn { background:#444; color:#fff; display:none; }
+#pomControlsIsland {
+  display: flex;
+  gap: 6px;             /* smaller gap */
+  margin-top: 12px;     /* smaller margin */
+  flex-wrap: wrap;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+#pomControlsIsland button {
+  padding: 4px 8px;     /* smaller buttons */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;   /* smaller font */
+}
+
+#pomStartBtn { background: var(--primary-color); color: #fff; }
+#pomPauseBtn { background: var(--accent-color); color: #fff; display: none; }
+#pomResetBtn { background: #444; color: #fff; display: none; }
 
 /* Notification */
 #notification { position:fixed; bottom:30px; right:30px; background: var(--notif-color); color:#fff; padding:14px 24px; border-radius:28px; opacity:0; transform:translateY(20px); transition: all 0.4s ease; font-weight:500; z-index:100; }
