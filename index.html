@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
 
+<!-- If you add manifest.json to folder this link will activate PWA icons / install metadata -->
 <link rel="manifest" href="./manifest.json">
 <style>
 :root {
@@ -77,7 +78,22 @@ body{
 
 /* pom controls */
 #pomControlsIsland{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-#pomControlsIsland input[type=number]{width:64px;padding:6px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:var(--text-color);text-align:center}
+#pomControlsIsland input[type=text] {
+    width: 72px;
+    padding: 6px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-color);
+    text-align: center;
+
+    /* Blur effect */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
+
+    /* Drop shadow */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* x-offset, y-offset, blur-radius, color */
+}
 #pomControlsIsland button{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
 #pomStartBtn{background:var(--primary-color);color:#fff}
 #pomPauseBtn{background:var(--accent-color);color:#fff;display:none}
@@ -106,13 +122,28 @@ body{
 .field{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
 .label{font-size:.9rem;opacity:.95}
 .input, .select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:var(--text-color);outline:none}
-.row{display:flex;gap:8px;align-items:center}
-.presetGrid{display:flex;gap:8px;flex-wrap:wrap}
-.presetTile{width:72px;height:48px;border-radius:8px;background-size:cover;background-position:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.35);border:2px solid transparent}
-.presetTile.selected{border-color:rgba(255,255,255,0.22);transform:scale(1.03)}
 .prefsRight{display:flex;flex-direction:column;gap:10px}
 .prefsCard{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.35)}
 .closeBtn{background:transparent;border:none;color:#fff;font-weight:700;cursor:pointer;padding:8px;border-radius:10px}
+
+/* floating install prompt (bottom-right) */
+#floatingInstall{
+ position:fixed;
+ right:28px;
+ bottom:100px; /* above notification */
+ z-index:220;
+ display:none;
+ align-items:center;
+ gap:10px;
+ padding:10px 14px;
+ border-radius:14px;
+ min-width:200px;
+ background:var(--glass-bg);
+ backdrop-filter:blur(10px);
+ box-shadow:0 14px 40px rgba(0,0,0,0.45);
+}
+#floatingInstall .fiTitle{font-weight:700;font-size:0.95rem}
+#floatingInstall .fiBtn{margin-left:auto;padding:6px 10px;border-radius:10px;background:var(--primary-color);border:none;color:#fff;cursor:pointer}
 
 /* footer */
 .footer{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;font-size:1rem;opacity:.75}
@@ -131,6 +162,9 @@ body{
 }
 .small{font-size:.9rem;opacity:.9}
 .smallButton{padding:6px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer}
+
+/* ensure placeholder visible for numeric input */
+input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
 </style>
 </head>
 <body>
@@ -163,7 +197,8 @@ body{
     </div>
 
     <div id="pomControlsIsland">
-      <input type="number" id="pomCustomTime" placeholder="Min" min="1" style="width:72px">
+      <!-- changed type to text so placeholder is visible on all browsers; inputmode numeric helps mobile -->
+      <input type="text" id="pomCustomTime" placeholder="Min" inputmode="numeric" pattern="\d*">
       <button id="pomStartBtn">Start</button>
       <button id="pomPauseBtn">Pause</button>
       <button id="pomResetBtn">Reset</button>
@@ -192,22 +227,31 @@ body{
   </div>
 </div>
 
+<!-- floating install prompt (bottom-right glass) -->
+<div id="floatingInstall" role="dialog" aria-hidden="true" class="glass" style="display:none">
+  <div style="display:flex;align-items:center;gap:10px;width:100%">
+    <div style="display:flex;flex-direction:column">
+      <div class="fiTitle">Add to Home Screen</div>
+      <div style="font-size:0.85rem;opacity:0.9">Install this app for quick access</div>
+    </div>
+    <button id="floatingInstallBtn" class="fiBtn">Add</button>
+  </div>
+</div>
+
 <!-- preferences gear -->
 <div id="prefGear" title="Preferences (open)">
   <span class="material-icons-outlined gear">settings</span>
 </div>
 
-<!-- prefs overlay -->
+<!-- prefs overlay (includes location mode + oneko toggle) -->
 <div id="prefsOverlay" aria-hidden="true">
   <div id="prefsModal" role="dialog" aria-modal="true" aria-label="Preferences">
     <div>
       <div class="field">
-        <div class="label">Wallpaper (upload or choose preset)</div>
+        <div class="label">Wallpaper</div>
         <div class="row">
-          <input id="wallUpload" type="file" accept="image/*" class="input">
-          <button id="removeWallpaper" class="closeBtn">Remove</button>
+          <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper">
         </div>
-        <div class="presetGrid" id="presetGrid"></div>
       </div>
 
       <div class="field">
@@ -232,6 +276,17 @@ body{
       </div>
 
       <div class="field">
+        <div class="label">Location mode</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="locationMode" class="select" title="Auto = use geolocation, Manual = use City">
+            <option value="manual">Manual</option>
+            <option value="auto">Auto (use device location)</option>
+          </select>
+          <div style="font-size:.9rem;opacity:.85">Default: Lalitpur</div>
+        </div>
+      </div>
+
+      <div class="field">
         <div class="label">Theme color (primary)</div>
         <input id="themeColor" type="color" class="input" style="width:56px;height:44px;padding:6px">
       </div>
@@ -241,13 +296,23 @@ body{
         <input id="tickerSpeed" type="number" min="6" max="60" class="input">
       </div>
 
+      <div class="field">
+        <div class="label">Oneko Lily</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="display:flex;align-items:center;gap:8px">
+            <input id="onekoToggle" type="checkbox">
+            <span class="small">Gomen</span>
+          </label>
+        </div>
+      </div>
+
     </div>
 
     <div class="prefsRight">
       <div class="prefsCard">
         <div class="label">Preview</div>
         <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
-          <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.25)"></div>
+          <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.08)"></div>
           <div class="row"><button id="savePrefs" class="closeBtn">Save</button><button id="closePrefs" class="closeBtn">Close</button></div>
         </div>
       </div>
@@ -263,37 +328,27 @@ body{
   </div>
 </div>
 
-<!-- oneko cat -->
-<script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
+<!-- oneko cat will be loaded dynamically based on preference -->
 
 <script>
-/* ===========================================================
-   Single-file app.js (inline) — preferences, clock, APIs,
-   pomodoro, canvas animation, PWA registration, embedded alarm
-   =========================================================== */
+/* Single-file app.js — preferences, clock, APIs, pomodoro, canvas animation, PWA hooks */
 
-/* --------------------------
-   Embedded alarm generation
-   -------------------------- */
-/* generate a short 1s alarm WAV (sine + quick rise) and return dataURL base64 */
-function generateAlarmDataURL(duration = 1.0, freq = 880, sampleRate = 44100){
+/* small embedded alarm generator (now default 10s) */
+function generateAlarmDataURL(duration = 10.0, freq = 880, sampleRate = 44100){
   const len = Math.floor(duration * sampleRate);
-  const channels = 1;
-  // create PCM 16-bit little endian
-  const samples = new Int16Array(len * channels);
+  const samples = new Int16Array(len);
   for(let i=0;i<len;i++){
-    // quick attack and decay envelope
     const t = i / sampleRate;
-    // envelope: fast attack (0.01s), linear decay to 0.6s, then tail
-    let env = 1;
-    if(t < 0.02) env = t / 0.02;
-    else if(t < duration * 0.6) env = 1 - ((t - 0.02) / (duration * 0.6 - 0.02)) * 0.6;
-    else env = Math.max(0, 0.4 * (1 - (t - duration*0.6) / (duration*0.4)));
-    const value = Math.sin(2 * Math.PI * freq * t) * 0.9 * env;
+    // smooth envelope: short attack, sustain, slow release
+    let env;
+    if(t < 0.03) env = t / 0.03; // 30ms attack
+    else if(t < duration - 0.3) env = 0.9; // sustain
+    else env = 0.9 * Math.max(0, 1 - (t - (duration - 0.3)) / 0.3); // 300ms release
+    // small slow amplitude modulation to avoid harshness
+    const trem = 0.03 * Math.sin(2 * Math.PI * 2 * t);
+    const value = Math.sin(2 * Math.PI * freq * t) * (0.85 + trem) * env;
     samples[i] = Math.max(-1, Math.min(1, value)) * 0x7fff;
   }
-
-  // WAV file header
   const buffer = new ArrayBuffer(44 + samples.length * 2);
   const view = new DataView(buffer);
   function writeString(view, offset, string){
@@ -305,18 +360,15 @@ function generateAlarmDataURL(duration = 1.0, freq = 880, sampleRate = 44100){
   writeString(view, offset, 'WAVE'); offset += 4;
   writeString(view, offset, 'fmt '); offset += 4;
   view.setUint32(offset, 16, true); offset += 4;
-  view.setUint16(offset, 1, true); offset += 2; // PCM
-  view.setUint16(offset, channels, true); offset += 2;
+  view.setUint16(offset, 1, true); offset += 2;
+  view.setUint16(offset, 1, true); offset += 2;
   view.setUint32(offset, sampleRate, true); offset += 4;
-  view.setUint32(offset, sampleRate * channels * 2, true); offset += 4;
-  view.setUint16(offset, channels * 2, true); offset += 2;
+  view.setUint32(offset, sampleRate * 2, true); offset += 4;
+  view.setUint16(offset, 2, true); offset += 2;
   view.setUint16(offset, 16, true); offset += 2;
   writeString(view, offset, 'data'); offset += 4;
   view.setUint32(offset, samples.length * 2, true); offset += 4;
-  // PCM samples
-  for(let i=0;i<samples.length;i++, offset += 2) view.setInt16(offset, samples[i], true);
-
-  // base64
+  for(let i=0;i<samples.length;i++, offset+=2) view.setInt16(offset, samples[i], true);
   const binary = new Uint8Array(buffer);
   let binaryStr = '';
   const chunkSize = 0x8000;
@@ -326,41 +378,35 @@ function generateAlarmDataURL(duration = 1.0, freq = 880, sampleRate = 44100){
   const base64 = btoa(binaryStr);
   return 'data:audio/wav;base64,' + base64;
 }
-
-// create audio element with embedded dataURL
 const notifAudio = document.createElement('audio');
 notifAudio.id = 'notifSound';
 notifAudio.preload = 'auto';
-notifAudio.src = generateAlarmDataURL(1.0, 880);
+notifAudio.src = generateAlarmDataURL(10.0, 880); // 10s smooth tone
 document.body.appendChild(notifAudio);
 
 /* --------------------------
    Defaults & preferences
    -------------------------- */
-const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210"; // as requested
-const defaults = {
+const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210"; // keep as-is
+const DEFAULTS = {
   themeColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#5C7C75',
   ticker: 'Welcome back, Ruben. Stay curious 💫',
   pomDefault: 25,
-  wallpaper: null,
+  wallpaper: null, // null means "use the default asset"
+  defaultWallpaper: 'assets/chihiro036.jpeg',
   city: 'Lalitpur',
   tempUnit: 'C',
   tickerSpeed: 15,
-  presets: [
-    'assets/chihiro036.jpeg',
-    'https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop'
-  ]
+  locationMode: 'manual', // manual or auto
+  onekoEnabled: true
 };
 
-let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || defaults;
-if(!prefs.presets) prefs.presets = defaults.presets;
+let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || DEFAULTS;
 
 /* UI elements */
 const prefGear = document.getElementById('prefGear');
 const prefsOverlay = document.getElementById('prefsOverlay');
 const wallUpload = document.getElementById('wallUpload');
-const presetGrid = document.getElementById('presetGrid');
 const previewWallpaper = document.getElementById('previewWallpaper');
 const tickerInput = document.getElementById('tickerInput');
 const pomDefaultInput = document.getElementById('pomDefaultInput');
@@ -369,71 +415,117 @@ const tempUnit = document.getElementById('tempUnit');
 const themeColor = document.getElementById('themeColor');
 const savePrefs = document.getElementById('savePrefs');
 const closePrefs = document.getElementById('closePrefs');
-const removeWallpaper = document.getElementById('removeWallpaper');
 const clearPrefs = document.getElementById('clearPrefs');
 const installPWA = document.getElementById('installPWA');
 const tickerSpeed = document.getElementById('tickerSpeed');
 const tickerTextEl = document.getElementById('tickerText');
 const tickerTextDupEl = document.getElementById('tickerTextDup');
+const locationModeEl = document.getElementById('locationMode');
+const onekoToggle = document.getElementById('onekoToggle');
 
+/* PWA floating install */
+const floatingInstall = document.getElementById('floatingInstall');
+const floatingInstallBtn = document.getElementById('floatingInstallBtn');
+
+/* helper to persist prefs */
 function savePrefsToStorage(){
-  localStorage.setItem('mps_prefs', JSON.stringify(prefs));
-}
-
-function applyWallpaper(w){
-  if(!w){ document.body.style.background = ''; previewWallpaper.style.backgroundImage = ''; return; }
-  document.body.style.background = `url('${w}') center/cover no-repeat`;
-  previewWallpaper.style.backgroundImage = `url('${w}')`;
-}
-
-function buildPresets(){
-  presetGrid.innerHTML = '';
-  prefs.presets.forEach((url,i)=>{
-    const tile = document.createElement('div');
-    tile.className = 'presetTile' + ((prefs.wallpaper===url)?' selected':'');
-    tile.style.backgroundImage = `url('${url}')`;
-    tile.addEventListener('click', ()=>{
-      prefs.wallpaper = url;
-      applyWallpaper(url);
-      document.querySelectorAll('.presetTile').forEach(t=>t.classList.remove('selected'));
-      tile.classList.add('selected');
-    });
-    presetGrid.appendChild(tile);
-  });
-}
-
-/* wallpaper upload -> base64 */
-wallUpload.addEventListener('change', async (e)=>{
-  const f = e.target.files[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    prefs.wallpaper = reader.result;
-    applyWallpaper(prefs.wallpaper);
-    buildPresets();
+  const toStore = {
+    themeColor: prefs.themeColor,
+    ticker: prefs.ticker,
+    pomDefault: prefs.pomDefault,
+    wallpaper: prefs.wallpaper,
+    city: prefs.city,
+    tempUnit: prefs.tempUnit,
+    tickerSpeed: prefs.tickerSpeed,
+    locationMode: prefs.locationMode,
+    onekoEnabled: prefs.onekoEnabled
   };
-  reader.readAsDataURL(f);
-});
+  localStorage.setItem('mps_prefs', JSON.stringify(toStore));
+  prefs = Object.assign({}, DEFAULTS, toStore);
+}
 
-removeWallpaper.addEventListener('click', ()=>{
-  prefs.wallpaper = null;
-  applyWallpaper(null);
-  buildPresets();
-});
+/* Apply wallpaper — if prefs.wallpaper exists use it, otherwise use default asset */
+function applyWallpaper(w){
+  const final = w || DEFAULTS.defaultWallpaper;
+  document.body.style.background = `url('${final}') center/cover no-repeat`;
+  previewWallpaper.style.backgroundImage = `url('${final}')`;
+}
+
+/* oneko dynamic loader/unloader */
+let onekoScriptTag = null;
+function loadOneko(){
+  // if already loaded, return
+  if(window.onekoLoaded) return;
+  onekoScriptTag = document.createElement('script');
+  onekoScriptTag.src = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js";
+  onekoScriptTag.dataset.cat = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
+  onekoScriptTag.onload = () => { window.onekoLoaded = true; };
+  document.body.appendChild(onekoScriptTag);
+}
+function unloadOneko(){
+  // Remove the script tag and any injected cat nodes
+  if(onekoScriptTag){
+    try { document.body.removeChild(onekoScriptTag); } catch(e){}
+    onekoScriptTag = null;
+  }
+  // remove any injected nodes by the lib (it adds an image and container)
+  const catEls = document.querySelectorAll('img[src*="oneko.gif"], .oneko, #oneko, img.oneko');
+  catEls.forEach(el => el.remove());
+  // some versions add a div; remove nodes that look like the injected cat
+  document.querySelectorAll('[style*="position:fixed"]').forEach(el=>{
+    if(el && el.querySelector && el.querySelector('img') && el.querySelector('img').src && el.querySelector('img').src.includes('oneko')) el.remove();
+  });
+  window.onekoLoaded = false;
+}
+
+/* apply stored preferences on load */
+function applyPreferences(){
+  prefs = Object.assign({}, DEFAULTS, prefs);
+
+  document.documentElement.style.setProperty('--primary-color', prefs.themeColor || DEFAULTS.themeColor);
+  tickerTextEl.textContent = prefs.ticker || DEFAULTS.ticker;
+  tickerTextDupEl.textContent = prefs.ticker || DEFAULTS.ticker;
+  const animSec = Math.max(6, prefs.tickerSpeed || DEFAULTS.tickerSpeed);
+  document.querySelector('.topTicker .tickerContent').style.animationDuration = animSec + 's';
+
+  applyWallpaper(prefs.wallpaper);
+
+  // ensure pom default exists in localStorage if not already set
+  if(!localStorage.getItem('pomTotal')) {
+    localStorage.setItem('pomTotal', (prefs.pomDefault||DEFAULTS.pomDefault) * 60);
+  }
+
+  // prefs UI population
+  themeColor.value = prefs.themeColor || DEFAULTS.themeColor;
+  tickerInput.value = prefs.ticker || DEFAULTS.ticker;
+  pomDefaultInput.value = prefs.pomDefault || DEFAULTS.pomDefault;
+  cityInput.value = prefs.city || DEFAULTS.city;
+  tempUnit.value = prefs.tempUnit || DEFAULTS.tempUnit;
+  tickerSpeed.value = prefs.tickerSpeed || DEFAULTS.tickerSpeed;
+  locationModeEl.value = prefs.locationMode || DEFAULTS.locationMode;
+  onekoToggle.checked = typeof prefs.onekoEnabled === 'boolean' ? prefs.onekoEnabled : DEFAULTS.onekoEnabled;
+
+  // Oneko dynamic
+  if(prefs.onekoEnabled) loadOneko(); else unloadOneko();
+}
+applyPreferences();
 
 /* open/close prefs */
 prefGear.addEventListener('click', ()=>{
   prefGear.classList.toggle('spin');
   prefsOverlay.classList.toggle('show');
   prefsOverlay.setAttribute('aria-hidden', prefsOverlay.classList.contains('show')? 'false' : 'true');
-  // populate fields
-  tickerInput.value = prefs.ticker || defaults.ticker;
-  pomDefaultInput.value = prefs.pomDefault || defaults.pomDefault;
-  cityInput.value = prefs.city || defaults.city;
-  tempUnit.value = prefs.tempUnit || defaults.tempUnit;
-  themeColor.value = prefs.themeColor || defaults.themeColor;
-  tickerSpeed.value = prefs.tickerSpeed || defaults.tickerSpeed;
-  buildPresets();
+  // populate fields (kept in applyPreferences, but re-populate to ensure freshness)
+  tickerInput.value = prefs.ticker || DEFAULTS.ticker;
+  pomDefaultInput.value = prefs.pomDefault || DEFAULTS.pomDefault;
+  cityInput.value = prefs.city || DEFAULTS.city;
+  tempUnit.value = prefs.tempUnit || DEFAULTS.tempUnit;
+  themeColor.value = prefs.themeColor || DEFAULTS.themeColor;
+  tickerSpeed.value = prefs.tickerSpeed || DEFAULTS.tickerSpeed;
+  locationModeEl.value = prefs.locationMode || DEFAULTS.locationMode;
+  onekoToggle.checked = prefs.onekoEnabled;
+  // set preview
+  previewWallpaper.style.backgroundImage = `url('${prefs.wallpaper || DEFAULTS.defaultWallpaper}')`;
 });
 
 closePrefs.addEventListener('click', ()=>{
@@ -442,61 +534,87 @@ closePrefs.addEventListener('click', ()=>{
   prefsOverlay.setAttribute('aria-hidden','true');
 });
 
+/* wallpaper upload -> base64 stored in prefs.wallpaper */
+wallUpload.addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    prefs.wallpaper = reader.result; // base64 data URL
+    previewWallpaper.style.backgroundImage = `url('${prefs.wallpaper}')`;
+    applyWallpaper(prefs.wallpaper);
+  };
+  reader.readAsDataURL(f);
+});
+
+/* save & apply preferences */
 savePrefs.addEventListener('click', ()=>{
-  prefs.ticker = tickerInput.value || defaults.ticker;
-  prefs.pomDefault = parseInt(pomDefaultInput.value) || defaults.pomDefault;
-  prefs.city = cityInput.value || defaults.city;
-  prefs.tempUnit = tempUnit.value || defaults.tempUnit;
-  prefs.themeColor = themeColor.value || defaults.themeColor;
-  prefs.tickerSpeed = parseInt(tickerSpeed.value) || defaults.tickerSpeed;
+  prefs.ticker = tickerInput.value || DEFAULTS.ticker;
+  prefs.pomDefault = parseInt(pomDefaultInput.value) || DEFAULTS.pomDefault;
+  prefs.city = cityInput.value || DEFAULTS.city;
+  prefs.tempUnit = tempUnit.value || DEFAULTS.tempUnit;
+  prefs.themeColor = themeColor.value || DEFAULTS.themeColor;
+  prefs.tickerSpeed = parseInt(tickerSpeed.value) || DEFAULTS.tickerSpeed;
+  prefs.locationMode = locationModeEl.value || DEFAULTS.locationMode;
+  prefs.onekoEnabled = !!onekoToggle.checked;
   savePrefsToStorage();
   applyPreferences();
   prefsOverlay.classList.remove('show'); prefGear.classList.remove('spin');
 });
 
-/* reset */
+/* reset preferences => revert to defaults (including wallpaper default) */
 clearPrefs.addEventListener('click', ()=>{
+  if(!confirm('Reset preferences to defaults?')) return;
+  // remove stored prefs entirely
   localStorage.removeItem('mps_prefs');
-  prefs = defaults;
+  // clear other stored state (pom)
+  localStorage.removeItem('pomTotal');
+  localStorage.removeItem('pomTime');
+  localStorage.removeItem('pomPaused');
+  localStorage.removeItem('pomStarted');
+  localStorage.removeItem('previousPrices');
+  // reset in-memory prefs to defaults
+  prefs = Object.assign({}, DEFAULTS);
+  // reset oneko to default
+  if(!prefs.onekoEnabled) unloadOneko(); else loadOneko();
   savePrefsToStorage();
   applyPreferences();
-  buildPresets();
-  alert('Preferences reset to defaults.');
+  // update preview and UI fields
+  previewWallpaper.style.backgroundImage = `url('${DEFAULTS.defaultWallpaper}')`;
+  // hide floating install if shown
+  floatingInstall.style.display = 'none';
+  installPWA.style.display = 'none';
+  alert('Preferences reset to defaults. Wallpaper restored to default.');
 });
 
 /* PWA install prompt handling */
 window.addEventListener('beforeinstallprompt', (e)=>{
   e.preventDefault();
   window.deferredPrompt = e;
+  // show both the prefs button and the floating prompt
   installPWA.style.display = 'inline-block';
+  floatingInstall.style.display = 'flex';
+  floatingInstall.setAttribute('aria-hidden','false');
 });
 installPWA.addEventListener('click', ()=>{
   if(window.deferredPrompt){
     window.deferredPrompt.prompt();
-    window.deferredPrompt.userChoice.then(()=>{ window.deferredPrompt = null; installPWA.style.display = 'none'; });
+    window.deferredPrompt.userChoice.then(()=>{ window.deferredPrompt = null; installPWA.style.display = 'none'; floatingInstall.style.display = 'none'; });
   } else {
     alert('Install prompt not available. Serve over HTTPS and try again.');
   }
 });
-
-/* apply stored preferences on load */
-function applyPreferences(){
-  document.documentElement.style.setProperty('--primary-color', prefs.themeColor || defaults.themeColor);
-  tickerTextEl.textContent = prefs.ticker || defaults.ticker;
-  tickerTextDupEl.textContent = prefs.ticker || defaults.ticker;
-  const animSec = Math.max(6, prefs.tickerSpeed || defaults.tickerSpeed);
-  document.querySelector('.topTicker .tickerContent').style.animationDuration = animSec + 's';
-  if(prefs.wallpaper) applyWallpaper(prefs.wallpaper);
-  // ensure pom default exists in localStorage if not already set
-  if(!localStorage.getItem('pomTotal')) {
-    localStorage.setItem('pomTotal', (prefs.pomDefault||defaults.pomDefault) * 60);
+floatingInstallBtn.addEventListener('click', ()=>{
+  if(window.deferredPrompt){
+    window.deferredPrompt.prompt();
+    window.deferredPrompt.userChoice.then(()=>{ window.deferredPrompt = null; installPWA.style.display = 'none'; floatingInstall.style.display = 'none'; });
+  } else {
+    floatingInstall.style.display = 'none';
   }
-}
-applyPreferences();
-buildPresets();
+});
 
 /* live ticker input preview */
-tickerInput.addEventListener('input', ()=>{ const v = tickerInput.value || defaults.ticker; tickerTextEl.textContent = v; tickerTextDupEl.textContent = v; });
+tickerInput.addEventListener('input', ()=>{ const v = tickerInput.value || DEFAULTS.ticker; tickerTextEl.textContent = v; tickerTextDupEl.textContent = v; });
 
 /* --------------------------
    Clock
@@ -546,28 +664,65 @@ fetchCrypto();
 setInterval(fetchCrypto, 120000);
 
 /* --------------------------
-   Weather (WeatherAPI) - Lalitpur default
+   Weather (WeatherAPI) — supports manual city or auto geolocation
    -------------------------- */
 function cToF(c){ return (c * 9/5) + 32; }
+
 async function fetchWeather(){
   try{
-    const CITY = (prefs && prefs.city) ? prefs.city : 'Lalitpur';
+    const CITY = (prefs && prefs.city) ? prefs.city : DEFAULTS.city;
+
+    // If auto mode, try to get coordinates first
+    if(prefs.locationMode === 'auto' && navigator.geolocation){
+      // use a Promise wrapper for getCurrentPosition
+      const coords = await new Promise((resolve, reject) => {
+        const ok = (pos) => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude});
+        const err = (e) => reject(e);
+        navigator.geolocation.getCurrentPosition(ok, err, {timeout:7000});
+      }).catch((e) => {
+        console.warn('Geolocation failed, falling back to manual city', e);
+        return null;
+      });
+      if(coords){
+        // WeatherAPI allows 'lat,lon' in q param
+        const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${coords.lat},${coords.lon}`);
+        if(!res.ok) throw new Error('Weather fetch failed');
+        const data = await res.json();
+        return updateWeatherUI(data);
+      }
+      // else fallthrough to manual city
+    }
+
+    // manual fallback
     const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(CITY)}`);
+    if(!res.ok) throw new Error('Weather fetch failed');
     const data = await res.json();
-    let tempC = data.current.temp_c;
-    let displayTemp = tempC;
-    if(prefs.tempUnit === 'F') displayTemp = cToF(tempC);
-    document.getElementById('temp').textContent = displayTemp.toFixed(1) + (prefs.tempUnit === 'F' ? '°F' : '°C');
-    document.getElementById('humidity').textContent = 'Humidity: ' + data.current.humidity + '%';
-    const dew = prefs.tempUnit === 'F' ? cToF(data.current.dewpoint_c) : data.current.dewpoint_c;
-    document.getElementById('dew').textContent = 'Dew: ' + dew.toFixed(1) + (prefs.tempUnit === 'F' ? '°F' : '°C');
-    document.getElementById('wind').textContent = 'Wind: ' + data.current.wind_kph + ' km/h';
-    document.getElementById('pressure').textContent = 'Pressure: ' + data.current.pressure_mb + ' hPa';
+    updateWeatherUI(data);
+
   } catch(e){
     console.error('Weather error', e);
     document.getElementById('temp').textContent = 'Weather unavailable';
+    document.getElementById('humidity').textContent = 'Humidity: --%';
+    document.getElementById('dew').textContent = 'Dew: --';
+    document.getElementById('wind').textContent = 'Wind: --';
+    document.getElementById('pressure').textContent = 'Pressure: --';
   }
 }
+
+function updateWeatherUI(data){
+  if(!data || !data.current) throw new Error('Invalid weather response');
+  let tempC = typeof data.current.temp_c === 'number' ? data.current.temp_c : NaN;
+  let displayTemp = tempC;
+  if(prefs.tempUnit === 'F') displayTemp = cToF(tempC);
+  document.getElementById('temp').textContent = (isNaN(displayTemp) ? '--' : displayTemp.toFixed(1)) + (prefs.tempUnit === 'F' ? '°F' : '°C');
+  document.getElementById('humidity').textContent = 'Humidity: ' + (data.current.humidity ?? '--') + '%';
+  const dewC = data.current.dewpoint_c ?? null;
+  const dew = (prefs.tempUnit === 'F' && dewC !== null) ? cToF(dewC) : dewC;
+  document.getElementById('dew').textContent = 'Dew: ' + (dew !== null ? dew.toFixed(1) : '--') + (prefs.tempUnit === 'F' ? '°F' : '°C');
+  document.getElementById('wind').textContent = 'Wind: ' + (data.current.wind_kph ?? '--') + ' km/h';
+  document.getElementById('pressure').textContent = 'Pressure: ' + (data.current.pressure_mb ?? '--') + ' hPa';
+}
+
 fetchWeather();
 setInterval(fetchWeather, 1800000);
 
@@ -672,8 +827,11 @@ drawPom();
 
 /* pom controls */
 function startPom(){
-  const val = parseInt(document.getElementById('pomCustomTime').value);
+  // read numeric minutes from text input (allow empty)
+  const raw = document.getElementById('pomCustomTime').value.trim();
+  const val = raw ? parseInt(raw.replace(/\D/g,''),10) : null;
   if(val > 0){ pomTotal = val * 60; pomTime = pomTotal; }
+  // store default pom if user provided pomDefault
   started = true;
   isPaused = false;
   savePomState();
@@ -714,24 +872,44 @@ function resetPom(){
   savePomState();
 }
 
-/* show notification + play embedded audio */
+/* show notification + play audio for 10s; keep pause visible while playing */
+let notifTimeout = null;
 function showNotification(text = 'Time Up!'){
   const notif = document.getElementById('notification');
   document.getElementById('notificationText').textContent = text;
   notif.classList.add('show');
-  try { notifAudio.currentTime = 0; notifAudio.play(); } catch(e){ console.warn('Audio play prevented', e); }
-  setTimeout(()=> notif.classList.remove('show'), 3500);
+
+  // ensure pause button is visible and set to "Pause" by default
+  const notifPauseBtn = document.getElementById('notifPauseBtn');
+  notifPauseBtn.textContent = 'Pause';
+
+  try {
+    notifAudio.currentTime = 0;
+    // try to play; if autoplay is blocked, this will be caught
+    const p = notifAudio.play();
+    if(p && p.catch){
+      p.catch(e => console.warn('Audio play prevented', e));
+    }
+  } catch(e){ console.warn('Audio play prevented', e); }
+
+  // keep visible for entire 10s — allow pause/resume for the audio
+  if(notifTimeout) clearTimeout(notifTimeout);
+  notifTimeout = setTimeout(()=> {
+    notif.classList.remove('show');
+    try { notifAudio.pause(); notifAudio.currentTime = 0; } catch(e){}
+  }, 10000); // 10 seconds
 }
 
-/* notification audio controls */
+/* notification controls — pause/resume audio during the full 10s */
 document.getElementById('notifPauseBtn').addEventListener('click', ()=>{
   if(!notifAudio) return;
   if(!notifAudio.paused){ notifAudio.pause(); document.getElementById('notifPauseBtn').textContent = 'Resume'; }
-  else { notifAudio.play(); document.getElementById('notifPauseBtn').textContent = 'Pause'; }
+  else { notifAudio.play().catch(()=>{}); document.getElementById('notifPauseBtn').textContent = 'Pause'; }
 });
 document.getElementById('notifStopBtn').addEventListener('click', ()=>{
   if(!notifAudio) return;
   notifAudio.pause(); notifAudio.currentTime = 0; document.getElementById('notification').classList.remove('show');
+  if(notifTimeout) { clearTimeout(notifTimeout); notifTimeout = null; }
 });
 
 /* event bindings */
@@ -743,36 +921,23 @@ updatePomDisplay();
 if(started) startPom();
 
 /* --------------------------
-   PWA Registration for sw.js
+   PWA service worker registration (if service-worker.js exists)
    -------------------------- */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(()=> {
-    console.log('Service worker registered.');
-  }).catch(e => console.warn('SW registration failed', e));
+  navigator.serviceWorker.register('./service-worker.js').catch(()=>{ /* ignore if not present */ });
 }
 
-/* --------------------------
-   Small accessibility: close prefs with ESC
-   -------------------------- */
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape'){
-    prefsOverlay.classList.remove('show');
-    prefGear.classList.remove('spin');
-  }
+/* hide prompt if user dismisses manually / when installed */
+window.addEventListener('appinstalled', ()=>{
+  installPWA.style.display = 'none';
+  floatingInstall.style.display = 'none';
+  window.deferredPrompt = null;
 });
 
-/* Initialize UI values */
-function initUIValues(){
-  tickerInput.value = prefs.ticker || defaults.ticker;
-  pomDefaultInput.value = prefs.pomDefault || defaults.pomDefault;
-  cityInput.value = prefs.city || defaults.city;
-  tempUnit.value = prefs.tempUnit || defaults.tempUnit;
-  themeColor.value = prefs.themeColor || defaults.themeColor;
-  tickerSpeed.value = prefs.tickerSpeed || defaults.tickerSpeed;
-  buildPresets();
-}
-initUIValues();
-
+/* Ensure floating install is dismissible by clicking outside (optional UX) */
+floatingInstall.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') floatingInstall.style.display = 'none';
+});
 </script>
 </body>
 </html>
