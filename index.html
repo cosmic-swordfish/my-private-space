@@ -1,281 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>my-private-space</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+<link rel="manifest" href="./manifest.json">
 <style>
 :root {
-  --glass-bg: rgba(255,255,255,0.1);
-  --glass-blur: 30px;
-  --primary-color: #5C7C75; /* updated from #5e5ce6 */
-  --accent-color: #ff6b6b;
-  --text-color: #fff;
-  --panel-radius: 36px;
-  --notif-color: #5C7C75; /* notification uses same color */
-  --transition-speed: 0.4s;
+ --glass-bg: rgba(255,255,255,0.08);
+ --glass-blur: 24px;
+ --primary-color: #5C7C75;
+ --accent-color: #ff6b6b;
+ --text-color: #fff;
+ --panel-radius: 28px;
+ --notif-color: #5C7C75;
+ --transition-speed: 0.35s;
+ --overlay-bg: rgba(0,0,0,0.45);
 }
 
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
+*{box-sizing:border-box;font-family:Roboto,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+html,body{height:100%}
+body{
+ margin:0;
+ color:var(--text-color);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ min-height:100vh;
+ background: url('assets/chihiro036.jpeg') center/cover no-repeat;
+ transition: background 0.4s ease;
 }
 
-body {
-  background: url('assets/chihiro036.jpeg') center/cover no-repeat;
-  color: var(--text-color);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+/* glass base */
+.glass{
+ background:var(--glass-bg);
+ backdrop-filter: blur(var(--glass-blur));
+ border-radius:var(--panel-radius);
+ padding:16px;
+ box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+ color:var(--text-color);
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+ transition: all var(--transition-speed) ease;
 }
 
-/* Glass Panels */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border-radius: var(--panel-radius);
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 220px;
-  transition: all var(--transition-speed) ease;
+/* layout */
+.container{
+ width:100%;
+ max-width:1400px;
+ display:flex;
+ gap:18px;
+ padding:20px;
+ align-items:flex-start;
 }
+.panel-left,.panel-right{display:flex;flex-direction:column;gap:10px;min-width:200px}
+.panel-left div,.panel-right div{display:flex;align-items:center;gap:10px;font-weight:600}
+.icon{font-size:1.4rem;color:var(--text-color)}
 
-/* Layout */
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
-}
-.panel-left, .panel-right { display: flex; flex-direction: column; gap: 12px; }
-.panel-left div, .panel-right div { display: flex; align-items: center; gap: 10px; font-weight: 500; }
-.icon { font-size: 1.4rem; color: #fff; }
-
-  .panel-left {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    font-size: 1rem;
-  }
-
-  .panel-left div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .icon {
-    font-size: 1.4rem;
-    color: var(--text-color);
-  }
-
-  /* Arrow appearance */
-  .crypto-arrow {
-    font-size: 0.95rem;
-    margin-left: 4px;
-    vertical-align: middle;
-  }
-
-  .arrow-up {
-    color: #00ff88;
-  }
-  .arrow-down {
-    color: #ff5555;
-  }
-  .arrow-stable {
-    color: #aaa;
-  }
-
-/* Center */
-.center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  flex: 1;
-}
-#time { font-size: 180px; font-weight: 700; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-.date { font-size: 28px; opacity: 0.85; }
+/* centre */
+.center{flex:1;display:flex;flex-direction:column;align-items:center;gap:18px}
+#time{font-size:160px;font-weight:700;line-height:1;text-shadow:0 6px 18px rgba(0,0,0,0.35)}
+.date{font-size:24px;opacity:0.9}
 
 /* Dynamic Island */
-#dynamicIsland {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 60px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, opacity 0.4s ease;
-}
-#dynamicIsland.pulse { animation: pulseIsland 1.5s infinite alternate; }
-@keyframes pulseIsland {
-  0% { transform: scale(0.98); }
-  50% { transform: scale(1.03); }
-  100% { transform: scale(0.98); }
-}
-#dynamicIsland canvas {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%; border-radius: 60px;
-}
-#dynamicIslandTime { font-size: 1rem; font-weight: 600; z-index: 2; }
+#dynamicIsland{position:relative;width:120px;height:120px;border-radius:60px;background:var(--glass-bg);backdrop-filter:blur(var(--glass-blur));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(0,0,0,0.25);transition:transform .3s ease}
+#dynamicIsland.pulse{animation:pulseIsland 1.5s infinite alternate}
+@keyframes pulseIsland{0%{transform:scale(.985)}50%{transform:scale(1.03)}100%{transform:scale(.985)}}
+#dynamicIsland canvas{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:60px}
+#dynamicIslandTime{z-index:2;font-weight:700}
 
-/* Pomodoro Controls */
-#pomControlsIsland {
-  display: flex;
-  gap: 6px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-#pomControlsIsland button {
-  padding: 4px 8px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-#pomStartBtn { background: var(--primary-color); color: #fff; }
-#pomPauseBtn { background: var(--accent-color); color: #fff; display: none; }
-#pomResetBtn { background: #444; color: #fff; display: none; }
+/* pom controls */
+#pomControlsIsland{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#pomControlsIsland input[type=number]{width:64px;padding:6px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:var(--text-color);text-align:center}
+#pomControlsIsland button{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
+#pomStartBtn{background:var(--primary-color);color:#fff}
+#pomPauseBtn{background:var(--accent-color);color:#fff;display:none}
+#pomResetBtn{background:#444;color:#fff;display:none}
 
-/* Notification */
-#notification {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: var(--notif-color);
-  color: #fff;
-  padding: 14px 24px;
-  border-radius: 28px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.4s ease;
-  font-weight: 500;
-  z-index: 100;
+/* notification */
+#notification{position:fixed;right:28px;bottom:28px;background:var(--notif-color);color:#fff;padding:12px 18px;border-radius:24px;opacity:0;transform:translateY(20px);transition:all .35s;display:flex;gap:10px;align-items:center;z-index:120}
+#notification.show{opacity:1;transform:translateY(0)}
 
-  display: flex;           /* horizontal layout */
-  align-items: center;     /* vertical center */
-  justify-content: space-between; /* text left, icon right */
-  gap: 10px;               /* spacing between text and icon */
-  min-width: 150px;        /* optional for consistent size */
-}
+/* ticker */
+.topTicker{position:fixed;top:20px;left:20px;width:calc(25vw - 20px);white-space:nowrap;overflow:hidden;border-radius:12px;background:rgba(255,255,255,0.06);backdrop-filter:blur(8px);padding:8px 12px;z-index:110}
+.topTicker .tickerContent{display:flex;width:max-content;animation:topTickerScroll 15s linear infinite}
+.topTicker .tickerContent span{padding-right:48px}
+@keyframes topTickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-#notification.show { 
-  opacity: 1; 
-  transform: translateY(0); 
-}
+/* preferences gear */
+#prefGear{position:fixed;top:22px;right:22px;z-index:200;width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);backdrop-filter:blur(10px);box-shadow:0 10px 36px rgba(0,0,0,0.35);cursor:pointer;transition:transform .35s,box-shadow .35s}
+#prefGear:hover{transform:rotate(6deg) scale(1.03);box-shadow:0 16px 46px rgba(0,0,0,0.45)}
+.gear{font-size:22px;transition:transform .6s cubic-bezier(.2,.9,.2,1)}
+#prefGear.spin .gear{transform:rotate(360deg)}
 
-#notification .material-symbols-outlined {
-  font-size: 20px;
-  transform: scale(0);           /* start small for pop-in */
-  transition: transform 0.3s ease; /* pop-in animation */
-}
+/* prefs overlay & modal */
+#prefsOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--overlay-bg);z-index:300;opacity:0;transition:opacity .35s}
+#prefsOverlay.show{display:flex;opacity:1}
+#prefsModal{width:min(920px,94vw);background:rgba(18,18,18,0.36);backdrop-filter:blur(14px);border-radius:16px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);color:var(--text-color);display:grid;grid-template-columns:1fr 320px;gap:12px}
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.label{font-size:.9rem;opacity:.95}
+.input, .select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:var(--text-color);outline:none}
+.row{display:flex;gap:8px;align-items:center}
+.presetGrid{display:flex;gap:8px;flex-wrap:wrap}
+.presetTile{width:72px;height:48px;border-radius:8px;background-size:cover;background-position:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.35);border:2px solid transparent}
+.presetTile.selected{border-color:rgba(255,255,255,0.22);transform:scale(1.03)}
+.prefsRight{display:flex;flex-direction:column;gap:10px}
+.prefsCard{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.35)}
+.closeBtn{background:transparent;border:none;color:#fff;font-weight:700;cursor:pointer;padding:8px;border-radius:10px}
 
-#notification.show .material-symbols-outlined {
-  transform: scale(1);           /* icon pops in */
-}
+/* footer */
+.footer{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;font-size:1rem;opacity:.75}
 
-.topTicker {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: calc(25vw - 20px);
-  white-space: nowrap;
-  overflow: hidden;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 6px 12px;
-  z-index: 100;
-}
-
-.topTicker .tickerContent {
-  display: flex;
-  width: max-content;
-  animation: topTickerScroll 15s linear infinite;
-}
-
-.topTicker .tickerContent span {
-  padding-right: 50px; /* space between repetitions */
-}
-
-@keyframes topTickerScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* half of total content because we duplicated it */
-}
-/* Responsive */
+/* responsive */
 @media(max-width:900px){
-  #time{font-size:120px;}
-  .date{font-size:22px;}
-  #dynamicIsland{width:100px;height:100px;}
+ #time{font-size:120px}
+ .date{font-size:20px}
+ #dynamicIsland{width:100px;height:100px}
+ #prefsModal{grid-template-columns:1fr}
 }
 @media(max-width:600px){
-  #time{font-size:80px;}
-  .date{font-size:18px;}
-  #dynamicIsland{width:80px;height:80px;}
-  .container{flex-direction:column;align-items:center;gap:15px;}
+ .container{flex-direction:column;align-items:center;gap:12px;padding:12px}
+ #time{font-size:72px}
+ #dynamicIsland{width:80px;height:80px}
 }
-
-
-.footer {
-  position: fixed;
-  bottom: 20px;             /* distance from bottom */
-  left: 50%;                /* horizontally center the footer */
-  transform: translateX(-50%); /* adjust horizontal centering */
-  display: flex;             /* enable flex for vertical alignment */
-  align-items: center;       /* vertical centering of content */
-  justify-content: center;   /* horizontal centering of content */
-  font-size: 1rem;
-  opacity: 0.7;
-  padding: 5px 10px;        /* optional padding for comfort */
-}
-
+.small{font-size:.9rem;opacity:.9}
+.smallButton{padding:6px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer}
 </style>
 </head>
 <body>
 
+<!-- Top ticker -->
 <div class="topTicker glass">
-  <div class="tickerContent">
-   <span>Welcome back, Ruben. Stay curious 💫</span>
-   <span>Welcome back, Ruben. Stay curious 💫</span>
+  <div class="tickerContent" id="tickerContent">
+    <span id="tickerText">Welcome back, Ruben. Stay curious 💫</span>
+    <span id="tickerTextDup">Welcome back, Ruben. Stay curious 💫</span>
   </div>
 </div>
 
 <div class="container">
-  <!-- Left Panel: Crypto Prices -->
+  <!-- left panel: crypto -->
   <div class="glass panel-left" id="infoPanel">
-  <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
-  <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
-  <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
-  <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
+    <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
+    <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
+    <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
+    <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
   </div>
 
-  <!-- Center Panel: Pomodoro -->
+  <!-- center: clock and pomodoro -->
   <div class="center">
     <div id="time">00:00</div>
     <div id="date" class="date">-- -- ----</div>
@@ -286,15 +163,14 @@ body {
     </div>
 
     <div id="pomControlsIsland">
-      <input type="number" id="pomCustomTime" placeholder="Min"
-        style="width:60px; text-align:center; border:none; border-radius:12px; padding:4px 6px;">
+      <input type="number" id="pomCustomTime" placeholder="Min" min="1" style="width:72px">
       <button id="pomStartBtn">Start</button>
       <button id="pomPauseBtn">Pause</button>
       <button id="pomResetBtn">Reset</button>
     </div>
   </div>
 
-  <!-- Right Panel: Weather -->
+  <!-- right: weather -->
   <div class="glass panel-right" id="weatherPanel">
     <div><span class="material-icons-outlined icon">cloud</span><span id="temp">--°C</span></div>
     <div><span class="material-icons-outlined icon">water_drop</span><span id="humidity">Humidity: --%</span></div>
@@ -304,22 +180,327 @@ body {
   </div>
 </div>
 
-<div class="bottom">
-  <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
+<div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
+
+<!-- notification with controls -->
+<div id="notification" role="status" aria-live="polite">
+  <span id="notificationText">Time Up!</span>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button id="notifPauseBtn" class="smallButton">Pause</button>
+    <button id="notifStopBtn" class="smallButton">Stop</button>
+    <span class="material-symbols-outlined">alarm</span>
+  </div>
 </div>
 
-<div id="notification">
-  <span>Time Up!</span>
-  <span class="material-symbols-outlined">alarm</span>
+<!-- preferences gear -->
+<div id="prefGear" title="Preferences (open)">
+  <span class="material-icons-outlined gear">settings</span>
 </div>
-<audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
 
+<!-- prefs overlay -->
+<div id="prefsOverlay" aria-hidden="true">
+  <div id="prefsModal" role="dialog" aria-modal="true" aria-label="Preferences">
+    <div>
+      <div class="field">
+        <div class="label">Wallpaper (upload or choose preset)</div>
+        <div class="row">
+          <input id="wallUpload" type="file" accept="image/*" class="input">
+          <button id="removeWallpaper" class="closeBtn">Remove</button>
+        </div>
+        <div class="presetGrid" id="presetGrid"></div>
+      </div>
 
+      <div class="field">
+        <div class="label">Top ticker text</div>
+        <input id="tickerInput" class="input" placeholder="Welcome back, Ruben. Stay curious 💫">
+      </div>
+
+      <div class="field">
+        <div class="label">Pomodoro default (minutes)</div>
+        <input id="pomDefaultInput" type="number" class="input" min="1" max="180">
+      </div>
+
+      <div class="field">
+        <div class="label">Temperature unit & City</div>
+        <div class="row">
+          <select id="tempUnit" class="select">
+            <option value="C">Celsius (°C)</option>
+            <option value="F">Fahrenheit (°F)</option>
+          </select>
+          <input id="cityInput" class="input" placeholder="Lalitpur">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">Theme color (primary)</div>
+        <input id="themeColor" type="color" class="input" style="width:56px;height:44px;padding:6px">
+      </div>
+
+      <div class="field">
+        <div class="label">Ticker speed (seconds loop)</div>
+        <input id="tickerSpeed" type="number" min="6" max="60" class="input">
+      </div>
+
+    </div>
+
+    <div class="prefsRight">
+      <div class="prefsCard">
+        <div class="label">Preview</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
+          <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.25)"></div>
+          <div class="row"><button id="savePrefs" class="closeBtn">Save</button><button id="closePrefs" class="closeBtn">Close</button></div>
+        </div>
+      </div>
+
+      <div class="prefsCard">
+        <div class="label">Other Controls</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+          <button id="clearPrefs" class="closeBtn">Reset preferences</button>
+          <button id="installPWA" class="closeBtn" style="display:none">Install PWA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- oneko cat -->
 <script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
 
 <script>
+/* ===========================================================
+   Single-file app.js (inline) — preferences, clock, APIs,
+   pomodoro, canvas animation, PWA registration, embedded alarm
+   =========================================================== */
 
-// --- Clock ---
+/* --------------------------
+   Embedded alarm generation
+   -------------------------- */
+/* generate a short 1s alarm WAV (sine + quick rise) and return dataURL base64 */
+function generateAlarmDataURL(duration = 1.0, freq = 880, sampleRate = 44100){
+  const len = Math.floor(duration * sampleRate);
+  const channels = 1;
+  // create PCM 16-bit little endian
+  const samples = new Int16Array(len * channels);
+  for(let i=0;i<len;i++){
+    // quick attack and decay envelope
+    const t = i / sampleRate;
+    // envelope: fast attack (0.01s), linear decay to 0.6s, then tail
+    let env = 1;
+    if(t < 0.02) env = t / 0.02;
+    else if(t < duration * 0.6) env = 1 - ((t - 0.02) / (duration * 0.6 - 0.02)) * 0.6;
+    else env = Math.max(0, 0.4 * (1 - (t - duration*0.6) / (duration*0.4)));
+    const value = Math.sin(2 * Math.PI * freq * t) * 0.9 * env;
+    samples[i] = Math.max(-1, Math.min(1, value)) * 0x7fff;
+  }
+
+  // WAV file header
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  function writeString(view, offset, string){
+    for(let i=0;i<string.length;i++) view.setUint8(offset + i, string.charCodeAt(i));
+  }
+  let offset = 0;
+  writeString(view, offset, 'RIFF'); offset += 4;
+  view.setUint32(offset, 36 + samples.length * 2, true); offset += 4;
+  writeString(view, offset, 'WAVE'); offset += 4;
+  writeString(view, offset, 'fmt '); offset += 4;
+  view.setUint32(offset, 16, true); offset += 4;
+  view.setUint16(offset, 1, true); offset += 2; // PCM
+  view.setUint16(offset, channels, true); offset += 2;
+  view.setUint32(offset, sampleRate, true); offset += 4;
+  view.setUint32(offset, sampleRate * channels * 2, true); offset += 4;
+  view.setUint16(offset, channels * 2, true); offset += 2;
+  view.setUint16(offset, 16, true); offset += 2;
+  writeString(view, offset, 'data'); offset += 4;
+  view.setUint32(offset, samples.length * 2, true); offset += 4;
+  // PCM samples
+  for(let i=0;i<samples.length;i++, offset += 2) view.setInt16(offset, samples[i], true);
+
+  // base64
+  const binary = new Uint8Array(buffer);
+  let binaryStr = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < binary.length; i += chunkSize) {
+    binaryStr += String.fromCharCode.apply(null, binary.subarray(i, i + chunkSize));
+  }
+  const base64 = btoa(binaryStr);
+  return 'data:audio/wav;base64,' + base64;
+}
+
+// create audio element with embedded dataURL
+const notifAudio = document.createElement('audio');
+notifAudio.id = 'notifSound';
+notifAudio.preload = 'auto';
+notifAudio.src = generateAlarmDataURL(1.0, 880);
+document.body.appendChild(notifAudio);
+
+/* --------------------------
+   Defaults & preferences
+   -------------------------- */
+const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210"; // as requested
+const defaults = {
+  themeColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#5C7C75',
+  ticker: 'Welcome back, Ruben. Stay curious 💫',
+  pomDefault: 25,
+  wallpaper: null,
+  city: 'Lalitpur',
+  tempUnit: 'C',
+  tickerSpeed: 15,
+  presets: [
+    'assets/chihiro036.jpeg',
+    'https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop'
+  ]
+};
+
+let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || defaults;
+if(!prefs.presets) prefs.presets = defaults.presets;
+
+/* UI elements */
+const prefGear = document.getElementById('prefGear');
+const prefsOverlay = document.getElementById('prefsOverlay');
+const wallUpload = document.getElementById('wallUpload');
+const presetGrid = document.getElementById('presetGrid');
+const previewWallpaper = document.getElementById('previewWallpaper');
+const tickerInput = document.getElementById('tickerInput');
+const pomDefaultInput = document.getElementById('pomDefaultInput');
+const cityInput = document.getElementById('cityInput');
+const tempUnit = document.getElementById('tempUnit');
+const themeColor = document.getElementById('themeColor');
+const savePrefs = document.getElementById('savePrefs');
+const closePrefs = document.getElementById('closePrefs');
+const removeWallpaper = document.getElementById('removeWallpaper');
+const clearPrefs = document.getElementById('clearPrefs');
+const installPWA = document.getElementById('installPWA');
+const tickerSpeed = document.getElementById('tickerSpeed');
+const tickerTextEl = document.getElementById('tickerText');
+const tickerTextDupEl = document.getElementById('tickerTextDup');
+
+function savePrefsToStorage(){
+  localStorage.setItem('mps_prefs', JSON.stringify(prefs));
+}
+
+function applyWallpaper(w){
+  if(!w){ document.body.style.background = ''; previewWallpaper.style.backgroundImage = ''; return; }
+  document.body.style.background = `url('${w}') center/cover no-repeat`;
+  previewWallpaper.style.backgroundImage = `url('${w}')`;
+}
+
+function buildPresets(){
+  presetGrid.innerHTML = '';
+  prefs.presets.forEach((url,i)=>{
+    const tile = document.createElement('div');
+    tile.className = 'presetTile' + ((prefs.wallpaper===url)?' selected':'');
+    tile.style.backgroundImage = `url('${url}')`;
+    tile.addEventListener('click', ()=>{
+      prefs.wallpaper = url;
+      applyWallpaper(url);
+      document.querySelectorAll('.presetTile').forEach(t=>t.classList.remove('selected'));
+      tile.classList.add('selected');
+    });
+    presetGrid.appendChild(tile);
+  });
+}
+
+/* wallpaper upload -> base64 */
+wallUpload.addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    prefs.wallpaper = reader.result;
+    applyWallpaper(prefs.wallpaper);
+    buildPresets();
+  };
+  reader.readAsDataURL(f);
+});
+
+removeWallpaper.addEventListener('click', ()=>{
+  prefs.wallpaper = null;
+  applyWallpaper(null);
+  buildPresets();
+});
+
+/* open/close prefs */
+prefGear.addEventListener('click', ()=>{
+  prefGear.classList.toggle('spin');
+  prefsOverlay.classList.toggle('show');
+  prefsOverlay.setAttribute('aria-hidden', prefsOverlay.classList.contains('show')? 'false' : 'true');
+  // populate fields
+  tickerInput.value = prefs.ticker || defaults.ticker;
+  pomDefaultInput.value = prefs.pomDefault || defaults.pomDefault;
+  cityInput.value = prefs.city || defaults.city;
+  tempUnit.value = prefs.tempUnit || defaults.tempUnit;
+  themeColor.value = prefs.themeColor || defaults.themeColor;
+  tickerSpeed.value = prefs.tickerSpeed || defaults.tickerSpeed;
+  buildPresets();
+});
+
+closePrefs.addEventListener('click', ()=>{
+  prefsOverlay.classList.remove('show');
+  prefGear.classList.remove('spin');
+  prefsOverlay.setAttribute('aria-hidden','true');
+});
+
+savePrefs.addEventListener('click', ()=>{
+  prefs.ticker = tickerInput.value || defaults.ticker;
+  prefs.pomDefault = parseInt(pomDefaultInput.value) || defaults.pomDefault;
+  prefs.city = cityInput.value || defaults.city;
+  prefs.tempUnit = tempUnit.value || defaults.tempUnit;
+  prefs.themeColor = themeColor.value || defaults.themeColor;
+  prefs.tickerSpeed = parseInt(tickerSpeed.value) || defaults.tickerSpeed;
+  savePrefsToStorage();
+  applyPreferences();
+  prefsOverlay.classList.remove('show'); prefGear.classList.remove('spin');
+});
+
+/* reset */
+clearPrefs.addEventListener('click', ()=>{
+  localStorage.removeItem('mps_prefs');
+  prefs = defaults;
+  savePrefsToStorage();
+  applyPreferences();
+  buildPresets();
+  alert('Preferences reset to defaults.');
+});
+
+/* PWA install prompt handling */
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  window.deferredPrompt = e;
+  installPWA.style.display = 'inline-block';
+});
+installPWA.addEventListener('click', ()=>{
+  if(window.deferredPrompt){
+    window.deferredPrompt.prompt();
+    window.deferredPrompt.userChoice.then(()=>{ window.deferredPrompt = null; installPWA.style.display = 'none'; });
+  } else {
+    alert('Install prompt not available. Serve over HTTPS and try again.');
+  }
+});
+
+/* apply stored preferences on load */
+function applyPreferences(){
+  document.documentElement.style.setProperty('--primary-color', prefs.themeColor || defaults.themeColor);
+  tickerTextEl.textContent = prefs.ticker || defaults.ticker;
+  tickerTextDupEl.textContent = prefs.ticker || defaults.ticker;
+  const animSec = Math.max(6, prefs.tickerSpeed || defaults.tickerSpeed);
+  document.querySelector('.topTicker .tickerContent').style.animationDuration = animSec + 's';
+  if(prefs.wallpaper) applyWallpaper(prefs.wallpaper);
+  // ensure pom default exists in localStorage if not already set
+  if(!localStorage.getItem('pomTotal')) {
+    localStorage.setItem('pomTotal', (prefs.pomDefault||defaults.pomDefault) * 60);
+  }
+}
+applyPreferences();
+buildPresets();
+
+/* live ticker input preview */
+tickerInput.addEventListener('input', ()=>{ const v = tickerInput.value || defaults.ticker; tickerTextEl.textContent = v; tickerTextDupEl.textContent = v; });
+
+/* --------------------------
+   Clock
+   -------------------------- */
 function updateTime(){
   const now = new Date();
   document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
@@ -327,168 +508,160 @@ function updateTime(){
 }
 setInterval(updateTime,1000); updateTime();
 
-  // --- Crypto Tracker ---
-const previousPrices = JSON.parse(localStorage.getItem("previousPrices")) || {};
+/* --------------------------
+   Crypto (CoinGecko)
+   -------------------------- */
+const previousPrices = JSON.parse(localStorage.getItem("previousPrices") || '{}');
 
-async function fetchCrypto() {
-  try {
-    const res = await fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd&include_24hr_change=true"
-    );
+async function fetchCrypto(){
+  try{
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd&include_24hr_change=true");
     const data = await res.json();
 
-    function updateElement(id, coinData, symbol = "$") {
+    function updateElement(id, coinData, symbol='$'){
       const el = document.getElementById(id);
       const price = coinData.usd;
       const change = coinData.usd_24h_change;
-
-      let arrow = "";
-      if (change > 0.1) arrow = `<span style="color:#00ff88">▲</span>`;
-      else if (change < -0.1) arrow = `<span style="color:#ff5555">▼</span>`;
+      let arrow = '';
+      if(change > 0.1) arrow = `<span style="color:#00ff88">▲</span>`;
+      else if(change < -0.1) arrow = `<span style="color:#ff5555">▼</span>`;
       else arrow = `<span style="color:#aaa">▬</span>`;
-
       el.innerHTML = `${id.toUpperCase()}: ${symbol}${price.toLocaleString()} ${arrow}`;
       previousPrices[id] = price;
     }
 
-    updateElement("btc", data.bitcoin);
-    updateElement("eth", data.ethereum);
+    updateElement('btc', data.bitcoin);
+    updateElement('eth', data.ethereum);
+    if(data['pi-network'] && data['pi-network'].usd != null) updateElement('pi', data['pi-network']);
+    else document.getElementById('pi').textContent = 'PI: N/A';
+    updateElement('usdt', data.tether);
 
-    if (data["pi-network"] && data["pi-network"].usd != null)
-      updateElement("pi", data["pi-network"]);
-    else
-      document.getElementById("pi").textContent = "PI: N/A";
-
-    updateElement("usdt", data.tether);
-
-    // Save last prices
-    localStorage.setItem("previousPrices", JSON.stringify(previousPrices));
-  } catch (e) {
-    console.error("Fetch error:", e);
-    ["btc", "eth", "pi", "usdt"].forEach(id => {
-      document.getElementById(id).textContent = id.toUpperCase() + ": Error";
-    });
+    localStorage.setItem('previousPrices', JSON.stringify(previousPrices));
+  } catch(err){
+    console.error('Crypto fetch error', err);
+    ['btc','eth','pi','usdt'].forEach(id => document.getElementById(id).textContent = id.toUpperCase()+': Error');
   }
 }
-
-// Initial fetch
 fetchCrypto();
-// Update every 30 seconds
-setInterval(fetchCrypto, 30000);
+setInterval(fetchCrypto, 120000);
 
-// --- Weather ---
-const WEATHER_API_KEY="d81009d2cbae458bbdb51509251210"; const CITY="Lalitpur";
+/* --------------------------
+   Weather (WeatherAPI) - Lalitpur default
+   -------------------------- */
+function cToF(c){ return (c * 9/5) + 32; }
 async function fetchWeather(){
   try{
-    const res=await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}`);
-    const data=await res.json();
-    document.getElementById('temp').textContent=data.current.temp_c.toFixed(1)+"°C";
-    document.getElementById('humidity').textContent="Humidity: "+data.current.humidity+"%";
-    document.getElementById('dew').textContent="Dew: "+data.current.dewpoint_c.toFixed(1)+"°C";
-    document.getElementById('wind').textContent="Wind: "+data.current.wind_kph+" km/h";
-    document.getElementById('pressure').textContent="Pressure: "+data.current.pressure_mb+" hPa";
-  }catch(e){console.error(e);}
+    const CITY = (prefs && prefs.city) ? prefs.city : 'Lalitpur';
+    const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(CITY)}`);
+    const data = await res.json();
+    let tempC = data.current.temp_c;
+    let displayTemp = tempC;
+    if(prefs.tempUnit === 'F') displayTemp = cToF(tempC);
+    document.getElementById('temp').textContent = displayTemp.toFixed(1) + (prefs.tempUnit === 'F' ? '°F' : '°C');
+    document.getElementById('humidity').textContent = 'Humidity: ' + data.current.humidity + '%';
+    const dew = prefs.tempUnit === 'F' ? cToF(data.current.dewpoint_c) : data.current.dewpoint_c;
+    document.getElementById('dew').textContent = 'Dew: ' + dew.toFixed(1) + (prefs.tempUnit === 'F' ? '°F' : '°C');
+    document.getElementById('wind').textContent = 'Wind: ' + data.current.wind_kph + ' km/h';
+    document.getElementById('pressure').textContent = 'Pressure: ' + data.current.pressure_mb + ' hPa';
+  } catch(e){
+    console.error('Weather error', e);
+    document.getElementById('temp').textContent = 'Weather unavailable';
+  }
 }
-fetchWeather(); setInterval(fetchWeather,1800000);
+fetchWeather();
+setInterval(fetchWeather, 1800000);
 
-// --- Pomodoro ---
-const canvas = document.getElementById("pomCanvas");
-const ctx = canvas.getContext("2d");
-const pomDisplay = document.getElementById("dynamicIslandTime");
-const dynamicIsland = document.getElementById("dynamicIsland");
+/* --------------------------
+   Pomodoro w/ canvas animation
+   -------------------------- */
+const canvas = document.getElementById('pomCanvas');
+const ctx = canvas.getContext('2d');
+const pomDisplay = document.getElementById('dynamicIslandTime');
+const dynamicIsland = document.getElementById('dynamicIsland');
 
-let pomTotal = localStorage.getItem("pomTotal") ? parseInt(localStorage.getItem("pomTotal")) : 25*60;
-let pomTime = localStorage.getItem("pomTime") ? parseInt(localStorage.getItem("pomTime")) : pomTotal;
-let isPaused = localStorage.getItem("pomPaused") === "true";
-let started = localStorage.getItem("pomStarted") === "true";
+let pomTotal = localStorage.getItem('pomTotal') ? parseInt(localStorage.getItem('pomTotal')) : (prefs.pomDefault || 25) * 60;
+let pomTime = localStorage.getItem('pomTime') ? parseInt(localStorage.getItem('pomTime')) : pomTotal;
+let isPaused = localStorage.getItem('pomPaused') === 'true';
+let started = localStorage.getItem('pomStarted') === 'true';
 let pomInterval = null;
 
-function resizeCanvas(){canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;}
-resizeCanvas(); window.addEventListener("resize",resizeCanvas);
+function resizeCanvas(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 
 function updatePomDisplay(){
-  const m = Math.floor(pomTime/60);
-  const s = pomTime%60;
-  pomDisplay.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  const m = Math.floor(pomTime / 60);
+  const s = pomTime % 60;
+  pomDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
 function savePomState(){
-  localStorage.setItem("pomTotal", pomTotal);
-  localStorage.setItem("pomTime", pomTime);
-  localStorage.setItem("pomPaused", isPaused);
-  localStorage.setItem("pomStarted", started);
+  localStorage.setItem('pomTotal', pomTotal);
+  localStorage.setItem('pomTime', pomTime);
+  localStorage.setItem('pomPaused', isPaused);
+  localStorage.setItem('pomStarted', started);
 }
 
-// --- Draw expressive + smooth progress ---
-function drawPom() {
+/* Draw expressive circular wavy progress */
+function drawPom(){
   const w = canvas.width;
   const h = canvas.height;
   const cx = w/2;
   const cy = h/2;
-  const r = w/2 - 12;
+  const r = Math.min(w,h)/2 - 10;
+  ctx.clearRect(0,0,w,h);
 
-  ctx.clearRect(0, 0, w, h);
-
-  // Draw remaining portion (smooth, not wavy)
   if(started){
-    const progress = 1 - pomTime/pomTotal; // fraction elapsed
+    // background arc for remaining
+    const progress = 1 - pomTime / pomTotal;
     ctx.beginPath();
     ctx.arc(cx, cy, r, -Math.PI/2 + 2*Math.PI*progress, 1.5*Math.PI);
-    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
     ctx.lineWidth = 12;
     ctx.stroke();
   }
 
-  // Draw completed portion (wavy)
-  if(!started){ 
-    // Before start → full wavy indeterminate
+  if(!started){
+    // indeterminate wavy ring
     const waveAmp = 6;
     const waveFreq = 6;
-    const speed = Date.now()/300;
+    const speed = Date.now() / 300;
     const steps = 500;
     ctx.beginPath();
     for(let i=0;i<=steps;i++){
       const angle = -Math.PI/2 + (i/steps)*2*Math.PI;
       const wave = Math.sin(angle*waveFreq + speed) * waveAmp;
-      const x = cx + (r+wave)*Math.cos(angle);
-      const y = cy + (r+wave)*Math.sin(angle);
-      if(i===0) ctx.moveTo(x,y);
-      else ctx.lineTo(x,y);
+      const x = cx + (r + wave) * Math.cos(angle);
+      const y = cy + (r + wave) * Math.sin(angle);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
     }
-    ctx.strokeStyle = ctx.createConicGradient(-Math.PI/2, cx, cy);
-    ctx.strokeStyle = "#5e5ce6"; // keep base color for indeterminate
+    ctx.strokeStyle = '#5C7C75';
+    ctx.lineWidth = 10;
     ctx.stroke();
   } else {
-    // Determinate wavy completed portion
-    const progress = 1 - pomTime/pomTotal;
+    const progress = 1 - pomTime / pomTotal;
     const waveAmp = isPaused ? 2 : 6;
     const waveFreq = 6;
     const speed = Date.now() / (isPaused?1200:300);
     const steps = 500;
-
     const grad = ctx.createConicGradient(-Math.PI/2, cx, cy);
-     grad.addColorStop(0, "#5C7C75");  // updated
-    grad.addColorStop(0.4, "#ff6b6b");
-    grad.addColorStop(0.8, "#5C7C75"); // updated
-    grad.addColorStop(1, "#5C7C75");   // updated
+    grad.addColorStop(0, '#5C7C75');
+    grad.addColorStop(0.4, '#ff6b6b');
+    grad.addColorStop(0.8, '#5C7C75');
+    grad.addColorStop(1, '#5C7C75');
     ctx.strokeStyle = grad;
-
     ctx.beginPath();
     for(let i=0;i<=steps*progress;i++){
       const angle = -Math.PI/2 + (i/steps)*2*Math.PI;
       const wave = Math.sin(angle*waveFreq + speed) * waveAmp;
-      const x = cx + (r+wave)*Math.cos(angle);
-      const y = cy + (r+wave)*Math.sin(angle);
-      if(i===0) ctx.moveTo(x,y);
-      else ctx.lineTo(x,y);
+      const x = cx + (r + wave) * Math.cos(angle);
+      const y = cy + (r + wave) * Math.sin(angle);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
     }
-
-    // Slow breathing glow when paused
-    const glow = isPaused ? Math.sin(Date.now()/3000*Math.PI)*6+8 : 0;
+    const glow = isPaused ? Math.sin(Date.now()/3000*Math.PI) * 6 + 8 : 0;
     ctx.shadowBlur = glow;
-    ctx.shadowColor = "rgba(255,255,255,0.4)";
+    ctx.shadowColor = 'rgba(255,255,255,0.45)';
     ctx.lineWidth = 10;
-    ctx.lineCap = "round";
+    ctx.lineCap = 'round';
     ctx.stroke();
     ctx.shadowBlur = 0;
   }
@@ -497,68 +670,109 @@ function drawPom() {
 }
 drawPom();
 
+/* pom controls */
 function startPom(){
-  const val = parseInt(document.getElementById("pomCustomTime").value);
-  if(val>0){pomTotal = val*60; pomTime = pomTotal;}
+  const val = parseInt(document.getElementById('pomCustomTime').value);
+  if(val > 0){ pomTotal = val * 60; pomTime = pomTotal; }
   started = true;
   isPaused = false;
   savePomState();
-  dynamicIsland.classList.add("pulse");
-  document.getElementById("pomStartBtn").style.display="none";
-  document.getElementById("pomPauseBtn").style.display="inline-block";
-  document.getElementById("pomResetBtn").style.display="inline-block";
+  dynamicIsland.classList.add('pulse');
+  document.getElementById('pomStartBtn').style.display = 'none';
+  document.getElementById('pomPauseBtn').style.display = 'inline-block';
+  document.getElementById('pomResetBtn').style.display = 'inline-block';
   if(pomInterval) return;
   pomInterval = setInterval(()=>{
     if(!isPaused && started){
       pomTime--;
       if(pomTime <= 0){
-        clearInterval(pomInterval);
-        pomInterval = null;
+        clearInterval(pomInterval); pomInterval = null;
         showNotification();
         resetPom();
       }
-      updatePomDisplay();
-      savePomState();
+      updatePomDisplay(); savePomState();
     }
-  },1000);
+  }, 1000);
 }
 
 function pausePom(){
   isPaused = !isPaused;
-  document.getElementById("pomPauseBtn").textContent = isPaused ? "Resume" : "Pause";
-  dynamicIsland.classList.toggle("pulse", !isPaused);
+  document.getElementById('pomPauseBtn').textContent = isPaused ? 'Resume' : 'Pause';
+  dynamicIsland.classList.toggle('pulse', !isPaused);
   savePomState();
 }
 
 function resetPom(){
-  clearInterval(pomInterval);
-  pomInterval = null;
-  started = false;
-  isPaused = false;
+  clearInterval(pomInterval); pomInterval = null;
+  started = false; isPaused = false;
   pomTime = pomTotal;
   updatePomDisplay();
-  dynamicIsland.classList.remove("pulse");
-  document.getElementById("pomStartBtn").style.display="inline-block";
-  document.getElementById("pomPauseBtn").style.display="none";
-  document.getElementById("pomResetBtn").style.display="none";
+  dynamicIsland.classList.remove('pulse');
+  document.getElementById('pomStartBtn').style.display = 'inline-block';
+  document.getElementById('pomPauseBtn').style.display = 'none';
+  document.getElementById('pomResetBtn').style.display = 'none';
   savePomState();
 }
 
-function showNotification(){
-  const notif = document.getElementById("notification");
-  notif.classList.add("show");
-  document.getElementById("notifSound").play();
-  
-  // remove show class after 3.5s
-  setTimeout(() => notif.classList.remove("show"), 3500);
+/* show notification + play embedded audio */
+function showNotification(text = 'Time Up!'){
+  const notif = document.getElementById('notification');
+  document.getElementById('notificationText').textContent = text;
+  notif.classList.add('show');
+  try { notifAudio.currentTime = 0; notifAudio.play(); } catch(e){ console.warn('Audio play prevented', e); }
+  setTimeout(()=> notif.classList.remove('show'), 3500);
 }
 
-document.getElementById("pomStartBtn").addEventListener("click", startPom);
-document.getElementById("pomPauseBtn").addEventListener("click", pausePom);
-document.getElementById("pomResetBtn").addEventListener("click", resetPom);
+/* notification audio controls */
+document.getElementById('notifPauseBtn').addEventListener('click', ()=>{
+  if(!notifAudio) return;
+  if(!notifAudio.paused){ notifAudio.pause(); document.getElementById('notifPauseBtn').textContent = 'Resume'; }
+  else { notifAudio.play(); document.getElementById('notifPauseBtn').textContent = 'Pause'; }
+});
+document.getElementById('notifStopBtn').addEventListener('click', ()=>{
+  if(!notifAudio) return;
+  notifAudio.pause(); notifAudio.currentTime = 0; document.getElementById('notification').classList.remove('show');
+});
+
+/* event bindings */
+document.getElementById('pomStartBtn').addEventListener('click', startPom);
+document.getElementById('pomPauseBtn').addEventListener('click', pausePom);
+document.getElementById('pomResetBtn').addEventListener('click', resetPom);
 
 updatePomDisplay();
-if(started) startPom(); // resume state if user reopens tab
+if(started) startPom();
+
+/* --------------------------
+   PWA Registration for sw.js
+   -------------------------- */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(()=> {
+    console.log('Service worker registered.');
+  }).catch(e => console.warn('SW registration failed', e));
+}
+
+/* --------------------------
+   Small accessibility: close prefs with ESC
+   -------------------------- */
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    prefsOverlay.classList.remove('show');
+    prefGear.classList.remove('spin');
+  }
+});
+
+/* Initialize UI values */
+function initUIValues(){
+  tickerInput.value = prefs.ticker || defaults.ticker;
+  pomDefaultInput.value = prefs.pomDefault || defaults.pomDefault;
+  cityInput.value = prefs.city || defaults.city;
+  tempUnit.value = prefs.tempUnit || defaults.tempUnit;
+  themeColor.value = prefs.themeColor || defaults.themeColor;
+  tickerSpeed.value = prefs.tickerSpeed || defaults.tickerSpeed;
+  buildPresets();
+}
+initUIValues();
+
 </script>
 </body>
 </html>
