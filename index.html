@@ -51,7 +51,7 @@ body {
   transition: all var(--transition-speed) ease;
 }
 
-/* Panels Layout */
+/* Layout */
 .container {
   display: flex;
   justify-content: space-between;
@@ -64,9 +64,46 @@ body {
 }
 .panel-left, .panel-right { display: flex; flex-direction: column; gap: 12px; }
 .panel-left div, .panel-right div { display: flex; align-items: center; gap: 10px; font-weight: 500; }
-.panel-left div span.icon, .panel-right div span.icon { font-size: 1.4rem; color: #fff; }
+.icon { font-size: 1.4rem; color: #fff; }
 
-/* Center Panel */
+  .panel-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 1rem;
+  }
+
+  .panel-left div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .icon {
+    font-size: 1.4rem;
+    color: var(--text-color);
+  }
+
+  /* Arrow appearance */
+  .crypto-arrow {
+    font-size: 0.95rem;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .arrow-up {
+    color: #00ff88;
+  }
+  .arrow-down {
+    color: #ff5555;
+  }
+  .arrow-stable {
+    color: #aaa;
+  }
+
+/* Center */
 .center {
   display: flex;
   flex-direction: column;
@@ -75,34 +112,35 @@ body {
   gap: 20px;
   flex: 1;
 }
-#time {
-  font-size: 180px;        /* BIG main clock */
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-.date {
-  font-size: 28px;
-  opacity: 0.85;
-}
+#time { font-size: 180px; font-weight: 700; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.date { font-size: 28px; opacity: 0.85; }
 
-/* Dynamic Island / Pomodoro */ 
-  #dynamicIsland 
-  { position: relative; width: 120px; /* small circle */ height: 120px; border-radius: 60px; background: var(--glass-bg);
-   backdrop-filter: blur(var(--glass-blur)); 
-  display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(0,0,0,0.2); 
-  transition: transform 0.3s ease, opacity 0.4s ease; } 
-  
-  #dynamicIsland.pulse 
-  { animation: pulseIsland 1.5s infinite alternate; } 
-  @keyframes pulseIsland { 0% { transform: scale(0.98); } 50% { transform: scale(1.03); } 100% { transform: scale(0.98); } } 
-  
-  #dynamicIsland canvas 
-  { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 60px; } 
-  
-  #dynamicIslandTime { font-size: 1rem; font-weight: 600; z-index: 2; }
-  
+/* Dynamic Island */
+#dynamicIsland {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, opacity 0.4s ease;
+}
+#dynamicIsland.pulse { animation: pulseIsland 1.5s infinite alternate; }
+@keyframes pulseIsland {
+  0% { transform: scale(0.98); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(0.98); }
+}
+#dynamicIsland canvas {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%; border-radius: 60px;
+}
+#dynamicIslandTime { font-size: 1rem; font-weight: 600; z-index: 2; }
+
 /* Pomodoro Controls */
 #pomControlsIsland {
   display: flex;
@@ -110,7 +148,6 @@ body {
   margin-top: 12px;
   flex-wrap: wrap;
   justify-content: center;
-  transition: opacity 0.3s ease;
 }
 #pomControlsIsland button {
   padding: 4px 8px;
@@ -139,16 +176,14 @@ body {
   font-weight: 500;
   z-index: 100;
 }
-#notification.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+#notification.show { opacity: 1; transform: translateY(0); }
 
+/* Top Ticker */
 .topTicker {
   position: fixed;
   top: 20px;
-  left: 0;         /* align to top-left */
-  width: 25vw;     /* quarter of viewport width */
+  left: 0;
+  width: 25vw;
   white-space: nowrap;
   overflow: hidden;
   border-radius: 12px;
@@ -157,54 +192,46 @@ body {
   padding: 6px 12px;
   z-index: 100;
 }
-
 .topTicker .tickerContent {
   display: inline-block;
   padding-left: 100%;
   animation: topTickerScroll 20s linear infinite;
 }
-
 @keyframes topTickerScroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }
 }
 
-
-/* Media Queries */
+/* Responsive */
 @media(max-width:900px){
-  #time { font-size:120px; }
-  .date { font-size:22px; }
-  #dynamicIsland { width:100px; height:100px; }
-  #pomControlsIsland { margin-top:10px; }
+  #time{font-size:120px;}
+  .date{font-size:22px;}
+  #dynamicIsland{width:100px;height:100px;}
 }
 @media(max-width:600px){
-  #time { font-size:80px; }
-  .date { font-size:18px; }
-  #dynamicIsland { width:80px; height:80px; }
-  #pomControlsIsland { margin-top:8px; }
-  .container { flex-direction: column; align-items: center; gap:15px; }
+  #time{font-size:80px;}
+  .date{font-size:18px;}
+  #dynamicIsland{width:80px;height:80px;}
+  .container{flex-direction:column;align-items:center;gap:15px;}
 }
 </style>
 </head>
 <body>
 
-
-  <!-- Top-left scrolling ticker -->
 <div class="topTicker glass">
   <div class="tickerContent">Welcome back, Ruben. Stay curious 💫</div>
 </div>
 
-  
 <div class="container">
-  <!-- Left Panel: Crypto -->
+  <!-- Left Panel: Crypto Prices -->
   <div class="glass panel-left" id="infoPanel">
-    <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
-    <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
-    <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
-    <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
+  <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
+  <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
+  <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
+  <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
   </div>
 
-  <!-- Center Panel: Time & Pomodoro -->
+  <!-- Center Panel: Pomodoro -->
   <div class="center">
     <div id="time">00:00</div>
     <div id="date" class="date">-- -- ----</div>
@@ -215,7 +242,8 @@ body {
     </div>
 
     <div id="pomControlsIsland">
-      <input type="number" id="pomCustomTime" placeholder="Min" style="width:60px; text-align:center; border:none; border-radius:12px; padding:4px 6px;">
+      <input type="number" id="pomCustomTime" placeholder="Min"
+        style="width:60px; text-align:center; border:none; border-radius:12px; padding:4px 6px;">
       <button id="pomStartBtn">Start</button>
       <button id="pomPauseBtn">Pause</button>
       <button id="pomResetBtn">Reset</button>
@@ -232,63 +260,64 @@ body {
   </div>
 </div>
 
-<!-- Bottom Section -->
 <div class="bottom">
-
   <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
 </div>
 
 <div id="notification">Pomodoro finished! ⏰</div>
 <audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
 
-   <!-- Oneko Cat -->
- <script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
+
+<script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js" data-cat="https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif"></script>
+
 <script>
-// --- Time ---
+
+// --- Clock ---
 function updateTime(){
-  const now=new Date();
-  document.getElementById('time').textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false});
-  document.getElementById('date').textContent=now.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+  const now = new Date();
+  document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
+  document.getElementById('date').textContent = now.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
 }
 setInterval(updateTime,1000); updateTime();
 
-let previousPrices = {};
+
+ // --- Crypto Tracker ---
+  // --- Crypto Tracker ---
+const previousPrices = JSON.parse(localStorage.getItem("previousPrices")) || {};
 
 async function fetchCrypto() {
   try {
     const res = await fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd"
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd&include_24hr_change=true"
     );
     const data = await res.json();
 
-    function updateElement(id, newValue, symbol = "$") {
+    function updateElement(id, coinData, symbol = "$") {
       const el = document.getElementById(id);
-      const oldValue = previousPrices[id];
+      const price = coinData.usd;
+      const change = coinData.usd_24h_change;
+
       let arrow = "";
+      if (change > 0.1) arrow = `<span style="color:#00ff88">▲</span>`;
+      else if (change < -0.1) arrow = `<span style="color:#ff5555">▼</span>`;
+      else arrow = `<span style="color:#aaa">▬</span>`;
 
-      if (oldValue !== undefined && !isNaN(oldValue)) {
-        if (newValue > oldValue) arrow = " ▲";
-        else if (newValue < oldValue) arrow = " ▼";
-      }
-
-      // Add animation + color
-      el.classList.remove("price-up", "price-down");
-      if (arrow === " ▲") el.classList.add("price-up");
-      if (arrow === " ▼") el.classList.add("price-down");
-
-      el.textContent = `${id.toUpperCase()}: ${symbol}${newValue.toLocaleString()}${arrow}`;
-      previousPrices[id] = newValue;
+      el.innerHTML = `${id.toUpperCase()}: ${symbol}${price.toLocaleString()} ${arrow}`;
+      previousPrices[id] = price;
     }
 
-    // Update each crypto
-    updateElement("btc", data.bitcoin.usd);
-    updateElement("eth", data.ethereum.usd);
+    updateElement("btc", data.bitcoin);
+    updateElement("eth", data.ethereum);
+
     if (data["pi-network"] && data["pi-network"].usd != null)
-      updateElement("pi", data["pi-network"].usd);
+      updateElement("pi", data["pi-network"]);
     else
       document.getElementById("pi").textContent = "PI: N/A";
-    updateElement("usdt", data.tether.usd);
 
+    updateElement("usdt", data.tether);
+
+    // Save last prices
+    localStorage.setItem("previousPrices", JSON.stringify(previousPrices));
   } catch (e) {
     console.error("Fetch error:", e);
     ["btc", "eth", "pi", "usdt"].forEach(id => {
@@ -317,31 +346,32 @@ async function fetchWeather(){
 }
 fetchWeather(); setInterval(fetchWeather,1800000);
 
-
-  
 // --- Pomodoro ---
 const canvas = document.getElementById("pomCanvas");
 const ctx = canvas.getContext("2d");
 const pomDisplay = document.getElementById("dynamicIslandTime");
 const dynamicIsland = document.getElementById("dynamicIsland");
 
-let pomTotal = 25*60;
-let pomTime = pomTotal;
+let pomTotal = localStorage.getItem("pomTotal") ? parseInt(localStorage.getItem("pomTotal")) : 25*60;
+let pomTime = localStorage.getItem("pomTime") ? parseInt(localStorage.getItem("pomTime")) : pomTotal;
+let isPaused = localStorage.getItem("pomPaused") === "true";
+let started = localStorage.getItem("pomStarted") === "true";
 let pomInterval = null;
-let isPaused = false;
-let started = false;
 
-function resizeCanvas() {
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+function resizeCanvas(){canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;}
+resizeCanvas(); window.addEventListener("resize",resizeCanvas);
 
-function updatePomDisplay() {
-  const m = Math.floor(pomTime / 60);
-  const s = pomTime % 60;
+function updatePomDisplay(){
+  const m = Math.floor(pomTime/60);
+  const s = pomTime%60;
   pomDisplay.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function savePomState(){
+  localStorage.setItem("pomTotal", pomTotal);
+  localStorage.setItem("pomTime", pomTime);
+  localStorage.setItem("pomPaused", isPaused);
+  localStorage.setItem("pomStarted", started);
 }
 
 // --- Draw expressive + smooth progress ---
@@ -422,30 +452,28 @@ function drawPom() {
 }
 drawPom();
 
-// --- Pomodoro logic ---
 function startPom(){
-  const val = parseInt(document.getElementById("pomCustomTime")?.value);
-  if(val>0){ pomTotal=val*60; pomTime=pomTotal; updatePomDisplay(); }
+  const val = parseInt(document.getElementById("pomCustomTime").value);
+  if(val>0){pomTotal = val*60; pomTime = pomTotal;}
   started = true;
+  isPaused = false;
+  savePomState();
   dynamicIsland.classList.add("pulse");
   document.getElementById("pomStartBtn").style.display="none";
   document.getElementById("pomPauseBtn").style.display="inline-block";
   document.getElementById("pomResetBtn").style.display="inline-block";
   if(pomInterval) return;
   pomInterval = setInterval(()=>{
-    if(!isPaused){
+    if(!isPaused && started){
       pomTime--;
-      updatePomDisplay();
-      if(pomTime<0){
+      if(pomTime <= 0){
         clearInterval(pomInterval);
         pomInterval = null;
-        pomTime = pomTotal;
-        started = false;
-        dynamicIsland.classList.remove("pulse");
-        updatePomDisplay();
-        document.getElementById("pomStartBtn").style.display="inline-block";
-        document.getElementById("pomPauseBtn").style.display="none";
+        showNotification();
+        resetPom();
       }
+      updatePomDisplay();
+      savePomState();
     }
   },1000);
 }
@@ -453,72 +481,37 @@ function startPom(){
 function pausePom(){
   isPaused = !isPaused;
   document.getElementById("pomPauseBtn").textContent = isPaused ? "Resume" : "Pause";
-  if(isPaused) dynamicIsland.classList.remove("pulse");
-  else dynamicIsland.classList.add("pulse");
+  dynamicIsland.classList.toggle("pulse", !isPaused);
+  savePomState();
 }
 
 function resetPom(){
   clearInterval(pomInterval);
   pomInterval = null;
-  pomTime = pomTotal;
+  started = false;
   isPaused = false;
-  started = false;
-  updatePomDisplay();
-  dynamicIsland.classList.remove("pulse");
-  document.getElementById("pomPauseBtn").textContent="Pause";
-  document.getElementById("pomStartBtn").style.display="inline-block";
-  document.getElementById("pomPauseBtn").style.display="none";
-}
-
-document.getElementById("pomStartBtn").addEventListener("click",startPom);
-document.getElementById("pomPauseBtn").addEventListener("click",pausePom);
-document.getElementById("pomResetBtn").addEventListener("click",resetPom);
-
-// Initial display
-updatePomDisplay();
-
-// --- Notification ---
-function showNotification(){
-  const notif=document.getElementById('notification');
-  notif.classList.add('show');
-  document.getElementById('notifSound').play();
-  setTimeout(()=>notif.classList.remove('show'),3500);
-}
-
-  if(pomTime < 0){
-  clearInterval(pomInterval);
-  pomInterval = null;
   pomTime = pomTotal;
-  started = false;
-  dynamicIsland.classList.remove("pulse");
   updatePomDisplay();
+  dynamicIsland.classList.remove("pulse");
   document.getElementById("pomStartBtn").style.display="inline-block";
   document.getElementById("pomPauseBtn").style.display="none";
-
-  // Add notification trigger
-  showNotification();
+  document.getElementById("pomResetBtn").style.display="none";
+  savePomState();
 }
 
-  pomInterval = setInterval(()=>{
-  if(!isPaused){
-    pomTime--;
-    updatePomDisplay();
-    if(pomTime < 0){
-      clearInterval(pomInterval);
-      pomInterval = null;
-      pomTime = pomTotal;
-      started = false;
-      dynamicIsland.classList.remove("pulse");
-      updatePomDisplay();
-      document.getElementById("pomStartBtn").style.display="inline-block";
-      document.getElementById("pomPauseBtn").style.display="none";
+function showNotification(){
+  const notif = document.getElementById("notification");
+  notif.classList.add("show");
+  document.getElementById("notifSound").play();
+  setTimeout(()=>notif.classList.remove("show"),3500);
+}
 
-      // 🔔 Trigger notification & sound
-      showNotification();
-    }
-  }
-},1000);
+document.getElementById("pomStartBtn").addEventListener("click", startPom);
+document.getElementById("pomPauseBtn").addEventListener("click", pausePom);
+document.getElementById("pomResetBtn").addEventListener("click", resetPom);
 
+updatePomDisplay();
+if(started) startPom(); // resume state if user reopens tab
 </script>
 </body>
 </html>
