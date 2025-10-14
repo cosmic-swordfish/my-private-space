@@ -1,0 +1,21 @@
+{
+  "name": "my-private-space",
+  "short_name": "mps",
+  "description": "Personal dashboard with Pomodoro, Weather, Crypto, and more.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#5C7C75",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
