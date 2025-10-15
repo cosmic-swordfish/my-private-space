@@ -94,6 +94,12 @@ body{
     /* Drop shadow */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* x-offset, y-offset, blur-radius, color */
 }
+
+/* pomedoro input placeholder */
+#pomControlsIsland input[type="text"]::placeholder {
+  color: #fff;
+  opacity: 0.8;
+}
 #pomControlsIsland button{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
 #pomStartBtn{background:var(--primary-color);color:#fff}
 #pomPauseBtn{background:var(--accent-color);color:#fff;display:none}
@@ -108,23 +114,123 @@ body{
 .topTicker .tickerContent{display:flex;width:max-content;animation:topTickerScroll 15s linear infinite}
 .topTicker .tickerContent span{padding-right:48px}
 @keyframes topTickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* Preferences gear */
+#prefGear {
+  position: fixed;
+  top: 22px;
+  right: 22px;
+  z-index: 200;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 36px rgba(0,0,0,0.35);
+  cursor: pointer;
+  transition: transform 0.35s, box-shadow 0.35s;
+}
+#prefGear:hover {
+  transform: rotate(6deg) scale(1.03);
+  box-shadow: 0 16px 46px rgba(0,0,0,0.45);
+}
+.gear {
+  font-size: 22px;
+  transition: transform 0.6s cubic-bezier(.2,.9,.2,1);
+}
+#prefGear.spin .gear {
+  transform: rotate(360deg);
+}
 
-/* preferences gear */
-#prefGear{position:fixed;top:22px;right:22px;z-index:200;width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);backdrop-filter:blur(10px);box-shadow:0 10px 36px rgba(0,0,0,0.35);cursor:pointer;transition:transform .35s,box-shadow .35s}
-#prefGear:hover{transform:rotate(6deg) scale(1.03);box-shadow:0 16px 46px rgba(0,0,0,0.45)}
-.gear{font-size:22px;transition:transform .6s cubic-bezier(.2,.9,.2,1)}
-#prefGear.spin .gear{transform:rotate(360deg)}
+/* Overlay & modal */
+#prefsOverlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+#prefsOverlay.show {
+  display: flex;
+  opacity: 1;
+}
+#prefsModal {
+  width: min(920px, 94vw);
+  background: rgba(18,18,18,0.36);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  color: var(--text-color);
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 12px;
+}
+.prefsLeft, .prefsRight { display: flex; flex-direction: column; gap: 10px; }
+.prefsCard { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.label { font-size: .9rem; opacity: .95; }
+.input, .select { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.04); padding: 8px; border-radius:10px; color:var(--text-color); outline:none; }
 
-/* prefs overlay & modal */
-#prefsOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--overlay-bg);z-index:300;opacity:0;transition:opacity .35s}
-#prefsOverlay.show{display:flex;opacity:1}
-#prefsModal{width:min(920px,94vw);background:rgba(18,18,18,0.36);backdrop-filter:blur(14px);border-radius:16px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);color:var(--text-color);display:grid;grid-template-columns:1fr 320px;gap:12px}
-.field{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
-.label{font-size:.9rem;opacity:.95}
-.input, .select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:var(--text-color);outline:none}
-.prefsRight{display:flex;flex-direction:column;gap:10px}
-.prefsCard{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.35)}
-.closeBtn{background:transparent;border:none;color:#fff;font-weight:700;cursor:pointer;padding:8px;border-radius:10px}
+.smallButton.active {
+  background: var(--primary-color);
+  color: #fff;
+}
+.smallButton {
+  padding:6px 12px;
+  border-radius:8px;
+  border:none;
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s;
+}
+.smallButton:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.radio-group { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.radio-group label { font-size:.9rem; font-weight: normal; }
+
+/* Close buttons */
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  align-self: flex-end;
+  opacity: 0.8;
+  transition: opacity 0.25s;
+}
+.closeBtn:hover { opacity: 1; }
+
+/* Social / Contact section */
+.social-links { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
+.social-links a { color: var(--accent-color); text-decoration:none; font-weight:500; transition: opacity 0.3s; }
+.social-links a:hover { opacity:0.8; text-decoration: underline; }
+
+/* Modal animation */
+@keyframes prefsSlideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+#prefsOverlay.show #prefsModal {
+  animation: prefsSlideUp 0.35s ease-out;
+}
+
+
+
+
 
 /* floating install prompt (bottom-right) */
 #floatingInstall{
@@ -145,8 +251,22 @@ body{
 #floatingInstall .fiTitle{font-weight:700;font-size:0.95rem}
 #floatingInstall .fiBtn{margin-left:auto;padding:6px 10px;border-radius:10px;background:var(--primary-color);border:none;color:#fff;cursor:pointer}
 
-/* footer */
-.footer{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;font-size:1rem;opacity:.75}
+
+/* Footer — centered & flexible */
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  text-align: center;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  z-index: 100; /* stays above backgrounds but below modals */
+
 
 /* responsive */
 @media(max-width:900px){
@@ -238,20 +358,19 @@ input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
   </div>
 </div>
 
-<!-- preferences gear -->
+<!-- Preferences Gear -->
 <div id="prefGear" title="Preferences (open)">
   <span class="material-icons-outlined gear">settings</span>
 </div>
 
-<!-- prefs overlay (includes location mode + oneko toggle) -->
+<!-- Preferences Overlay -->
 <div id="prefsOverlay" aria-hidden="true">
   <div id="prefsModal" role="dialog" aria-modal="true" aria-label="Preferences">
-    <div>
+    <div class="prefsLeft">
+
       <div class="field">
         <div class="label">Wallpaper</div>
-        <div class="row">
-          <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper">
-        </div>
+        <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper">
       </div>
 
       <div class="field">
@@ -264,27 +383,22 @@ input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
         <input id="pomDefaultInput" type="number" class="input" min="1" max="180">
       </div>
 
-      <div class="field">
-        <div class="label">Temperature unit & City</div>
-        <div class="row">
-          <select id="tempUnit" class="select">
-            <option value="C">Celsius (°C)</option>
-            <option value="F">Fahrenheit (°F)</option>
-          </select>
-          <input id="cityInput" class="input" placeholder="Lalitpur">
-        </div>
-      </div>
+    <div class="field">
+  <div class="label">Temperature & Location</div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <!-- Temperature Unit -->
+    <select id="tempUnit" class="select">
+      <option value="C">Celsius (°C)</option>
+      <option value="F">Fahrenheit (°F)</option>
+    </select>
 
-      <div class="field">
-        <div class="label">Location mode</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <select id="locationMode" class="select" title="Auto = use geolocation, Manual = use City">
-            <option value="manual">Manual</option>
-            <option value="auto">Auto (use device location)</option>
-          </select>
-          <div style="font-size:.9rem;opacity:.85">Default: Lalitpur</div>
-        </div>
-      </div>
+    <!-- Location Buttons -->
+    <div style="display:flex;gap:6px;">
+      <button type="button" id="locDefault" class="smallButton active">Lalitpur</button>
+      <button type="button" id="locAuto" class="smallButton">Auto Detect</button>
+    </div>
+  </div>
+</div>
 
       <div class="field">
         <div class="label">Theme color (primary)</div>
@@ -298,11 +412,9 @@ input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
 
       <div class="field">
         <div class="label">Oneko Lily</div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <label style="display:flex;align-items:center;gap:8px">
-            <input id="onekoToggle" type="checkbox">
-            <span class="small">Gomen</span>
-          </label>
+        <div class="radio-group">
+          <label><input type="radio" name="onekoMode" value="enable"> Enable</label>
+          <label><input type="radio" name="onekoMode" value="disable"> Disable</label>
         </div>
       </div>
 
@@ -313,7 +425,10 @@ input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
         <div class="label">Preview</div>
         <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
           <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.08)"></div>
-          <div class="row"><button id="savePrefs" class="closeBtn">Save</button><button id="closePrefs" class="closeBtn">Close</button></div>
+          <div class="row">
+            <button id="savePrefs" class="closeBtn">Save</button>
+            <button id="closePrefs" class="closeBtn">Close</button>
+          </div>
         </div>
       </div>
 
@@ -324,9 +439,17 @@ input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
           <button id="installPWA" class="closeBtn" style="display:none">Install PWA</button>
         </div>
       </div>
+
+      <div class="prefsCard social-links">
+        <a href="https://github.com/yourname" target="_blank">GitHub</a>
+        <a href="https://twitter.com/yourname" target="_blank">Twitter</a>
+        <a href="mailto:your@email.com">Email</a>
+      </div>
     </div>
   </div>
 </div>
+
+
 
 <!-- oneko cat will be loaded dynamically based on preference -->
 
@@ -392,18 +515,20 @@ const DEFAULTS = {
   themeColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#5C7C75',
   ticker: 'Welcome back, Ruben. Stay curious 💫',
   pomDefault: 25,
-  wallpaper: null, // null means "use the default asset"
+  wallpaper: null,
   defaultWallpaper: 'assets/chihiro036.jpeg',
   city: 'Lalitpur',
   tempUnit: 'C',
   tickerSpeed: 15,
-  locationMode: 'manual', // manual or auto
+  locationMode: 'default', // default or auto
   onekoEnabled: true
 };
 
 let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || DEFAULTS;
 
-/* UI elements */
+/* --------------------------
+   UI elements
+   -------------------------- */
 const prefGear = document.getElementById('prefGear');
 const prefsOverlay = document.getElementById('prefsOverlay');
 const wallUpload = document.getElementById('wallUpload');
@@ -420,14 +545,18 @@ const installPWA = document.getElementById('installPWA');
 const tickerSpeed = document.getElementById('tickerSpeed');
 const tickerTextEl = document.getElementById('tickerText');
 const tickerTextDupEl = document.getElementById('tickerTextDup');
-const locationModeEl = document.getElementById('locationMode');
-const onekoToggle = document.getElementById('onekoToggle');
+
+const locDefault = document.getElementById('locDefault');
+const locAuto = document.getElementById('locAuto');
+const onekoRadios = document.querySelectorAll('input[name="onekoMode"]');
 
 /* PWA floating install */
 const floatingInstall = document.getElementById('floatingInstall');
 const floatingInstallBtn = document.getElementById('floatingInstallBtn');
 
-/* helper to persist prefs */
+/* --------------------------
+   Helper functions
+   -------------------------- */
 function savePrefsToStorage(){
   const toStore = {
     themeColor: prefs.themeColor,
@@ -444,17 +573,17 @@ function savePrefsToStorage(){
   prefs = Object.assign({}, DEFAULTS, toStore);
 }
 
-/* Apply wallpaper — if prefs.wallpaper exists use it, otherwise use default asset */
+
+/* Apply wallpaper */
 function applyWallpaper(w){
   const final = w || DEFAULTS.defaultWallpaper;
   document.body.style.background = `url('${final}') center/cover no-repeat`;
   previewWallpaper.style.backgroundImage = `url('${final}')`;
 }
 
-/* oneko dynamic loader/unloader */
+/* Oneko loader/unloader */
 let onekoScriptTag = null;
 function loadOneko(){
-  // if already loaded, return
   if(window.onekoLoaded) return;
   onekoScriptTag = document.createElement('script');
   onekoScriptTag.src = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js";
@@ -463,22 +592,19 @@ function loadOneko(){
   document.body.appendChild(onekoScriptTag);
 }
 function unloadOneko(){
-  // Remove the script tag and any injected cat nodes
   if(onekoScriptTag){
     try { document.body.removeChild(onekoScriptTag); } catch(e){}
     onekoScriptTag = null;
   }
-  // remove any injected nodes by the lib (it adds an image and container)
   const catEls = document.querySelectorAll('img[src*="oneko.gif"], .oneko, #oneko, img.oneko');
   catEls.forEach(el => el.remove());
-  // some versions add a div; remove nodes that look like the injected cat
   document.querySelectorAll('[style*="position:fixed"]').forEach(el=>{
     if(el && el.querySelector && el.querySelector('img') && el.querySelector('img').src && el.querySelector('img').src.includes('oneko')) el.remove();
   });
   window.onekoLoaded = false;
 }
 
-/* apply stored preferences on load */
+/* Apply stored preferences on load */
 function applyPreferences(){
   prefs = Object.assign({}, DEFAULTS, prefs);
 
@@ -486,104 +612,115 @@ function applyPreferences(){
   tickerTextEl.textContent = prefs.ticker || DEFAULTS.ticker;
   tickerTextDupEl.textContent = prefs.ticker || DEFAULTS.ticker;
   const animSec = Math.max(6, prefs.tickerSpeed || DEFAULTS.tickerSpeed);
-  document.querySelector('.topTicker .tickerContent').style.animationDuration = animSec + 's';
+  const tickerContent = document.querySelector('.topTicker .tickerContent');
+  if(tickerContent) tickerContent.style.animationDuration = animSec + 's';
 
   applyWallpaper(prefs.wallpaper);
 
-  // ensure pom default exists in localStorage if not already set
   if(!localStorage.getItem('pomTotal')) {
     localStorage.setItem('pomTotal', (prefs.pomDefault||DEFAULTS.pomDefault) * 60);
   }
 
-  // prefs UI population
+  // populate form fields
   themeColor.value = prefs.themeColor || DEFAULTS.themeColor;
   tickerInput.value = prefs.ticker || DEFAULTS.ticker;
   pomDefaultInput.value = prefs.pomDefault || DEFAULTS.pomDefault;
-  cityInput.value = prefs.city || DEFAULTS.city;
   tempUnit.value = prefs.tempUnit || DEFAULTS.tempUnit;
   tickerSpeed.value = prefs.tickerSpeed || DEFAULTS.tickerSpeed;
-  locationModeEl.value = prefs.locationMode || DEFAULTS.locationMode;
-  onekoToggle.checked = typeof prefs.onekoEnabled === 'boolean' ? prefs.onekoEnabled : DEFAULTS.onekoEnabled;
 
-  // Oneko dynamic
+const locDefault = document.getElementById('locDefault');
+const locAuto = document.getElementById('locAuto');
+
+function setLocationMode(mode){
+  prefs.locationMode = mode;
+  if(mode === 'default'){
+    locDefault.classList.add('active');
+    locAuto.classList.remove('active');
+  } else {
+    locDefault.classList.remove('active');
+    locAuto.classList.add('active');
+  }
+}
+
+locDefault.addEventListener('click', ()=> setLocationMode('default'));
+locAuto.addEventListener('click', ()=> setLocationMode('auto'));
+
+// initialize based on prefs
+setLocationMode(prefs.locationMode);
+  onekoRadios.forEach(r => r.checked = (prefs.onekoEnabled === (r.value === "enable")));
+
   if(prefs.onekoEnabled) loadOneko(); else unloadOneko();
 }
 applyPreferences();
 
-/* open/close prefs */
+/* --------------------------
+   Event listeners
+   -------------------------- */
+
+/* Open/close preference panel */
 prefGear.addEventListener('click', ()=>{
   prefGear.classList.toggle('spin');
   prefsOverlay.classList.toggle('show');
-  prefsOverlay.setAttribute('aria-hidden', prefsOverlay.classList.contains('show')? 'false' : 'true');
-  // populate fields (kept in applyPreferences, but re-populate to ensure freshness)
-  tickerInput.value = prefs.ticker || DEFAULTS.ticker;
-  pomDefaultInput.value = prefs.pomDefault || DEFAULTS.pomDefault;
-  cityInput.value = prefs.city || DEFAULTS.city;
-  tempUnit.value = prefs.tempUnit || DEFAULTS.tempUnit;
-  themeColor.value = prefs.themeColor || DEFAULTS.themeColor;
-  tickerSpeed.value = prefs.tickerSpeed || DEFAULTS.tickerSpeed;
-  locationModeEl.value = prefs.locationMode || DEFAULTS.locationMode;
-  onekoToggle.checked = prefs.onekoEnabled;
-  // set preview
-  previewWallpaper.style.backgroundImage = `url('${prefs.wallpaper || DEFAULTS.defaultWallpaper}')`;
+  prefsOverlay.setAttribute('aria-hidden', prefsOverlay.classList.contains('show') ? 'false' : 'true');
 });
 
 closePrefs.addEventListener('click', ()=>{
   prefsOverlay.classList.remove('show');
   prefGear.classList.remove('spin');
-  prefsOverlay.setAttribute('aria-hidden','true');
 });
 
-/* wallpaper upload -> base64 stored in prefs.wallpaper */
+/* Wallpaper upload */
 wallUpload.addEventListener('change', async (e)=>{
   const f = e.target.files[0];
   if(!f) return;
   const reader = new FileReader();
   reader.onload = ()=>{
-    prefs.wallpaper = reader.result; // base64 data URL
+    prefs.wallpaper = reader.result;
     previewWallpaper.style.backgroundImage = `url('${prefs.wallpaper}')`;
     applyWallpaper(prefs.wallpaper);
   };
   reader.readAsDataURL(f);
 });
 
-/* save & apply preferences */
+/* Save preferences */
 savePrefs.addEventListener('click', ()=>{
   prefs.ticker = tickerInput.value || DEFAULTS.ticker;
   prefs.pomDefault = parseInt(pomDefaultInput.value) || DEFAULTS.pomDefault;
-  prefs.city = cityInput.value || DEFAULTS.city;
+  prefs.city = prefs.locationMode === 'default' ? DEFAULTS.city : '';
   prefs.tempUnit = tempUnit.value || DEFAULTS.tempUnit;
   prefs.themeColor = themeColor.value || DEFAULTS.themeColor;
   prefs.tickerSpeed = parseInt(tickerSpeed.value) || DEFAULTS.tickerSpeed;
-  prefs.locationMode = locationModeEl.value || DEFAULTS.locationMode;
-  prefs.onekoEnabled = !!onekoToggle.checked;
+
+  // Oneko toggle
+  const selectedOneko = document.querySelector('input[name="onekoMode"]:checked').value;
+  prefs.onekoEnabled = (selectedOneko === "enable");
+
   savePrefsToStorage();
   applyPreferences();
-  prefsOverlay.classList.remove('show'); prefGear.classList.remove('spin');
+  prefsOverlay.classList.remove('show');
+  prefGear.classList.remove('spin');
 });
 
-/* reset preferences => revert to defaults (including wallpaper default) */
+/* Reset preferences */
 clearPrefs.addEventListener('click', ()=>{
   if(!confirm('Reset preferences to defaults?')) return;
-  // remove stored prefs entirely
   localStorage.removeItem('mps_prefs');
-  // clear other stored state (pom)
   localStorage.removeItem('pomTotal');
   localStorage.removeItem('pomTime');
   localStorage.removeItem('pomPaused');
   localStorage.removeItem('pomStarted');
   localStorage.removeItem('previousPrices');
-  // reset in-memory prefs to defaults
+
   prefs = Object.assign({}, DEFAULTS);
-  // reset oneko to default
   if(!prefs.onekoEnabled) unloadOneko(); else loadOneko();
+
   savePrefsToStorage();
   applyPreferences();
-  // update preview and UI fields
+
   previewWallpaper.style.backgroundImage = `url('${DEFAULTS.defaultWallpaper}')`;
-  // hide floating install if shown
   floatingInstall.style.display = 'none';
   installPWA.style.display = 'none';
+
   alert('Preferences reset to defaults. Wallpaper restored to default.');
 });
 
@@ -672,9 +809,8 @@ async function fetchWeather(){
   try{
     const CITY = (prefs && prefs.city) ? prefs.city : DEFAULTS.city;
 
-    // If auto mode, try to get coordinates first
+    // Auto location
     if(prefs.locationMode === 'auto' && navigator.geolocation){
-      // use a Promise wrapper for getCurrentPosition
       const coords = await new Promise((resolve, reject) => {
         const ok = (pos) => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude});
         const err = (e) => reject(e);
@@ -684,7 +820,6 @@ async function fetchWeather(){
         return null;
       });
       if(coords){
-        // WeatherAPI allows 'lat,lon' in q param
         const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${coords.lat},${coords.lon}`);
         if(!res.ok) throw new Error('Weather fetch failed');
         const data = await res.json();
@@ -693,7 +828,7 @@ async function fetchWeather(){
       // else fallthrough to manual city
     }
 
-    // manual fallback
+    // Manual city fallback
     const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(CITY)}`);
     if(!res.ok) throw new Error('Weather fetch failed');
     const data = await res.json();
@@ -711,14 +846,18 @@ async function fetchWeather(){
 
 function updateWeatherUI(data){
   if(!data || !data.current) throw new Error('Invalid weather response');
+
   let tempC = typeof data.current.temp_c === 'number' ? data.current.temp_c : NaN;
   let displayTemp = tempC;
   if(prefs.tempUnit === 'F') displayTemp = cToF(tempC);
+
   document.getElementById('temp').textContent = (isNaN(displayTemp) ? '--' : displayTemp.toFixed(1)) + (prefs.tempUnit === 'F' ? '°F' : '°C');
   document.getElementById('humidity').textContent = 'Humidity: ' + (data.current.humidity ?? '--') + '%';
+
   const dewC = data.current.dewpoint_c ?? null;
   const dew = (prefs.tempUnit === 'F' && dewC !== null) ? cToF(dewC) : dewC;
   document.getElementById('dew').textContent = 'Dew: ' + (dew !== null ? dew.toFixed(1) : '--') + (prefs.tempUnit === 'F' ? '°F' : '°C');
+
   document.getElementById('wind').textContent = 'Wind: ' + (data.current.wind_kph ?? '--') + ' km/h';
   document.getElementById('pressure').textContent = 'Pressure: ' + (data.current.pressure_mb ?? '--') + ' hPa';
 }
