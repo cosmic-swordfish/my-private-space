@@ -1,150 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>my-private-space</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-
-<!-- If you add manifest.json to folder this link will activate PWA icons / install metadata -->
-<link rel="manifest" href="./manifest.json">
-<style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>my-private-space</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link rel="manifest" href="./manifest.json">
+  <style>
+    /* Existing styles remain unchanged, only adding the new rules */
+/* Existing styles with updated closeBtn and prefGear rules */
+/* Updated styles with fixed prefGear and closeBtn */
 :root {
- --glass-bg: rgba(255,255,255,0.08);
- --glass-blur: 24px;
- --primary-color: #5C7C75;
- --accent-color: #ff6b6b;
- --text-color: #fff;
- --panel-radius: 28px;
- --notif-color: #5C7C75;
- --transition-speed: 0.35s;
- --overlay-bg: rgba(0,0,0,0.45);
+  --glass-bg: rgba(10, 22, 38, 0.2);
+  --primary-color: #2A3F5F;
+  --accent-color: #4A6F8A;
+  --text-color: #E2E2E3;
+  --panel-radius: 28px;
+  --notif-color: #3C5A7D;
+  --transition-speed: 0.35s;
+  --bg-color: #0A1626;
+  --success-color: #4CAF50;
+  --error-color: #D32F2F;
+  --neutral-color: #95A5B5;
+  --button-bg: var(--accent-color);
+  --gradient-start: var(--primary-color);
+  --gradient-end: var(--accent-color);
 }
-
-*{box-sizing:border-box;font-family:Roboto,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
-html,body{height:100%}
-body{
- margin:0;
- color:var(--text-color);
- display:flex;
- align-items:center;
- justify-content:center;
- min-height:100vh;
- background: url('assets/chihiro036.jpeg') center/cover no-repeat;
- transition: background 0.4s ease;
+.light {
+  --glass-bg: rgba(226, 226, 227, 0.2);
+  --text-color: #0A1626;
+  --bg-color: #E2E2E3;
+  --primary-color: #A8B5C2;
+  --accent-color: #7E94A8;
+  --notif-color: #95A5B5;
+  --success-color: #4CAF50;
+  --error-color: #D32F2F;
+  --neutral-color: #3C5A7D;
+  --button-bg: var(--accent-color);
+  --gradient-start: var(--primary-color);
+  --gradient-end: var(--accent-color);
 }
-
-/* glass base */
-.glass{
- background:var(--glass-bg);
- backdrop-filter: blur(var(--glass-blur));
- border-radius:var(--panel-radius);
- padding:16px;
- box-shadow: 0 10px 30px rgba(0,0,0,0.28);
- color:var(--text-color);
- display:flex;
- flex-direction:column;
- gap:10px;
- transition: all var(--transition-speed) ease;
+* { box-sizing: border-box; font-family: Roboto, sans-serif; }
+html, body { height: 100%; margin: 0; }
+body {
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: url('assets/chihiro036.webp') center/cover no-repeat;
+  background-color: var(--bg-color);
+  transition: background 0.4s ease;
 }
-
-/* layout */
-.container{
- width:100%;
- max-width:1400px;
- display:flex;
- gap:18px;
- padding:20px;
- align-items:flex-start;
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  border-radius: var(--panel-radius);
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.panel-left,.panel-right{display:flex;flex-direction:column;gap:10px;min-width:200px}
-.panel-left div,.panel-right div{display:flex;align-items:center;gap:10px;font-weight:600}
-.icon{font-size:1.4rem;color:var(--text-color)}
-
-/* centre */
-.center{flex:1;display:flex;flex-direction:column;align-items:center;gap:18px}
-#time{font-size:160px;font-weight:700;line-height:1;text-shadow:0 6px 18px rgba(0,0,0,0.35)}
-.date{font-size:24px;opacity:0.9}
-
-/* Dynamic Island */
-#dynamicIsland{position:relative;width:120px;height:120px;border-radius:60px;background:var(--glass-bg);backdrop-filter:blur(var(--glass-blur));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(0,0,0,0.25);transition:transform .3s ease}
-#dynamicIsland.pulse{animation:pulseIsland 1.5s infinite alternate}
-@keyframes pulseIsland{0%{transform:scale(.985)}50%{transform:scale(1.03)}100%{transform:scale(.985)}}
-#dynamicIsland canvas{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:60px}
-#dynamicIslandTime{z-index:2;font-weight:700}
-
-/* pom controls */
-#pomControlsIsland{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-#pomControlsIsland input[type=text] {
-    width: 72px;
-    padding: 6px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text-color);
-    text-align: center;
-
-    /* Blur effect */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px); /* Safari support */
-
-    /* Drop shadow */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* x-offset, y-offset, blur-radius, color */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  gap: 18px;
+  padding: 20px;
+  align-items: flex-start;
 }
-
-/* pomedoro input placeholder */
+.panel-left, .panel-right { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
+.panel-left div, .panel-right div { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.icon { font-size: 1.4rem; color: var(--text-color); }
+.center { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+#time { font-size: 160px; font-weight: 700; line-height: 1; text-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+.date { font-size: 24px; opacity: 0.9; }
+#dynamicIsland {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.25);
+  transition: transform .3s ease;
+}
+#dynamicIsland.pulse { animation: pulseIsland 1.5s infinite alternate; }
+@keyframes pulseIsland { 0% { transform: scale(.985); } 50% { transform: scale(1.03); } 100% { transform: scale(.985); } }
+#dynamicIsland canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 60px; }
+#dynamicIslandTime { z-index: 2; font-weight: 700; }
+#pomControlsIsland { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+#pomControlsIsland input[type="text"] {
+  width: 72px;
+  padding: 6px;
+  border-radius: 10px;
+  border: none;
+  background: var(--glass-bg);
+  color: var(--text-color);
+  text-align: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 #pomControlsIsland input[type="text"]::placeholder {
-  color: #fff;
+  color: var(--text-color);
   opacity: 0.8;
 }
-#pomControlsIsland button{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
-#pomStartBtn{background:var(--primary-color);color:#fff}
-#pomPauseBtn{background:var(--accent-color);color:#fff;display:none}
-#pomResetBtn{background:#444;color:#fff;display:none}
-
-/* notification */
-#notification{position:fixed;right:28px;bottom:28px;background:var(--notif-color);color:#fff;padding:12px 18px;border-radius:24px;opacity:0;transform:translateY(20px);transition:all .35s;display:flex;gap:10px;align-items:center;z-index:120}
-#notification.show{opacity:1;transform:translateY(0)}
-
-/* ticker */
-.topTicker{position:fixed;top:20px;left:20px;width:calc(25vw - 20px);white-space:nowrap;overflow:hidden;border-radius:12px;background:rgba(255,255,255,0.06);backdrop-filter:blur(8px);padding:8px 12px;z-index:110}
-.topTicker .tickerContent{display:flex;width:max-content;animation:topTickerScroll 15s linear infinite}
-.topTicker .tickerContent span{padding-right:48px}
-@keyframes topTickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-/* Preferences gear */
+#pomControlsIsland button { padding: 6px 10px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
+#pomStartBtn { background: var(--primary-color); color: var(--text-color); }
+#pomPauseBtn { background: var(--accent-color); color: var(--text-color); display: none; }
+#pomResetBtn { background: var(--button-bg); color: var(--text-color); display: none; }
+#notification {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  background: var(--notif-color);
+  color: var(--text-color);
+  padding: 12px 18px;
+  border-radius: 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all .35s;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 120;
+}
+#notification.show { opacity: 1; transform: translateY(0); }
+.topTicker {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: calc(25vw - 20px);
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  padding: 8px 12px;
+  z-index: 110;
+}
+.topTicker .tickerContent { display: flex; width: max-content; animation: topTickerScroll 15s linear infinite; }
+.topTicker .tickerContent span { padding-right: 48px; }
+@keyframes topTickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 #prefGear {
   position: fixed;
-  top: 22px;
-  right: 22px;
-  z-index: 200;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  top: 18px;
+  right: 18px;
+  z-index: 320;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 36px rgba(0,0,0,0.35);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
   cursor: pointer;
   transition: transform 0.35s, box-shadow 0.35s;
 }
-#prefGear:hover {
-  transform: rotate(6deg) scale(1.03);
-  box-shadow: 0 16px 46px rgba(0,0,0,0.45);
+#prefGear:hover { transform: rotate(6deg) scale(1.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
+.gear { font-size: 18px; transition: transform 0.6s cubic-bezier(.2,.9,.2,1); }
+#prefGear.spin .gear { transform: rotate(360deg); }
+#prefsOverlay.show #prefGear { display: none !important; }
+#prefsOverlay:not(.show) #prefGear { display: flex !important; }
+#themeToggle {
+  position: fixed;
+  top: 18px;
+  right: 66px;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  cursor: pointer;
+  transition: transform 0.35s, box-shadow 0.35s;
 }
-.gear {
-  font-size: 22px;
-  transition: transform 0.6s cubic-bezier(.2,.9,.2,1);
-}
-#prefGear.spin .gear {
-  transform: rotate(360deg);
-}
-
-/* Overlay & modal */
+#themeToggle:hover { transform: scale(1.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
+#themeToggle .theme-icon { font-size: 18px; }
 #prefsOverlay {
   position: fixed;
   inset: 0;
@@ -154,105 +199,75 @@ body{
   background: rgba(0,0,0,0.6);
   z-index: 300;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-#prefsOverlay.show {
-  display: flex;
-  opacity: 1;
-}
+#prefsOverlay.show { display: flex; opacity: 1; }
 #prefsModal {
   width: min(920px, 94vw);
-  background: rgba(18,18,18,0.36);
+  background: var(--glass-bg);
   backdrop-filter: blur(14px);
   border-radius: 16px;
-  padding: 14px 18px;
+  padding: 18px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   color: var(--text-color);
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 12px;
+  transform: translateY(100px) scale(0.95);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
 }
+#prefsOverlay.show #prefsModal { transform: translateY(0) scale(1); opacity: 1; }
 .prefsLeft, .prefsRight { display: flex; flex-direction: column; gap: 10px; }
-.prefsCard { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+.prefsCard { background: var(--glass-bg); padding: 12px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
 .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
 .label { font-size: .9rem; opacity: .95; }
-.input, .select { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.04); padding: 8px; border-radius:10px; color:var(--text-color); outline:none; }
-
-.smallButton.active {
-  background: var(--primary-color);
-  color: #fff;
-}
-.smallButton {
-  padding:6px 12px;
-  border-radius:8px;
-  border:none;
-  background: rgba(255,255,255,0.04);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s, color 0.3s;
-}
-.smallButton:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-.radio-group { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.radio-group label { font-size:.9rem; font-weight: normal; }
-
-/* Close buttons */
+.input, .select { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.1); padding: 8px; border-radius: 10px; color: var(--text-color); outline: none; }
+.smallButton { padding: 6px 12px; border-radius: 8px; border: none; background: var(--glass-bg); color: var(--text-color); cursor: pointer; font-weight: 500; }
+.smallButton.active { background: var(--primary-color); color: var(--text-color); }
+.smallButton:hover { background: var(--accent-color); }
 .closeBtn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-weight: 700;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--text-color);
   cursor: pointer;
-  padding: 8px;
-  border-radius: 10px;
-  align-self: flex-end;
-  opacity: 0.8;
-  transition: opacity 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: none;
 }
-.closeBtn:hover { opacity: 1; }
-
-/* Social / Contact section */
+.closeBtn .material-icons-outlined {
+  font-size: 24px;
+}
 .social-links { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
-.social-links a { color: var(--accent-color); text-decoration:none; font-weight:500; transition: opacity 0.3s; }
-.social-links a:hover { opacity:0.8; text-decoration: underline; }
-
-/* Modal animation */
-@keyframes prefsSlideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+.social-links a { color: var(--accent-color); text-decoration: none; font-weight: 500; }
+.social-links a:hover { opacity: 0.8; text-decoration: underline; }
+#floatingInstall {
+  position: fixed;
+  right: 28px;
+  bottom: 100px;
+  z-index: 220;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  min-width: 200px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.45);
 }
-#prefsOverlay.show #prefsModal {
-  animation: prefsSlideUp 0.35s ease-out;
-}
-
-
-
-
-
-/* floating install prompt (bottom-right) */
-#floatingInstall{
- position:fixed;
- right:28px;
- bottom:100px; /* above notification */
- z-index:220;
- display:none;
- align-items:center;
- gap:10px;
- padding:10px 14px;
- border-radius:14px;
- min-width:200px;
- background:var(--glass-bg);
- backdrop-filter:blur(10px);
- box-shadow:0 14px 40px rgba(0,0,0,0.45);
-}
-#floatingInstall .fiTitle{font-weight:700;font-size:0.95rem}
-#floatingInstall .fiBtn{margin-left:auto;padding:6px 10px;border-radius:10px;background:var(--primary-color);border:none;color:#fff;cursor:pointer}
-
-
-/* Footer — centered & flexible */
+#floatingInstall .fiTitle { font-weight: 700; font-size: 0.95rem; }
+#floatingInstall .fiBtn { margin-left: auto; padding: 6px 10px; border-radius: 10px; background: var(--primary-color); color: var(--text-color); cursor: pointer; }
 .footer {
   position: fixed;
   left: 0;
@@ -265,217 +280,278 @@ body{
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  z-index: 100; /* stays above backgrounds but below modals */
-
-
-/* responsive */
-@media(max-width:900px){
- #time{font-size:120px}
- .date{font-size:20px}
- #dynamicIsland{width:100px;height:100px}
- #prefsModal{grid-template-columns:1fr}
+  z-index: 100;
 }
-@media(max-width:600px){
- .container{flex-direction:column;align-items:center;gap:12px;padding:12px}
- #time{font-size:72px}
- #dynamicIsland{width:80px;height:80px}
+#pomSessionCount {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--glass-bg);
+  color: var(--text-color);
+  text-align: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-.small{font-size:.9rem;opacity:.9}
-.smallButton{padding:6px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer}
-
-/* ensure placeholder visible for numeric input */
-input::placeholder {opacity:0.8;color:rgba(255,255,255,0.7)}
-</style>
+.media-field-container { display: flex; flex-direction: row; gap: 12px; flex-wrap: wrap; }
+.wallpaper-field, .sound-field { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 200px; }
+.input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 900px) {
+  #time { font-size: 120px; }
+  .date { font-size: 20px; }
+  #dynamicIsland { width: 100px; height: 100px; }
+  #prefsModal {
+    grid-template-columns: 1fr;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+  #themeToggle { right: 60px; }
+  .media-field-container { flex-direction: column; }
+  .closeBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 310;
+    width: 40px;
+    height: 40px;
+  }
+  .closeBtn .material-icons-outlined { font-size: 20px; }
+  #prefsModal::-webkit-scrollbar {
+    width: 8px;
+  }
+  #prefsModal::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #prefsModal::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+  }
+  #prefGear {
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+  }
+}
+@media (max-width: 600px) {
+  .container { flex-direction: column; align-items: center; gap: 12px; padding: 12px; }
+  #time { font-size: 72px; }
+  #dynamicIsland { width: 80px; height: 80px; }
+  #themeToggle { right: 54px; top: 14px; width: 32px; height: 32px; }
+  #prefGear {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+  }
+  #themeToggle .theme-icon { font-size: 16px; }
+  .gear { font-size: 16px; }
+  .input-row { flex-direction: column; gap: 12px; }
+  .closeBtn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 310;
+    width: 36px;
+    height: 36px;
+  }
+  .closeBtn .material-icons-outlined { font-size: 18px; }
+  #prefsModal {
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    padding-bottom: 16px;
+  }
+  #prefsModal::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+input::placeholder { opacity: 0.8; color: var(--text-color); }
+  </style>
 </head>
-<body>
-
-<!-- Top ticker -->
-<div class="topTicker glass">
-  <div class="tickerContent" id="tickerContent">
-    <span id="tickerText">Welcome back, Ruben. Stay curious 💫</span>
-    <span id="tickerTextDup">Welcome back, Ruben. Stay curious 💫</span>
-  </div>
-</div>
-
-<div class="container">
-  <!-- left panel: crypto -->
-  <div class="glass panel-left" id="infoPanel">
-    <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
-    <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
-    <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
-    <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
-  </div>
-
-  <!-- center: clock and pomodoro -->
-  <div class="center">
-    <div id="time">00:00</div>
-    <div id="date" class="date">-- -- ----</div>
-
-    <div id="dynamicIsland">
-      <canvas id="pomCanvas"></canvas>
-      <div id="dynamicIslandTime">25:00</div>
-    </div>
-
-    <div id="pomControlsIsland">
-      <!-- changed type to text so placeholder is visible on all browsers; inputmode numeric helps mobile -->
-      <input type="text" id="pomCustomTime" placeholder="Min" inputmode="numeric" pattern="\d*">
-      <button id="pomStartBtn">Start</button>
-      <button id="pomPauseBtn">Pause</button>
-      <button id="pomResetBtn">Reset</button>
+<body class="light">
+  <div class="topTicker glass">
+    <div class="tickerContent" id="tickerContent">
+      <span id="tickerText">Welcome back, Ruben. Stay curious 💫</span>
+      <span id="tickerTextDup">Welcome back, Ruben. Stay curious 💫</span>
     </div>
   </div>
-
-  <!-- right: weather -->
-  <div class="glass panel-right" id="weatherPanel">
-    <div><span class="material-icons-outlined icon">cloud</span><span id="temp">--°C</span></div>
-    <div><span class="material-icons-outlined icon">water_drop</span><span id="humidity">Humidity: --%</span></div>
-    <div><span class="material-icons-outlined icon">waves</span><span id="dew">Dew: --°C</span></div>
-    <div><span class="material-icons-outlined icon">air</span><span id="wind">Wind: -- km/h</span></div>
-    <div><span class="material-icons-outlined icon">speed</span><span id="pressure">Pressure: -- hPa</span></div>
-  </div>
-</div>
-
-<div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
-
-<!-- notification with controls -->
-<div id="notification" role="status" aria-live="polite">
-  <span id="notificationText">Time Up!</span>
-  <div style="display:flex;gap:8px;align-items:center">
-    <button id="notifPauseBtn" class="smallButton">Pause</button>
-    <button id="notifStopBtn" class="smallButton">Stop</button>
-    <span class="material-symbols-outlined">alarm</span>
-  </div>
-</div>
-
-<!-- floating install prompt (bottom-right glass) -->
-<div id="floatingInstall" role="dialog" aria-hidden="true" class="glass" style="display:none">
-  <div style="display:flex;align-items:center;gap:10px;width:100%">
-    <div style="display:flex;flex-direction:column">
-      <div class="fiTitle">Add to Home Screen</div>
-      <div style="font-size:0.85rem;opacity:0.9">Install this app for quick access</div>
+  <div class="container">
+    <div class="glass panel-left" id="infoPanel">
+      <div><span class="material-icons-outlined icon">currency_bitcoin</span><span id="btc">BTC: ...</span></div>
+      <div><span class="material-icons-outlined icon">token</span><span id="eth">ETH: ...</span></div>
+      <div><span class="material-icons-outlined icon">currency_exchange</span><span id="pi">PI: ...</span></div>
+      <div><span class="material-icons-outlined icon">paid</span><span id="usdt">USDT: ...</span></div>
     </div>
-    <button id="floatingInstallBtn" class="fiBtn">Add</button>
-  </div>
-</div>
-
-<!-- Preferences Gear -->
-<div id="prefGear" title="Preferences (open)">
-  <span class="material-icons-outlined gear">settings</span>
-</div>
-
-<!-- Preferences Overlay -->
-<div id="prefsOverlay" aria-hidden="true">
-  <div id="prefsModal" role="dialog" aria-modal="true" aria-label="Preferences">
-    <div class="prefsLeft">
-
-      <div class="field">
-        <div class="label">Wallpaper</div>
-        <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper">
+    <div class="center">
+      <div id="time">00:00</div>
+      <div id="date" class="date">-- -- ----</div>
+      <div id="dynamicIsland">
+        <canvas id="pomCanvas"></canvas>
+        <div id="dynamicIslandTime">25:00</div>
       </div>
-
-      <div class="field">
-        <div class="label">Top ticker text</div>
-        <input id="tickerInput" class="input" placeholder="Welcome back, Ruben. Stay curious 💫">
+      <div id="pomControlsIsland">
+        <input type="text" id="pomCustomTime" placeholder="Min" inputmode="numeric" pattern="\d*" aria-label="Pomodoro duration in minutes">
+        <button id="pomStartBtn">Start</button>
+        <button id="pomPauseBtn">Pause</button>
+        <button id="pomResetBtn">Reset</button>
       </div>
-
-      <div class="field">
-        <div class="label">Pomodoro default (minutes)</div>
-        <input id="pomDefaultInput" type="number" class="input" min="1" max="180">
-      </div>
-
-    <div class="field">
-  <div class="label">Temperature & Location</div>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-    <!-- Temperature Unit -->
-    <select id="tempUnit" class="select">
-      <option value="C">Celsius (°C)</option>
-      <option value="F">Fahrenheit (°F)</option>
-    </select>
-
-    <!-- Location Buttons -->
-    <div style="display:flex;gap:6px;">
-      <button type="button" id="locDefault" class="smallButton active">Lalitpur</button>
-      <button type="button" id="locAuto" class="smallButton">Auto Detect</button>
+    </div>
+    <div class="glass panel-right" id="weatherPanel">
+      <div><span class="material-icons-outlined icon">cloud</span><span id="temp">--°C</span></div>
+      <div><span class="material-icons-outlined icon">water_drop</span><span id="humidity">Humidity: --%</span></div>
+      <div><span class="material-icons-outlined icon">waves</span><span id="dew">Dew: --°C</span></div>
+      <div><span class="material-icons-outlined icon">air</span><span id="wind">Wind: -- km/h</span></div>
+      <div><span class="material-icons-outlined icon">speed</span><span id="pressure">Pressure: -- hPa</span></div>
     </div>
   </div>
-</div>
-
-      <div class="field">
-        <div class="label">Theme color (primary)</div>
-        <input id="themeColor" type="color" class="input" style="width:56px;height:44px;padding:6px">
+  <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
+  <div id="notification" role="status" aria-live="polite">
+    <span id="notificationText">Time Up!</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="notifPauseBtn" class="smallButton">Pause</button>
+      <button id="notifStopBtn" class="smallButton">Stop</button>
+      <span class="material-symbols-outlined">alarm</span>
+    </div>
+  </div>
+  <div id="floatingInstall" role="dialog" aria-hidden="true" class="glass" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <div style="display:flex;flex-direction:column">
+        <div class="fiTitle">Add to Home Screen</div>
+        <div style="font-size:0.85rem;opacity:0.9">Install this app for quick access</div>
       </div>
-
+      <button id="floatingInstallBtn" class="fiBtn">Add</button>
+    </div>
+  </div>
+  <div id="themeToggle" title="Toggle theme (light/dark)">
+    <span class="material-icons-outlined theme-icon">light_mode</span>
+  </div>
+  <div id="prefGear" title="Preferences (open)">
+    <span class="material-icons-outlined gear">settings</span>
+  </div>
+  <div id="prefsOverlay" aria-hidden="true">
+    <div id="prefsModal" role="dialog" aria-modal="true" aria-label="Preferences">
+      <button id="closePrefs" class="closeBtn" title="Close preferences">
+        <span class="material-icons-outlined">close</span>
+      </button>
+      <div class="prefsLeft">
       <div class="field">
-        <div class="label">Ticker speed (seconds loop)</div>
-        <input id="tickerSpeed" type="number" min="6" max="60" class="input">
-      </div>
-
-      <div class="field">
-        <div class="label">Oneko Lily</div>
-        <div class="radio-group">
-          <label><input type="radio" name="onekoMode" value="enable"> Enable</label>
-          <label><input type="radio" name="onekoMode" value="disable"> Disable</label>
+          <div class="label">Top ticker text</div>
+          <input id="tickerInput" class="input" placeholder="Welcome back, Ruben. Stay curious 💫">
         </div>
-      </div>
 
-    </div>
+       <div class="field">
+          <div class="label">Ticker speed (seconds loop)</div>
+          <input id="tickerSpeed" type="number" min="6" max="60" class="input">
+        </div>
 
-    <div class="prefsRight">
-      <div class="prefsCard">
-        <div class="label">Preview</div>
-        <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
-          <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.08)"></div>
-          <div class="row">
-            <button id="savePrefs" class="closeBtn">Save</button>
-            <button id="closePrefs" class="closeBtn">Close</button>
+        <div class="media-field-container">
+          <div class="wallpaper-field" style="flex: 1; min-width: 100px;">
+            <div class="label">Wallpaper</div>
+            <div class="input-row">
+              <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper" style="flex: 1; min-width: 100px;">
+            </div>
+          </div>
+          <div class="sound-field" style="flex: 1; min-width: 100px;">
+            <div class="label">Notification Sound</div>
+            <div class="input-row">
+              <input id="soundUpload" type="file" accept="audio/*" class="input" aria-label="Upload sound" style="flex: 1; min-width: 100px;">
+            </div>
+          </div>
+        </div>
+
+         <div class="media-field-container">
+        <div class="field" style="flex: 1; min-width: 100px;">
+          <div class="label">Pomodoro (minutes)</div>
+          <input id="pomDefaultInput" type="number" class="input" min="1" max="180" style="flex: 1; min-width: 100px;">
+        </div>
+        <div class="field" style="flex: 1; min-width: 100px;">
+          <div class="label">Theme color (primary)</div>
+          <input id="themeColor" type="color" class="input" style="flex: 1; min-width: 100px;">
+        </div>
+        </div>
+        <div class="field">
+          <div class="label">Temperature & Location</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select id="tempUnit" class="select">
+              <option value="C">Celsius (°C)</option>
+              <option value="F">Fahrenheit (°F)</option>
+            </select>
+            <div style="display:flex;gap:6px;">
+              <button type="button" id="locDefault" class="smallButton active">Manual</button>
+              <button type="button" id="locAuto" class="smallButton">Auto Detect</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="prefsCard">
+          <div class="label">Oneko Cat Animation</div>
+          <div style="margin-top:8px;display:flex;gap:6px;">
+            <button id="onekoEnable" class="smallButton active">Enable</button>
+            <button id="onekoDisable" class="smallButton">Disable</button>
           </div>
         </div>
       </div>
 
-      <div class="prefsCard">
-        <div class="label">Other Controls</div>
-        <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
-          <button id="clearPrefs" class="closeBtn">Reset preferences</button>
-          <button id="installPWA" class="closeBtn" style="display:none">Install PWA</button>
+      <div class="prefsRight">
+        <div class="prefsCard">
+          <div class="label">Preview</div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
+            <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.08)"></div>
+            <div class="row">
+              <button id="savePrefs" class="smallButton">Save</button>
+              <button id="clearPrefs" class="smallButton">Reset preferences</button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div class="prefsCard social-links">
-        <a href="https://github.com/yourname" target="_blank">GitHub</a>
-        <a href="https://twitter.com/yourname" target="_blank">Twitter</a>
-        <a href="mailto:your@email.com">Email</a>
+        <div class="prefsCard">
+          <div class="label">Pomodoro Sessions</div>
+          <div id="pomSessionCount">Sessions: 0</div>
+        </div>
+        <div class="prefsCard">
+          <div class="label">Analytics</div>
+          <div id="analyticsDisplay">Page loads: 0 | Timers started: 0</div>
+        </div>
+        <div class="prefsCard social-links">
+          <a href="https://github.com/yourname" target="_blank">GitHub</a>
+          <a href="https://twitter.com/yourname" target="_blank">Twitter</a>
+          <a href="mailto:your@email.com">Email</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-
-
-<!-- oneko cat will be loaded dynamically based on preference -->
-
-<script>
-/* Single-file app.js — preferences, clock, APIs, pomodoro, canvas animation, PWA hooks */
-
-/* small embedded alarm generator (now default 10s) */
-function generateAlarmDataURL(duration = 10.0, freq = 880, sampleRate = 44100){
+  <script>
+const DEFAULTS = {
+  themeColor: '#A8B5C2',
+  ticker: 'Welcome back, Ruben. Stay curious 💫',
+  pomDefault: 25,
+  wallpaper: null,
+  defaultWallpaper: 'assets/chihiro036.jpeg',
+  city: 'Lalitpur',
+  tempUnit: 'C',
+  tickerSpeed: 15,
+  locationMode: 'default',
+  onekoEnabled: true,
+  themeMode: 'light',
+  customSound: null
+};
+let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || DEFAULTS;
+const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210";
+const notifAudio = document.createElement('audio');
+notifAudio.id = 'notifSound';
+notifAudio.preload = 'auto';
+notifAudio.src = (function generateAlarmDataURL(duration = 10.0, freq = 880, sampleRate = 44100) {
   const len = Math.floor(duration * sampleRate);
   const samples = new Int16Array(len);
-  for(let i=0;i<len;i++){
+  for (let i = 0; i < len; i++) {
     const t = i / sampleRate;
-    // smooth envelope: short attack, sustain, slow release
-    let env;
-    if(t < 0.03) env = t / 0.03; // 30ms attack
-    else if(t < duration - 0.3) env = 0.9; // sustain
-    else env = 0.9 * Math.max(0, 1 - (t - (duration - 0.3)) / 0.3); // 300ms release
-    // small slow amplitude modulation to avoid harshness
+    let env = t < 0.03 ? t / 0.03 : t < duration - 0.3 ? 0.9 : 0.9 * Math.max(0, 1 - (t - (duration - 0.3)) / 0.3);
     const trem = 0.03 * Math.sin(2 * Math.PI * 2 * t);
     const value = Math.sin(2 * Math.PI * freq * t) * (0.85 + trem) * env;
     samples[i] = Math.max(-1, Math.min(1, value)) * 0x7fff;
   }
   const buffer = new ArrayBuffer(44 + samples.length * 2);
   const view = new DataView(buffer);
-  function writeString(view, offset, string){
-    for(let i=0;i<string.length;i++) view.setUint8(offset + i, string.charCodeAt(i));
+  function writeString(view, offset, string) {
+    for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
   }
   let offset = 0;
   writeString(view, offset, 'RIFF'); offset += 4;
@@ -491,73 +567,81 @@ function generateAlarmDataURL(duration = 10.0, freq = 880, sampleRate = 44100){
   view.setUint16(offset, 16, true); offset += 2;
   writeString(view, offset, 'data'); offset += 4;
   view.setUint32(offset, samples.length * 2, true); offset += 4;
-  for(let i=0;i<samples.length;i++, offset+=2) view.setInt16(offset, samples[i], true);
+  for (let i = 0; i < samples.length; i++, offset += 2) view.setInt16(offset, samples[i], true);
   const binary = new Uint8Array(buffer);
   let binaryStr = '';
   const chunkSize = 0x8000;
   for (let i = 0; i < binary.length; i += chunkSize) {
     binaryStr += String.fromCharCode.apply(null, binary.subarray(i, i + chunkSize));
   }
-  const base64 = btoa(binaryStr);
-  return 'data:audio/wav;base64,' + base64;
-}
-const notifAudio = document.createElement('audio');
-notifAudio.id = 'notifSound';
-notifAudio.preload = 'auto';
-notifAudio.src = generateAlarmDataURL(10.0, 880); // 10s smooth tone
+  return 'data:audio/wav;base64,' + btoa(binaryStr);
+})();
 document.body.appendChild(notifAudio);
-
-/* --------------------------
-   Defaults & preferences
-   -------------------------- */
-const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210"; // keep as-is
-const DEFAULTS = {
-  themeColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#5C7C75',
-  ticker: 'Welcome back, Ruben. Stay curious 💫',
-  pomDefault: 25,
-  wallpaper: null,
-  defaultWallpaper: 'assets/chihiro036.jpeg',
-  city: 'Lalitpur',
-  tempUnit: 'C',
-  tickerSpeed: 15,
-  locationMode: 'default', // default or auto
-  onekoEnabled: true
-};
-
-let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || DEFAULTS;
-
-/* --------------------------
-   UI elements
-   -------------------------- */
 const prefGear = document.getElementById('prefGear');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.querySelector('#themeToggle .theme-icon');
 const prefsOverlay = document.getElementById('prefsOverlay');
 const wallUpload = document.getElementById('wallUpload');
 const previewWallpaper = document.getElementById('previewWallpaper');
 const tickerInput = document.getElementById('tickerInput');
 const pomDefaultInput = document.getElementById('pomDefaultInput');
-const cityInput = document.getElementById('cityInput');
 const tempUnit = document.getElementById('tempUnit');
 const themeColor = document.getElementById('themeColor');
 const savePrefs = document.getElementById('savePrefs');
 const closePrefs = document.getElementById('closePrefs');
 const clearPrefs = document.getElementById('clearPrefs');
-const installPWA = document.getElementById('installPWA');
 const tickerSpeed = document.getElementById('tickerSpeed');
 const tickerTextEl = document.getElementById('tickerText');
 const tickerTextDupEl = document.getElementById('tickerTextDup');
-
 const locDefault = document.getElementById('locDefault');
 const locAuto = document.getElementById('locAuto');
-const onekoRadios = document.querySelectorAll('input[name="onekoMode"]');
-
-/* PWA floating install */
+const soundUpload = document.getElementById('soundUpload');
 const floatingInstall = document.getElementById('floatingInstall');
 const floatingInstallBtn = document.getElementById('floatingInstallBtn');
-
-/* --------------------------
-   Helper functions
-   -------------------------- */
-function savePrefsToStorage(){
+const analyticsDisplay = document.getElementById('analyticsDisplay');
+const onekoEnable = document.getElementById('onekoEnable');
+const onekoDisable = document.getElementById('onekoDisable');
+function hexToHSL(hex) {
+  let r = parseInt(hex.slice(1, 3), 16) / 255;
+  let g = parseInt(hex.slice(3, 5), 16) / 255;
+  let b = parseInt(hex.slice(5, 7), 16) / 255;
+  let max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) {
+    h = s = 0;
+  } else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return { h: h * 360, s: s * 100, l: l * 100 };
+}
+function hslToHex(h, s, l) {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = n => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+function deriveColors(primaryHex) {
+  const { h, s, l } = hexToHSL(primaryHex);
+  const isLight = document.body.classList.contains('light');
+  const accentL = isLight ? Math.max(40, l - 10) : Math.min(90, l + 10);
+  const notifL = isLight ? Math.min(85, l + 5) : Math.min(85, l + 5);
+  return {
+    accent: hslToHex(h, s, accentL),
+    notif: hslToHex(h, s, notifL)
+  };
+}
+function savePrefsToStorage() {
   const toStore = {
     themeColor: prefs.themeColor,
     ticker: prefs.ticker,
@@ -567,410 +651,455 @@ function savePrefsToStorage(){
     tempUnit: prefs.tempUnit,
     tickerSpeed: prefs.tickerSpeed,
     locationMode: prefs.locationMode,
-    onekoEnabled: prefs.onekoEnabled
+    onekoEnabled: prefs.onekoEnabled,
+    themeMode: prefs.themeMode,
+    customSound: prefs.customSound
   };
   localStorage.setItem('mps_prefs', JSON.stringify(toStore));
   prefs = Object.assign({}, DEFAULTS, toStore);
 }
-
-
-/* Apply wallpaper */
-function applyWallpaper(w){
+function preloadImage(url) {
+  const img = new Image();
+  img.src = url;
+}
+function applyWallpaper(w) {
   const final = w || DEFAULTS.defaultWallpaper;
   document.body.style.background = `url('${final}') center/cover no-repeat`;
   previewWallpaper.style.backgroundImage = `url('${final}')`;
 }
-
-/* Oneko loader/unloader */
 let onekoScriptTag = null;
-function loadOneko(){
-  if(window.onekoLoaded) return;
+function loadOneko() {
+  if (window.onekoLoaded) return;
   onekoScriptTag = document.createElement('script');
   onekoScriptTag.src = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.js";
   onekoScriptTag.dataset.cat = "https://cdn.jsdelivr.net/gh/adryd325/oneko.js/oneko.gif";
   onekoScriptTag.onload = () => { window.onekoLoaded = true; };
   document.body.appendChild(onekoScriptTag);
+  onekoEnable.classList.add('active');
+  onekoDisable.classList.remove('active');
 }
-function unloadOneko(){
-  if(onekoScriptTag){
-    try { document.body.removeChild(onekoScriptTag); } catch(e){}
+function unloadOneko() {
+  if (onekoScriptTag) {
+    try { document.body.removeChild(onekoScriptTag); } catch (e) {}
     onekoScriptTag = null;
   }
   const catEls = document.querySelectorAll('img[src*="oneko.gif"], .oneko, #oneko, img.oneko');
   catEls.forEach(el => el.remove());
-  document.querySelectorAll('[style*="position:fixed"]').forEach(el=>{
-    if(el && el.querySelector && el.querySelector('img') && el.querySelector('img').src && el.querySelector('img').src.includes('oneko')) el.remove();
-  });
   window.onekoLoaded = false;
+  onekoEnable.classList.remove('active');
+  onekoDisable.classList.add('active');
 }
-
-/* Apply stored preferences on load */
-function applyPreferences(){
+function applyThemeMode(mode) {
+  document.body.classList.remove('light', 'dark');
+  document.body.classList.add(mode);
+  themeIcon.textContent = mode === 'light' ? 'light_mode' : 'dark_mode';
+}
+function applyPreferences() {
   prefs = Object.assign({}, DEFAULTS, prefs);
-
-  document.documentElement.style.setProperty('--primary-color', prefs.themeColor || DEFAULTS.themeColor);
+  preloadImage(DEFAULTS.defaultWallpaper);
+  if (prefs.wallpaper) preloadImage(prefs.wallpaper);
+  const isLight = document.body.classList.contains('light');
+  const baseColor = isLight ? '#E2E2E3' : '#0A1626';
+  const { h, s } = hexToHSL(baseColor);
+  const primaryL = isLight ? 60 : 30;
+  const derivedPrimary = hslToHex(h, isLight ? 20 : 40, primaryL);
+  const { accent, notif } = deriveColors(derivedPrimary);
+  document.documentElement.style.setProperty('--primary-color', derivedPrimary);
+  document.documentElement.style.setProperty('--accent-color', accent);
+  document.documentElement.style.setProperty('--notif-color', notif);
   tickerTextEl.textContent = prefs.ticker || DEFAULTS.ticker;
   tickerTextDupEl.textContent = prefs.ticker || DEFAULTS.ticker;
   const animSec = Math.max(6, prefs.tickerSpeed || DEFAULTS.tickerSpeed);
-  const tickerContent = document.querySelector('.topTicker .tickerContent');
-  if(tickerContent) tickerContent.style.animationDuration = animSec + 's';
-
+  document.querySelector('.topTicker .tickerContent').style.animationDuration = animSec + 's';
   applyWallpaper(prefs.wallpaper);
-
-  if(!localStorage.getItem('pomTotal')) {
-    localStorage.setItem('pomTotal', (prefs.pomDefault||DEFAULTS.pomDefault) * 60);
-  }
-
-  // populate form fields
-  themeColor.value = prefs.themeColor || DEFAULTS.themeColor;
+  if (!localStorage.getItem('pomTotal')) localStorage.setItem('pomTotal', (prefs.pomDefault || DEFAULTS.pomDefault) * 60);
+  themeColor.value = prefs.themeColor || derivedPrimary;
   tickerInput.value = prefs.ticker || DEFAULTS.ticker;
   pomDefaultInput.value = prefs.pomDefault || DEFAULTS.pomDefault;
   tempUnit.value = prefs.tempUnit || DEFAULTS.tempUnit;
   tickerSpeed.value = prefs.tickerSpeed || DEFAULTS.tickerSpeed;
-
-const locDefault = document.getElementById('locDefault');
-const locAuto = document.getElementById('locAuto');
-
-function setLocationMode(mode){
-  prefs.locationMode = mode;
-  if(mode === 'default'){
-    locDefault.classList.add('active');
-    locAuto.classList.remove('active');
-  } else {
-    locDefault.classList.remove('active');
-    locAuto.classList.add('active');
+  function setLocationMode(mode) {
+    prefs.locationMode = mode;
+    locDefault.classList.toggle('active', mode === 'default');
+    locAuto.classList.toggle('active', mode === 'auto');
   }
-}
-
-locDefault.addEventListener('click', ()=> setLocationMode('default'));
-locAuto.addEventListener('click', ()=> setLocationMode('auto'));
-
-// initialize based on prefs
-setLocationMode(prefs.locationMode);
-  onekoRadios.forEach(r => r.checked = (prefs.onekoEnabled === (r.value === "enable")));
-
-  if(prefs.onekoEnabled) loadOneko(); else unloadOneko();
+  locDefault.addEventListener('click', () => setLocationMode('default'));
+  locAuto.addEventListener('click', () => setLocationMode('auto'));
+  setLocationMode(prefs.locationMode);
+  if (prefs.customSound) notifAudio.src = prefs.customSound;
+  applyThemeMode(prefs.themeMode);
+  if (prefs.onekoEnabled) loadOneko(); else unloadOneko();
 }
 applyPreferences();
-
-/* --------------------------
-   Event listeners
-   -------------------------- */
-
-/* Open/close preference panel */
-prefGear.addEventListener('click', ()=>{
-  prefGear.classList.toggle('spin');
+prefGear.addEventListener('click', () => {
   prefsOverlay.classList.toggle('show');
-  prefsOverlay.setAttribute('aria-hidden', prefsOverlay.classList.contains('show') ? 'false' : 'true');
+  prefGear.classList.toggle('spin');
+  const isOverlayShown = prefsOverlay.classList.contains('show');
+  prefsOverlay.setAttribute('aria-hidden', !isOverlayShown);
+  prefGear.style.display = isOverlayShown ? 'none' : 'flex';
+  applyWallpaper(prefs.wallpaper || DEFAULTS.defaultWallpaper);
 });
-
-closePrefs.addEventListener('click', ()=>{
+themeToggle.addEventListener('click', () => {
+  prefs.themeMode = prefs.themeMode === 'light' ? 'dark' : 'light';
+  applyThemeMode(prefs.themeMode);
+  applyPreferences();
+  savePrefsToStorage();
+});
+onekoEnable.addEventListener('click', () => {
+  prefs.onekoEnabled = true;
+  loadOneko();
+  savePrefsToStorage();
+});
+onekoDisable.addEventListener('click', () => {
+  prefs.onekoEnabled = false;
+  unloadOneko();
+  savePrefsToStorage();
+});
+function handleClosePrefs(event) {
+  event.preventDefault();
+  event.stopPropagation();
   prefsOverlay.classList.remove('show');
   prefGear.classList.remove('spin');
-});
-
-/* Wallpaper upload */
-wallUpload.addEventListener('change', async (e)=>{
+  prefsOverlay.setAttribute('aria-hidden', 'true');
+  prefGear.style.display = 'flex';
+  setTimeout(() => {
+    if (!prefsOverlay.classList.contains('show')) {
+      prefsOverlay.style.display = 'none';
+      prefGear.style.opacity = '1'; // Ensure gear is fully visible
+      prefGear.style.pointerEvents = 'auto'; // Ensure gear is clickable
+    }
+  }, 500);
+}
+closePrefs.addEventListener('click', handleClosePrefs);
+closePrefs.addEventListener('touchend', handleClosePrefs);
+wallUpload.addEventListener('change', async (e) => {
   const f = e.target.files[0];
-  if(!f) return;
+  if (!f) return;
   const reader = new FileReader();
-  reader.onload = ()=>{
+  reader.onload = () => {
     prefs.wallpaper = reader.result;
-    previewWallpaper.style.backgroundImage = `url('${prefs.wallpaper}')`;
+    preloadImage(prefs.wallpaper);
     applyWallpaper(prefs.wallpaper);
   };
   reader.readAsDataURL(f);
 });
-
-/* Save preferences */
-savePrefs.addEventListener('click', ()=>{
+soundUpload.addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    prefs.customSound = reader.result;
+    notifAudio.src = prefs.customSound;
+  };
+  reader.readAsDataURL(f);
+});
+savePrefs.addEventListener('click', () => {
   prefs.ticker = tickerInput.value || DEFAULTS.ticker;
   prefs.pomDefault = parseInt(pomDefaultInput.value) || DEFAULTS.pomDefault;
-  prefs.city = prefs.locationMode === 'default' ? DEFAULTS.city : '';
+  prefs.city = DEFAULTS.city;
   prefs.tempUnit = tempUnit.value || DEFAULTS.tempUnit;
   prefs.themeColor = themeColor.value || DEFAULTS.themeColor;
   prefs.tickerSpeed = parseInt(tickerSpeed.value) || DEFAULTS.tickerSpeed;
-
-  // Oneko toggle
-  const selectedOneko = document.querySelector('input[name="onekoMode"]:checked').value;
-  prefs.onekoEnabled = (selectedOneko === "enable");
-
   savePrefsToStorage();
   applyPreferences();
   prefsOverlay.classList.remove('show');
   prefGear.classList.remove('spin');
+  prefGear.style.display = 'flex';
+  prefGear.style.opacity = '1'; // Ensure gear is fully visible
+  prefGear.style.pointerEvents = 'auto'; // Ensure gear is clickable
 });
-
-/* Reset preferences */
-clearPrefs.addEventListener('click', ()=>{
-  if(!confirm('Reset preferences to defaults?')) return;
+clearPrefs.addEventListener('click', () => {
+  if (!confirm('Reset preferences to defaults?')) return;
   localStorage.removeItem('mps_prefs');
   localStorage.removeItem('pomTotal');
   localStorage.removeItem('pomTime');
   localStorage.removeItem('pomPaused');
   localStorage.removeItem('pomStarted');
   localStorage.removeItem('previousPrices');
-
+  localStorage.removeItem('pomSessionCount');
+  localStorage.removeItem('analytics');
   prefs = Object.assign({}, DEFAULTS);
-  if(!prefs.onekoEnabled) unloadOneko(); else loadOneko();
-
+  if (!prefs.onekoEnabled) unloadOneko(); else loadOneko();
   savePrefsToStorage();
   applyPreferences();
-
   previewWallpaper.style.backgroundImage = `url('${DEFAULTS.defaultWallpaper}')`;
   floatingInstall.style.display = 'none';
-  installPWA.style.display = 'none';
-
+  wallUpload.value = '';
+  soundUpload.value = '';
   alert('Preferences reset to defaults. Wallpaper restored to default.');
 });
-
-/* PWA install prompt handling */
-window.addEventListener('beforeinstallprompt', (e)=>{
+window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   window.deferredPrompt = e;
-  // show both the prefs button and the floating prompt
-  installPWA.style.display = 'inline-block';
   floatingInstall.style.display = 'flex';
-  floatingInstall.setAttribute('aria-hidden','false');
+  floatingInstall.setAttribute('aria-hidden', 'false');
 });
-installPWA.addEventListener('click', ()=>{
-  if(window.deferredPrompt){
+floatingInstallBtn.addEventListener('click', () => {
+  if (window.deferredPrompt) {
     window.deferredPrompt.prompt();
-    window.deferredPrompt.userChoice.then(()=>{ window.deferredPrompt = null; installPWA.style.display = 'none'; floatingInstall.style.display = 'none'; });
-  } else {
-    alert('Install prompt not available. Serve over HTTPS and try again.');
-  }
-});
-floatingInstallBtn.addEventListener('click', ()=>{
-  if(window.deferredPrompt){
-    window.deferredPrompt.prompt();
-    window.deferredPrompt.userChoice.then(()=>{ window.deferredPrompt = null; installPWA.style.display = 'none'; floatingInstall.style.display = 'none'; });
+    window.deferredPrompt.userChoice.then(() => {
+      window.deferredPrompt = null;
+      floatingInstall.style.display = 'none';
+    });
   } else {
     floatingInstall.style.display = 'none';
   }
 });
-
-/* live ticker input preview */
-tickerInput.addEventListener('input', ()=>{ const v = tickerInput.value || DEFAULTS.ticker; tickerTextEl.textContent = v; tickerTextDupEl.textContent = v; });
-
-/* --------------------------
-   Clock
-   -------------------------- */
-function updateTime(){
+tickerInput.addEventListener('input', () => {
+  const v = tickerInput.value || DEFAULTS.ticker;
+  tickerTextEl.textContent = v;
+  tickerTextDupEl.textContent = v;
+});
+function updateTime() {
   const now = new Date();
-  document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
-  document.getElementById('date').textContent = now.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+  document.getElementById('time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  document.getElementById('date').textContent = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 }
-setInterval(updateTime,1000); updateTime();
-
-/* --------------------------
-   Crypto (CoinGecko)
-   -------------------------- */
+setInterval(updateTime, 1000);
+updateTime();
 const previousPrices = JSON.parse(localStorage.getItem("previousPrices") || '{}');
-
-async function fetchCrypto(){
-  try{
+async function fetchCrypto() {
+  try {
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd&include_24hr_change=true");
     const data = await res.json();
-
-    function updateElement(id, coinData, symbol='$'){
+    localStorage.setItem('lastCryptoData', JSON.stringify(data));
+    function updateElement(id, coinData, symbol = '$') {
       const el = document.getElementById(id);
       const price = coinData.usd;
       const change = coinData.usd_24h_change;
-      let arrow = '';
-      if(change > 0.1) arrow = `<span style="color:#00ff88">▲</span>`;
-      else if(change < -0.1) arrow = `<span style="color:#ff5555">▼</span>`;
-      else arrow = `<span style="color:#aaa">▬</span>`;
+      let arrow = change > 0.1
+        ? `<span style="color:var(--success-color)">▲</span>`
+        : change < -0.1
+        ? `<span style="color:var(--error-color)">▼</span>`
+        : `<span style="color:var(--neutral-color)">▬</span>`;
       el.innerHTML = `${id.toUpperCase()}: ${symbol}${price.toLocaleString()} ${arrow}`;
       previousPrices[id] = price;
     }
-
     updateElement('btc', data.bitcoin);
     updateElement('eth', data.ethereum);
-    if(data['pi-network'] && data['pi-network'].usd != null) updateElement('pi', data['pi-network']);
+    if (data['pi-network'] && data['pi-network'].usd != null) updateElement('pi', data['pi-network']);
     else document.getElementById('pi').textContent = 'PI: N/A';
     updateElement('usdt', data.tether);
-
     localStorage.setItem('previousPrices', JSON.stringify(previousPrices));
-  } catch(err){
+  } catch (err) {
     console.error('Crypto fetch error', err);
-    ['btc','eth','pi','usdt'].forEach(id => document.getElementById(id).textContent = id.toUpperCase()+': Error');
+    const cachedData = localStorage.getItem('lastCryptoData');
+    if (cachedData) {
+      const data = JSON.parse(cachedData);
+      function updateElement(id, coinData, symbol = '$') {
+        const el = document.getElementById(id);
+        const price = coinData.usd;
+        const change = coinData.usd_24h_change;
+        let arrow = change > 0.1
+          ? `<span style="color:var(--success-color)">▲</span>`
+          : change < -0.1
+          ? `<span style="color:var(--error-color)">▼</span>`
+          : `<span style="color:var(--neutral-color)">▬</span>`;
+        el.innerHTML = `${id.toUpperCase()}: ${symbol}${price.toLocaleString()} ${arrow} (cached)`;
+      }
+      updateElement('btc', data.bitcoin);
+      updateElement('eth', data.ethereum);
+      if (data['pi-network'] && data['pi-network'].usd != null) updateElement('pi', data['pi-network']);
+      else document.getElementById('pi').textContent = 'PI: N/A';
+      updateElement('usdt', data.tether);
+    } else {
+      ['btc', 'eth', 'pi', 'usdt'].forEach(id => document.getElementById(id).textContent = id.toUpperCase() + ': Error');
+    }
   }
 }
 fetchCrypto();
 setInterval(fetchCrypto, 120000);
-
-/* --------------------------
-   Weather (WeatherAPI) — supports manual city or auto geolocation
-   -------------------------- */
-function cToF(c){ return (c * 9/5) + 32; }
-
-async function fetchWeather(){
-  try{
+function cToF(c) { return (c * 9 / 5) + 32; }
+async function fetchWeather() {
+  try {
     const CITY = (prefs && prefs.city) ? prefs.city : DEFAULTS.city;
-
-    // Auto location
-    if(prefs.locationMode === 'auto' && navigator.geolocation){
+    let query;
+    if (prefs.locationMode === 'auto' && navigator.geolocation) {
       const coords = await new Promise((resolve, reject) => {
-        const ok = (pos) => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude});
-        const err = (e) => reject(e);
-        navigator.geolocation.getCurrentPosition(ok, err, {timeout:7000});
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+          (e) => reject(e),
+          { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
+        );
       }).catch((e) => {
         console.warn('Geolocation failed, falling back to manual city', e);
+        showNotification('Geolocation unavailable, using default city.');
         return null;
       });
-      if(coords){
-        const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${coords.lat},${coords.lon}`);
-        if(!res.ok) throw new Error('Weather fetch failed');
-        const data = await res.json();
-        return updateWeatherUI(data);
-      }
-      // else fallthrough to manual city
+      if (coords) query = `${coords.lat},${coords.lon}`;
     }
-
-    // Manual city fallback
-    const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(CITY)}`);
-    if(!res.ok) throw new Error('Weather fetch failed');
+    if (!query) query = encodeURIComponent(CITY);
+    const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${query}`);
+    if (!res.ok) throw new Error('Weather fetch failed');
     const data = await res.json();
+    localStorage.setItem('lastWeatherData', JSON.stringify(data));
     updateWeatherUI(data);
-
-  } catch(e){
+  } catch (e) {
     console.error('Weather error', e);
-    document.getElementById('temp').textContent = 'Weather unavailable';
-    document.getElementById('humidity').textContent = 'Humidity: --%';
-    document.getElementById('dew').textContent = 'Dew: --';
-    document.getElementById('wind').textContent = 'Wind: --';
-    document.getElementById('pressure').textContent = 'Pressure: --';
+    const cachedData = localStorage.getItem('lastWeatherData');
+    if (cachedData) {
+      updateWeatherUI(JSON.parse(cachedData));
+      showNotification('Using cached weather data');
+    } else {
+      document.getElementById('temp').textContent = 'Weather unavailable';
+      document.getElementById('humidity').textContent = 'Humidity: --%';
+      document.getElementById('dew').textContent = 'Dew: --';
+      document.getElementById('wind').textContent = 'Wind: --';
+      document.getElementById('pressure').textContent = 'Pressure: --';
+    }
   }
 }
-
-function updateWeatherUI(data){
-  if(!data || !data.current) throw new Error('Invalid weather response');
-
+function updateWeatherUI(data) {
+  if (!data || !data.current) throw new Error('Invalid weather response');
   let tempC = typeof data.current.temp_c === 'number' ? data.current.temp_c : NaN;
-  let displayTemp = tempC;
-  if(prefs.tempUnit === 'F') displayTemp = cToF(tempC);
-
+  let displayTemp = prefs.tempUnit === 'F' ? cToF(tempC) : tempC;
   document.getElementById('temp').textContent = (isNaN(displayTemp) ? '--' : displayTemp.toFixed(1)) + (prefs.tempUnit === 'F' ? '°F' : '°C');
   document.getElementById('humidity').textContent = 'Humidity: ' + (data.current.humidity ?? '--') + '%';
-
   const dewC = data.current.dewpoint_c ?? null;
   const dew = (prefs.tempUnit === 'F' && dewC !== null) ? cToF(dewC) : dewC;
   document.getElementById('dew').textContent = 'Dew: ' + (dew !== null ? dew.toFixed(1) : '--') + (prefs.tempUnit === 'F' ? '°F' : '°C');
-
   document.getElementById('wind').textContent = 'Wind: ' + (data.current.wind_kph ?? '--') + ' km/h';
   document.getElementById('pressure').textContent = 'Pressure: ' + (data.current.pressure_mb ?? '--') + ' hPa';
 }
-
 fetchWeather();
 setInterval(fetchWeather, 1800000);
-
-/* --------------------------
-   Pomodoro w/ canvas animation
-   -------------------------- */
 const canvas = document.getElementById('pomCanvas');
 const ctx = canvas.getContext('2d');
 const pomDisplay = document.getElementById('dynamicIslandTime');
 const dynamicIsland = document.getElementById('dynamicIsland');
-
 let pomTotal = localStorage.getItem('pomTotal') ? parseInt(localStorage.getItem('pomTotal')) : (prefs.pomDefault || 25) * 60;
 let pomTime = localStorage.getItem('pomTime') ? parseInt(localStorage.getItem('pomTime')) : pomTotal;
 let isPaused = localStorage.getItem('pomPaused') === 'true';
 let started = localStorage.getItem('pomStarted') === 'true';
 let pomInterval = null;
-
-function resizeCanvas(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
-resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-
-function updatePomDisplay(){
+let animationFrameId = null;
+let sessionCount = parseInt(localStorage.getItem('pomSessionCount') || '0');
+let canvasWidth, canvasHeight, cx, cy, r;
+function resizeCanvas() {
+  canvasWidth = canvas.offsetWidth;
+  canvasHeight = canvas.offsetHeight;
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  cx = canvasWidth / 2;
+  cy = canvasHeight / 2;
+  r = Math.min(canvasWidth, canvasHeight) / 2 - 10;
+}
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(resizeCanvas, 100);
+});
+resizeCanvas();
+function updatePomDisplay() {
   const m = Math.floor(pomTime / 60);
   const s = pomTime % 60;
-  pomDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  pomDisplay.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
-
-function savePomState(){
+function updateSessionCount() {
+  document.getElementById('pomSessionCount').textContent = `Sessions: ${sessionCount}`;
+}
+function savePomState() {
   localStorage.setItem('pomTotal', pomTotal);
   localStorage.setItem('pomTime', pomTime);
   localStorage.setItem('pomPaused', isPaused);
   localStorage.setItem('pomStarted', started);
+  localStorage.setItem('pomSessionCount', sessionCount);
 }
-
-/* Draw expressive circular wavy progress */
-function drawPom(){
-  const w = canvas.width;
-  const h = canvas.height;
-  const cx = w/2;
-  const cy = h/2;
-  const r = Math.min(w,h)/2 - 10;
-  ctx.clearRect(0,0,w,h);
-
-  if(started){
-    // background arc for remaining
-    const progress = 1 - pomTime / pomTotal;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, -Math.PI/2 + 2*Math.PI*progress, 1.5*Math.PI);
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-    ctx.lineWidth = 12;
-    ctx.stroke();
-  }
-
-  if(!started){
-    // indeterminate wavy ring
+function drawPom(timestamp) {
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  const isLight = document.body.classList.contains('light');
+  const bgArcColor = isLight ? 'rgba(168, 181, 194, 0.1)' : 'rgba(42, 63, 95, 0.1)';
+  const glowColor = isLight ? 'rgba(126, 148, 168, 0.4)' : 'rgba(74, 111, 138, 0.4)';
+  if (!started && !isPaused) {
     const waveAmp = 6;
     const waveFreq = 6;
-    const speed = Date.now() / 300;
+    const speed = timestamp / 300;
     const steps = 500;
     ctx.beginPath();
-    for(let i=0;i<=steps;i++){
-      const angle = -Math.PI/2 + (i/steps)*2*Math.PI;
-      const wave = Math.sin(angle*waveFreq + speed) * waveAmp;
+    for (let i = 0; i <= steps; i++) {
+      const angle = -Math.PI / 2 + (i / steps) * 2 * Math.PI;
+      const wave = Math.sin(angle * waveFreq + speed) * waveAmp;
       const x = cx + (r + wave) * Math.cos(angle);
       const y = cy + (r + wave) * Math.sin(angle);
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = '#5C7C75';
-    ctx.lineWidth = 10;
-    ctx.stroke();
-  } else {
-    const progress = 1 - pomTime / pomTotal;
-    const waveAmp = isPaused ? 2 : 6;
-    const waveFreq = 6;
-    const speed = Date.now() / (isPaused?1200:300);
-    const steps = 500;
-    const grad = ctx.createConicGradient(-Math.PI/2, cx, cy);
-    grad.addColorStop(0, '#5C7C75');
-    grad.addColorStop(0.4, '#ff6b6b');
-    grad.addColorStop(0.8, '#5C7C75');
-    grad.addColorStop(1, '#5C7C75');
-    ctx.strokeStyle = grad;
-    ctx.beginPath();
-    for(let i=0;i<=steps*progress;i++){
-      const angle = -Math.PI/2 + (i/steps)*2*Math.PI;
-      const wave = Math.sin(angle*waveFreq + speed) * waveAmp;
-      const x = cx + (r + wave) * Math.cos(angle);
-      const y = cy + (r + wave) * Math.sin(angle);
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
-    const glow = isPaused ? Math.sin(Date.now()/3000*Math.PI) * 6 + 8 : 0;
-    ctx.shadowBlur = glow;
-    ctx.shadowColor = 'rgba(255,255,255,0.45)';
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.stroke();
-    ctx.shadowBlur = 0;
+  } else {
+    const progress = 1 - pomTime / pomTotal;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI / 2 + 2 * Math.PI * progress, 1.5 * Math.PI);
+    ctx.strokeStyle = bgArcColor;
+    ctx.lineWidth = 12;
+    ctx.stroke();
+    if (!started && isPaused) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
+      const grad = ctx.createConicGradient(-Math.PI / 2, cx, cy);
+      grad.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue('--gradient-start').trim());
+      grad.addColorStop(0.4, getComputedStyle(document.documentElement).getPropertyValue('--gradient-end').trim());
+      grad.addColorStop(0.8, getComputedStyle(document.documentElement).getPropertyValue('--gradient-start').trim());
+      grad.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue('--gradient-start').trim());
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 10;
+      ctx.stroke();
+    } else {
+      const waveAmp = isPaused ? 2 : 6;
+      const waveFreq = 6;
+      const speed = timestamp / (isPaused ? 1200 : 300);
+      const steps = 50;
+      const grad = ctx.createConicGradient(-Math.PI / 2, cx, cy);
+      grad.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue('--gradient-start').trim());
+      grad.addColorStop(0.4, getComputedStyle(document.documentElement).getPropertyValue('--gradient-end').trim());
+      grad.addColorStop(0.8, getComputedStyle(document.documentElement).getPropertyValue('--gradient-start').trim());
+      grad.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue('--gradient-start').trim());
+      ctx.strokeStyle = grad;
+      ctx.beginPath();
+      for (let i = 0; i <= steps * progress; i++) {
+        const angle = -Math.PI / 2 + (i / steps) * 2 * Math.PI;
+        const wave = Math.sin(angle * waveFreq + speed) * waveAmp;
+        const x = cx + (r + wave) * Math.cos(angle);
+        const y = cy + (r + wave) * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      const glow = isPaused ? Math.sin(timestamp / 3000 * Math.PI) * 6 + 8 : 0;
+      ctx.shadowBlur = glow;
+      ctx.shadowColor = glowColor;
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
   }
-
-  requestAnimationFrame(drawPom);
+  animationFrameId = requestAnimationFrame(drawPom);
 }
-drawPom();
-
-/* pom controls */
-function startPom(){
-  // read numeric minutes from text input (allow empty)
+function startPomAnimation() {
+  if (!animationFrameId && document.visibilityState === 'visible') {
+    animationFrameId = requestAnimationFrame(drawPom);
+  }
+}
+function stopPomAnimation() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    stopPomAnimation();
+  } else if (document.visibilityState === 'visible') {
+    startPomAnimation();
+  }
+});
+function startPom() {
   const raw = document.getElementById('pomCustomTime').value.trim();
-  const val = raw ? parseInt(raw.replace(/\D/g,''),10) : null;
-  if(val > 0){ pomTotal = val * 60; pomTime = pomTotal; }
-  // store default pom if user provided pomDefault
+  const val = raw ? parseInt(raw.replace(/\D/g, ''), 10) : null;
+  if (val > 0) {
+    pomTotal = val * 60;
+    pomTime = pomTotal;
+  }
   started = true;
   isPaused = false;
   savePomState();
@@ -978,105 +1107,117 @@ function startPom(){
   document.getElementById('pomStartBtn').style.display = 'none';
   document.getElementById('pomPauseBtn').style.display = 'inline-block';
   document.getElementById('pomResetBtn').style.display = 'inline-block';
-  if(pomInterval) return;
-  pomInterval = setInterval(()=>{
-    if(!isPaused && started){
-      pomTime--;
-      if(pomTime <= 0){
-        clearInterval(pomInterval); pomInterval = null;
-        showNotification();
-        resetPom();
+  if (!pomInterval) {
+    pomInterval = setInterval(() => {
+      if (!isPaused && started) {
+        pomTime--;
+        if (pomTime <= 0) {
+          clearInterval(pomInterval);
+          pomInterval = null;
+          showNotification();
+          resetPom();
+        }
+        updatePomDisplay();
+        savePomState();
       }
-      updatePomDisplay(); savePomState();
-    }
-  }, 1000);
+    }, 1000);
+  }
+  startPomAnimation();
+  trackEvent('timer_start');
 }
-
-function pausePom(){
+function pausePom() {
   isPaused = !isPaused;
   document.getElementById('pomPauseBtn').textContent = isPaused ? 'Resume' : 'Pause';
   dynamicIsland.classList.toggle('pulse', !isPaused);
   savePomState();
+  if (isPaused) {
+    stopPomAnimation();
+    drawPom(Date.now());
+  } else {
+    startPomAnimation();
+  }
 }
-
-function resetPom(){
-  clearInterval(pomInterval); pomInterval = null;
-  started = false; isPaused = false;
+function resetPom() {
+  clearInterval(pomInterval);
+  pomInterval = null;
+  if (pomTime <= 0) {
+    sessionCount++;
+    updateSessionCount();
+    savePomState();
+  }
+  started = false;
+  isPaused = false;
   pomTime = pomTotal;
   updatePomDisplay();
   dynamicIsland.classList.remove('pulse');
   document.getElementById('pomStartBtn').style.display = 'inline-block';
   document.getElementById('pomPauseBtn').style.display = 'none';
   document.getElementById('pomResetBtn').style.display = 'none';
+  stopPomAnimation();
+  startPomAnimation();
   savePomState();
 }
-
-/* show notification + play audio for 10s; keep pause visible while playing */
 let notifTimeout = null;
-function showNotification(text = 'Time Up!'){
+function showNotification(text = 'Time Up!') {
   const notif = document.getElementById('notification');
   document.getElementById('notificationText').textContent = text;
   notif.classList.add('show');
-
-  // ensure pause button is visible and set to "Pause" by default
   const notifPauseBtn = document.getElementById('notifPauseBtn');
   notifPauseBtn.textContent = 'Pause';
-
-  try {
-    notifAudio.currentTime = 0;
-    // try to play; if autoplay is blocked, this will be caught
-    const p = notifAudio.play();
-    if(p && p.catch){
-      p.catch(e => console.warn('Audio play prevented', e));
-    }
-  } catch(e){ console.warn('Audio play prevented', e); }
-
-  // keep visible for entire 10s — allow pause/resume for the audio
-  if(notifTimeout) clearTimeout(notifTimeout);
-  notifTimeout = setTimeout(()=> {
+  if (notifTimeout) clearTimeout(notifTimeout);
+  notifTimeout = setTimeout(() => {
     notif.classList.remove('show');
-    try { notifAudio.pause(); notifAudio.currentTime = 0; } catch(e){}
-  }, 10000); // 10 seconds
+    try { notifAudio.pause(); notifAudio.currentTime = 0; } catch (e) {}
+  }, 10000);
 }
-
-/* notification controls — pause/resume audio during the full 10s */
-document.getElementById('notifPauseBtn').addEventListener('click', ()=>{
-  if(!notifAudio) return;
-  if(!notifAudio.paused){ notifAudio.pause(); document.getElementById('notifPauseBtn').textContent = 'Resume'; }
-  else { notifAudio.play().catch(()=>{}); document.getElementById('notifPauseBtn').textContent = 'Pause'; }
+document.getElementById('notifPauseBtn').addEventListener('click', () => {
+  if (!notifAudio) return;
+  if (!notifAudio.paused) {
+    notifAudio.pause();
+    document.getElementById('notifPauseBtn').textContent = 'Resume';
+  } else {
+    notifAudio.play().catch(() => {});
+    document.getElementById('notifPauseBtn').textContent = 'Pause';
+  }
 });
-document.getElementById('notifStopBtn').addEventListener('click', ()=>{
-  if(!notifAudio) return;
-  notifAudio.pause(); notifAudio.currentTime = 0; document.getElementById('notification').classList.remove('show');
-  if(notifTimeout) { clearTimeout(notifTimeout); notifTimeout = null; }
+document.getElementById('notifStopBtn').addEventListener('click', () => {
+  if (!notifAudio) return;
+  notifAudio.pause();
+  notifAudio.currentTime = 0;
+  document.getElementById('notification').classList.remove('show');
+  if (notifTimeout) {
+    clearTimeout(notifTimeout);
+    notifTimeout = null;
+  }
 });
-
-/* event bindings */
 document.getElementById('pomStartBtn').addEventListener('click', startPom);
 document.getElementById('pomPauseBtn').addEventListener('click', pausePom);
 document.getElementById('pomResetBtn').addEventListener('click', resetPom);
-
 updatePomDisplay();
-if(started) startPom();
-
-/* --------------------------
-   PWA service worker registration (if service-worker.js exists)
-   -------------------------- */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./service-worker.js').catch(()=>{ /* ignore if not present */ });
+updateSessionCount();
+if (started) startPom();
+else startPomAnimation();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 }
-
-/* hide prompt if user dismisses manually / when installed */
-window.addEventListener('appinstalled', ()=>{
-  installPWA.style.display = 'none';
+window.addEventListener('appinstalled', () => {
   floatingInstall.style.display = 'none';
   window.deferredPrompt = null;
 });
-
-/* Ensure floating install is dismissible by clicking outside (optional UX) */
-floatingInstall.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape') floatingInstall.style.display = 'none';
-});
-</script>
+let analytics = JSON.parse(localStorage.getItem('analytics') || '{"pageLoads":0, "timerStarts":0}');
+analytics.pageLoads++;
+localStorage.setItem('analytics', JSON.stringify(analytics));
+function updateAnalyticsDisplay() {
+  analyticsDisplay.textContent = `Page loads: ${analytics.pageLoads} | Timers started: ${analytics.timerStarts}`;
+}
+function trackEvent(event) {
+  if (event === 'timer_start') {
+    analytics.timerStarts++;
+    localStorage.setItem('analytics', JSON.stringify(analytics));
+    updateAnalyticsDisplay();
+  }
+}
+updateAnalyticsDisplay();
+  </script>
 </body>
 </html>
