@@ -1,22 +1,61 @@
-{
-  "id": "/my-private-space/index.html",
-  "name": "my-private-space",
-  "short_name": "mps",
-  "description": "Personal dashboard with Pomodoro, Weather, Crypto, and more.",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#5C7C75",
-  "icons": [
+const manifestData = {
+  name: "my-private-space",
+  short_name: "mps",
+  description: "Personal dashboard with Pomodoro, Weather, Crypto, and more.",
+  start_url: "./index.html",
+  display: "standalone",
+  background_color: "#000000",
+  theme_color: "#5C7C75",
+  icons: [
     {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      src: "icons/icon-192.png",
+      sizes: "192x192",
+      type: "image/png"
     },
     {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      src: "icons/icon-512.png",
+      sizes: "512x512",
+      type: "image/png"
     }
   ]
+};
+
+function injectManifest() {
+  let manifestLink = document.querySelector('link[rel="manifest"]');
+  if (!manifestLink) {
+    manifestLink = document.createElement('link');
+    manifestLink.rel = 'manifest';
+    manifestLink.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifestData));
+    document.head.appendChild(manifestLink);
+  }
 }
+
+function updateManifestThemeColor(color) {
+  manifestData.theme_color = color;
+  const manifestLink = document.querySelector('link[rel="manifest"]');
+  if (manifestLink) {
+    manifestLink.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifestData));
+  }
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.content = color;
+  } else {
+    const newMeta = document.createElement('meta');
+    newMeta.name = 'theme-color';
+    newMeta.content = color;
+    document.head.appendChild(newMeta);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  injectManifest();
+  const storedPrefs = JSON.parse(localStorage.getItem('mps_prefs') || '{}');
+  if (storedPrefs.themeColor) {
+    updateManifestThemeColor(storedPrefs.themeColor);
+  }
+});
+
+// Listen for theme color changes from script.js
+window.addEventListener('themeColorChanged', (e) => {
+  updateManifestThemeColor(e.detail);
+});
