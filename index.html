@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>my-private-space</title>
+  <meta name="keywords" content="pomodoro timer, productivity app, cryptocurrency tracker, weather dashboard, glassmorphism UI, customizable dashboard, progressive web app, dark mode, light mode, real-time data, oneko animation, personal dashboard">
+  <meta name="description" content="My Private Space is a customizable productivity dashboard with a Pomodoro timer, real-time cryptocurrency prices, weather updates, and a glassmorphism UI. Install as a PWA for offline access.">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
@@ -188,6 +190,7 @@ body.dark::before {
   transition: transform 0.35s, box-shadow 0.35s;
 }
 #prefGear:hover { transform: rotate(6deg) scale(1.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
+#prefGear:focus { outline: 2px solid var(--accent-color); }
 .gear { font-size: 18px; transition: transform 0.6s cubic-bezier(.2,.9,.2,1); }
 #prefGear.spin .gear { transform: rotate(360deg); }
 #prefsOverlay.show #prefGear { display: none; }
@@ -210,6 +213,7 @@ body.dark::before {
   transition: transform 0.35s, box-shadow 0.35s;
 }
 #themeToggle:hover { transform: scale(1.03); box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
+#themeToggle:focus { outline: 2px solid var(--accent-color); }
 #themeToggle .theme-icon { font-size: 18px; }
 #prefsOverlay {
   position: fixed;
@@ -218,11 +222,21 @@ body.dark::before {
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(0px);
   z-index: 300;
   opacity: 0;
-  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, backdrop-filter;
 }
-#prefsOverlay.show { display: flex; opacity: 1; }
+#prefsOverlay.show {
+  display: flex;
+  opacity: 1;
+  backdrop-filter: blur(10px);
+}
+#prefsOverlay.closing {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+}
 #prefsModal {
   width: min(920px, 94vw);
   background: var(--glass-bg);
@@ -234,17 +248,26 @@ body.dark::before {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 12px;
-  transform: translateY(100px) scale(0.95);
+  transform: translateY(50px) scale(0.98);
   opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  will-change: transform, opacity;
 }
-#prefsOverlay.show #prefsModal { transform: translateY(0) scale(1); opacity: 1; }
+#prefsOverlay.show #prefsModal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+#prefsOverlay.closing #prefsModal {
+  transform: translateY(50px) scale(0.98);
+  opacity: 0;
+}
 .prefsLeft, .prefsRight { display: flex; flex-direction: column; gap: 10px; }
 .prefsCard { background: var(--glass-bg); padding: 12px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
 .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
 .label { font-size: .9rem; opacity: .95; }
 .input, .select { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.1); padding: 8px; border-radius: 10px; color: var(--text-color); outline: none; }
+.input:focus, .select:focus, .smallButton:focus { outline: 2px solid var(--accent-color); }
 .smallButton { padding: 6px 12px; border-radius: 8px; border: none; background: var(--glass-bg); color: var(--text-color); cursor: pointer; font-weight: 500; }
 .smallButton.active { background: var(--primary-color); color: var(--text-color); }
 .smallButton:hover { background: var(--accent-color); }
@@ -268,17 +291,13 @@ body.dark::before {
   z-index: 310;
   pointer-events: auto;
 }
-.closeBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-}
-.closeBtn .material-icons-outlined {
-  font-size: 26px;
-  line-height: 1;
-}
+.closeBtn:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+.closeBtn:focus { outline: 2px solid var(--accent-color); }
+.closeBtn .material-icons-outlined { font-size: 26px; line-height: 1; }
 .social-links { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
 .social-links a { color: var(--accent-color); text-decoration: none; font-weight: 500; }
 .social-links a:hover { opacity: 0.8; text-decoration: underline; }
+.social-links a:focus { outline: 2px solid var(--accent-color); }
 #floatingInstall {
   position: fixed;
   right: 28px;
@@ -418,9 +437,9 @@ input::placeholder { opacity: 0.8; color: var(--text-color); }
       </div>
       <div id="pomControlsIsland">
         <input type="text" id="pomCustomTime" placeholder="Min" inputmode="numeric" pattern="\d*" aria-label="Pomodoro duration in minutes">
-        <button id="pomStartBtn">Start</button>
-        <button id="pomPauseBtn">Pause</button>
-        <button id="pomResetBtn">Reset</button>
+        <button id="pomStartBtn" tabindex="0">Start</button>
+        <button id="pomPauseBtn" tabindex="0">Pause</button>
+        <button id="pomResetBtn" tabindex="0">Reset</button>
       </div>
     </div>
     <div class="glass panel-right" id="weatherPanel">
@@ -435,8 +454,8 @@ input::placeholder { opacity: 0.8; color: var(--text-color); }
   <div id="notification" role="status" aria-live="assertive">
     <span id="notificationText">Time Up!</span>
     <div style="display:flex;gap:8px;align-items:center">
-      <button id="notifPauseBtn" class="smallButton">Pause</button>
-      <button id="notifStopBtn" class="smallButton">Stop</button>
+      <button id="notifPauseBtn" class="smallButton" tabindex="0">Pause</button>
+      <button id="notifStopBtn" class="smallButton" tabindex="0">Stop</button>
       <span class="material-symbols-outlined">alarm</span>
     </div>
   </div>
@@ -446,72 +465,84 @@ input::placeholder { opacity: 0.8; color: var(--text-color); }
         <div class="fiTitle">Add to Home Screen</div>
         <div style="font-size:0.85rem;opacity:0.9">Install this app for quick access</div>
       </div>
-      <button id="floatingInstallBtn" class="fiBtn">Add</button>
+      <button id="floatingInstallBtn" class="fiBtn" tabindex="0">Add</button>
     </div>
   </div>
-  <div id="themeToggle" title="Toggle theme (light/dark)">
+  <div id="themeToggle" title="Toggle theme (light/dark)" tabindex="0">
     <span class="material-icons-outlined theme-icon">light_mode</span>
   </div>
-  <div id="prefGear" title="Preferences (open)">
+  <div id="prefGear" title="Preferences (open)" tabindex="0">
     <span class="material-icons-outlined gear">settings</span>
   </div>
   <div id="prefsOverlay" aria-hidden="true">
     <div id="prefsModal" role="dialog" aria-modal="true" aria-label="Preferences">
-      <button id="closePrefs" class="closeBtn" title="Close preferences" aria-label="Close preferences panel">
+      <button id="closePrefs" class="closeBtn" title="Close preferences" aria-label="Close preferences panel" tabindex="0">
         <span class="material-icons-outlined">close</span>
       </button>
       <div class="prefsLeft">
         <div class="field">
           <div class="label">Top ticker text</div>
-          <input id="tickerInput" class="input" placeholder="Welcome back, Ruben. Stay curious 💫">
+          <input id="tickerInput" class="input" placeholder="Welcome back, Ruben. Stay curious 💫" tabindex="0">
         </div>
         <div class="field">
           <div class="label">Ticker speed (seconds loop)</div>
-          <input id="tickerSpeed" type="number" min="6" max="60" class="input">
+          <input id="tickerSpeed" type="number" min="6" max="60" class="input" tabindex="0">
         </div>
         <div class="media-field-container">
           <div class="wallpaper-field" style="flex: 1; min-width: 100px;">
             <div class="label">Wallpaper</div>
             <div class="input-row">
-              <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper" style="flex: 1; min-width: 100px;">
+              <input id="wallUpload" type="file" accept="image/*" class="input" aria-label="Upload wallpaper" style="flex: 1; min-width: 100px;" tabindex="0">
             </div>
           </div>
           <div class="sound-field" style="flex: 1; min-width: 100px;">
             <div class="label">Notification Sound</div>
             <div class="input-row">
-              <input id="soundUpload" type="file" accept="audio/*" class="input" aria-label="Upload sound" style="flex: 1; min-width: 100px;">
+              <input id="soundUpload" type="file" accept="audio/*" class="input" aria-label="Upload sound" style="flex: 1; min-width: 100px;" tabindex="0">
             </div>
           </div>
         </div>
         <div class="media-field-container">
           <div class="field" style="flex: 1; min-width: 100px;">
             <div class="label">Pomodoro (minutes)</div>
-            <input id="pomDefaultInput" type="number" class="input" min="1" max="180" style="flex: 1; min-width: 100px;">
+            <input id="pomDefaultInput" type="number" class="input" min="1" max="180" style="flex: 1; min-width: 100px;" tabindex="0">
           </div>
           <div class="field" style="flex: 1; min-width: 100px;">
             <div class="label">Theme color (primary)</div>
-            <input id="themeColor" type="color" class="input" style="flex: 1; min-width: 100px;">
+            <input id="themeColor" type="color" class="input" style="flex: 1; min-width: 100px;" tabindex="0">
           </div>
+        </div>
+        <div class="field">
+          <div class="label">Custom Themes</div>
+          <div class="input-row">
+            <input id="themePrimary" type="color" class="input" aria-label="Primary color" style="flex: 1; min-width: 80px;" tabindex="0">
+            <input id="themeAccent" type="color" class="input" aria-label="Accent color" style="flex: 1; min-width: 80px;" tabindex="0">
+            <input id="themeNotif" type="color" class="input" aria-label="Notification color" style="flex: 1; min-width: 80px;" tabindex="0">
+            <button id="saveThemePreset" class="smallButton" tabindex="0">Save Theme</button>
+          </div>
+          <select id="themePresetSelect" class="select" aria-label="Select theme preset" tabindex="0">
+            <option value="">Select Theme Preset</option>
+          </select>
         </div>
         <div class="field">
           <div class="label">Temperature & Location</div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <select id="tempUnit" class="select">
+            <select id="tempUnit" class="select" tabindex="0">
               <option value="C">Celsius (°C)</option>
               <option value="F">Fahrenheit (°F)</option>
             </select>
             <div style="display:flex;gap:6px;">
-              <button type="button" id="locDefault" class="smallButton active">Manual</button>
-              <button type="button" id="locAuto" class="smallButton">Auto Detect</button>
+              <button type="button" id="locDefault" class="smallButton active" tabindex="0">Manual</button>
+              <button type="button" id="locAuto" class="smallButton" tabindex="0">Auto Detect</button>
             </div>
-            <input id="cityInput" class="input" placeholder="Enter city (e.g., Lalitpur)" style="display:none; flex: 1; min-width: 100px;">
+            <input id="cityInput" class="input" placeholder="Enter city (e.g., Lalitpur)" style="display:none; flex: 1; min-width: 100px;" tabindex="0">
           </div>
         </div>
         <div class="prefsCard">
           <div class="label">Oneko Cat Animation</div>
           <div style="margin-top:8px;display:flex;gap:6px;">
-            <button id="onekoEnable" class="smallButton active">Enable</button>
-            <button id="onekoDisable" class="smallButton">Disable</button>
+            <button id="onekoEnable" class="smallButton active" tabindex="0">Enable</button>
+            <button id="onekoDisable" class="smallButton" tabindex="0">Disable</button>
           </div>
         </div>
       </div>
@@ -521,8 +552,8 @@ input::placeholder { opacity: 0.8; color: var(--text-color); }
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
             <div id="previewWallpaper" style="height:160px;border-radius:12px;background-size:cover;background-position:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.08)"></div>
             <div class="row">
-              <button id="savePrefs" class="smallButton">Save</button>
-              <button id="clearPrefs" class="smallButton">Reset preferences</button>
+              <button id="savePrefs" class="smallButton" tabindex="0">Save</button>
+              <button id="clearPrefs" class="smallButton" tabindex="0">Reset preferences</button>
             </div>
           </div>
         </div>
@@ -535,16 +566,16 @@ input::placeholder { opacity: 0.8; color: var(--text-color); }
           <div id="analyticsDisplay">Page loads: 0 | Timers started: 0</div>
         </div>
         <div class="prefsCard social-links">
-          <a href="https://github.com/cosmic-swordfish" target="_blank">GitHub</a>
-          <a href="https://instagram.com/cosmic_swordfish/" target="_blank">Instagram</a>
-          <a href="https://www.rubenshahi.com.np//" target="_blank">Site</a>
-          <a href="mailto:reubenshahi2015@gmail.com">Email</a>
+          <a href="https://github.com/cosmic-swordfish" target="_blank" tabindex="0">GitHub</a>
+          <a href="https://instagram.com/cosmic_swordfish/" target="_blank" tabindex="0">Instagram</a>
+          <a href="https://www.rubenshahi.com.np//" target="_blank" tabindex="0">Site</a>
+          <a href="mailto:reubenshahi2015@gmail.com" tabindex="0">Email</a>
         </div>
       </div>
     </div>
   </div>
   <script>
-const DEFAULTS = {
+    const DEFAULTS = {
   themeColor: '#A8B5C2',
   ticker: 'Welcome back, Ruben. Stay curious 💫',
   pomDefault: 25,
@@ -556,7 +587,8 @@ const DEFAULTS = {
   locationMode: 'default',
   onekoEnabled: true,
   themeMode: 'light',
-  customSound: null
+  customSound: null,
+  themePresets: []
 };
 let prefs = JSON.parse(localStorage.getItem('mps_prefs') || 'null') || DEFAULTS;
 const WEATHER_API_KEY = "d81009d2cbae458bbdb51509251210";
@@ -606,12 +638,18 @@ const prefGear = document.getElementById('prefGear');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.querySelector('#themeToggle .theme-icon');
 const prefsOverlay = document.getElementById('prefsOverlay');
+const prefsModal = document.getElementById('prefsModal');
 const wallUpload = document.getElementById('wallUpload');
 const previewWallpaper = document.getElementById('previewWallpaper');
 const tickerInput = document.getElementById('tickerInput');
 const pomDefaultInput = document.getElementById('pomDefaultInput');
 const tempUnit = document.getElementById('tempUnit');
 const themeColor = document.getElementById('themeColor');
+const themePrimary = document.getElementById('themePrimary');
+const themeAccent = document.getElementById('themeAccent');
+const themeNotif = document.getElementById('themeNotif');
+const saveThemePreset = document.getElementById('saveThemePreset');
+const themePresetSelect = document.getElementById('themePresetSelect');
 const savePrefs = document.getElementById('savePrefs');
 const closePrefs = document.getElementById('closePrefs');
 const clearPrefs = document.getElementById('clearPrefs');
@@ -627,6 +665,9 @@ const floatingInstallBtn = document.getElementById('floatingInstallBtn');
 const analyticsDisplay = document.getElementById('analyticsDisplay');
 const onekoEnable = document.getElementById('onekoEnable');
 const onekoDisable = document.getElementById('onekoDisable');
+let isAudioUnlocked = false;
+let lastFocusedElement = null;
+
 function hexToHSL(hex) {
   let r = parseInt(hex.slice(1, 3), 16) / 255;
   let g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -647,6 +688,7 @@ function hexToHSL(hex) {
   }
   return { h: h * 360, s: s * 100, l: l * 100 };
 }
+
 function hslToHex(h, s, l) {
   l /= 100;
   const a = s * Math.min(l, 1 - l) / 100;
@@ -657,6 +699,7 @@ function hslToHex(h, s, l) {
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
+
 function deriveColors(primaryHex) {
   const { h, s, l } = hexToHSL(primaryHex);
   const isLight = document.body.classList.contains('light');
@@ -667,6 +710,7 @@ function deriveColors(primaryHex) {
     notif: hslToHex(h, s, notifL)
   };
 }
+
 function savePrefsToStorage() {
   const toStore = {
     themeColor: prefs.themeColor,
@@ -679,20 +723,24 @@ function savePrefsToStorage() {
     locationMode: prefs.locationMode,
     onekoEnabled: prefs.onekoEnabled,
     themeMode: prefs.themeMode,
-    customSound: prefs.customSound
+    customSound: prefs.customSound,
+    themePresets: prefs.themePresets
   };
   localStorage.setItem('mps_prefs', JSON.stringify(toStore));
   prefs = Object.assign({}, DEFAULTS, toStore);
 }
+
 function preloadImage(url) {
   const img = new Image();
   img.src = url;
 }
+
 function applyWallpaper(w) {
   const final = w || DEFAULTS.defaultWallpaper;
   document.body.style.background = `url('${final}') center/cover no-repeat`;
   previewWallpaper.style.backgroundImage = `url('${final}')`;
 }
+
 let onekoScriptTag = null;
 function loadOneko() {
   if (window.onekoLoaded) return;
@@ -704,6 +752,7 @@ function loadOneko() {
   onekoEnable.classList.add('active');
   onekoDisable.classList.remove('active');
 }
+
 function unloadOneko() {
   if (onekoScriptTag) {
     try { document.body.removeChild(onekoScriptTag); } catch (e) {}
@@ -715,11 +764,54 @@ function unloadOneko() {
   onekoEnable.classList.remove('active');
   onekoDisable.classList.add('active');
 }
+
 function applyThemeMode(mode) {
   document.body.classList.remove('light', 'dark');
   document.body.classList.add(mode);
   themeIcon.textContent = mode === 'light' ? 'light_mode' : 'dark_mode';
 }
+
+function updateTickerAnimation() {
+  const tickerContent = document.querySelector('.topTicker .tickerContent');
+  const tickerText = tickerInput.value || DEFAULTS.ticker;
+  tickerTextEl.textContent = tickerText;
+  tickerTextDupEl.textContent = tickerText;
+  const tempEl = document.createElement('span');
+  tempEl.style.visibility = 'hidden';
+  tempEl.style.position = 'absolute';
+  tempEl.style.whiteSpace = 'nowrap';
+  tempEl.style.font = getComputedStyle(tickerTextEl).font;
+  tempEl.textContent = tickerText;
+  document.body.appendChild(tempEl);
+  const textWidth = tempEl.offsetWidth;
+  document.body.removeChild(tempEl);
+  const tickerWidth = document.querySelector('.topTicker').offsetWidth;
+  const speedFactor = 100;
+  const minDuration = 6;
+  const maxDuration = 60;
+  const duration = Math.max(minDuration, Math.min(maxDuration, (textWidth + tickerWidth) / speedFactor));
+  tickerContent.style.animation = `topTickerScroll ${duration}s linear infinite`;
+}
+
+function applyThemePreset(preset) {
+  if (!preset) return;
+  document.documentElement.style.setProperty('--primary-color', preset.primary);
+  document.documentElement.style.setProperty('--accent-color', preset.accent);
+  document.documentElement.style.setProperty('--notif-color', preset.notif);
+  prefs.themeColor = preset.primary;
+  themeColor.value = preset.primary;
+}
+
+function updateThemePresets() {
+  themePresetSelect.innerHTML = '<option value="">Select Theme Preset</option>';
+  prefs.themePresets.forEach((preset, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = `Theme ${index + 1}`;
+    themePresetSelect.appendChild(option);
+  });
+}
+
 function applyPreferences() {
   prefs = Object.assign({}, DEFAULTS, prefs);
   preloadImage(DEFAULTS.defaultWallpaper);
@@ -729,17 +821,19 @@ function applyPreferences() {
   const { h, s } = hexToHSL(baseColor);
   const primaryL = isLight ? 60 : 30;
   const derivedPrimary = hslToHex(h, isLight ? 20 : 40, primaryL);
-  const { accent, notif } = deriveColors(derivedPrimary);
-  document.documentElement.style.setProperty('--primary-color', derivedPrimary);
+  const { accent, notif } = deriveColors(prefs.themeColor || derivedPrimary);
+  document.documentElement.style.setProperty('--primary-color', prefs.themeColor || derivedPrimary);
   document.documentElement.style.setProperty('--accent-color', accent);
   document.documentElement.style.setProperty('--notif-color', notif);
   tickerTextEl.textContent = prefs.ticker || DEFAULTS.ticker;
   tickerTextDupEl.textContent = prefs.ticker || DEFAULTS.ticker;
-  const animSec = Math.max(6, prefs.tickerSpeed || DEFAULTS.tickerSpeed);
-  document.querySelector('.topTicker .tickerContent').style.animationDuration = animSec + 's';
+  updateTickerAnimation();
   applyWallpaper(prefs.wallpaper);
   if (!localStorage.getItem('pomTotal')) localStorage.setItem('pomTotal', (prefs.pomDefault || DEFAULTS.pomDefault) * 60);
   themeColor.value = prefs.themeColor || derivedPrimary;
+  themePrimary.value = prefs.themeColor || derivedPrimary;
+  themeAccent.value = accent;
+  themeNotif.value = notif;
   tickerInput.value = prefs.ticker || DEFAULTS.ticker;
   pomDefaultInput.value = prefs.pomDefault || DEFAULTS.pomDefault;
   tempUnit.value = prefs.tempUnit || DEFAULTS.tempUnit;
@@ -758,47 +852,124 @@ function applyPreferences() {
   if (prefs.customSound) notifAudio.src = prefs.customSound;
   applyThemeMode(prefs.themeMode);
   if (prefs.onekoEnabled) loadOneko(); else unloadOneko();
+  updateThemePresets();
 }
 applyPreferences();
+
+function trapFocus(e) {
+  const focusableElements = prefsModal.querySelectorAll(
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  );
+  const firstFocusable = focusableElements[0];
+  const lastFocusable = focusableElements[focusableElements.length - 1];
+  if (e.key === 'Tab') {
+    if (e.shiftKey) {
+      if (document.activeElement === firstFocusable) {
+        e.preventDefault();
+        lastFocusable.focus();
+      }
+    } else {
+      if (document.activeElement === lastFocusable) {
+        e.preventDefault();
+        firstFocusable.focus();
+      }
+    }
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    handleClosePrefs(e);
+  }
+}
+
 prefGear.addEventListener('click', () => {
+  lastFocusedElement = document.activeElement;
   prefsOverlay.classList.add('show');
   prefGear.classList.add('spin');
   prefsOverlay.setAttribute('aria-hidden', 'false');
   prefGear.style.display = 'none';
   applyWallpaper(prefs.wallpaper || DEFAULTS.defaultWallpaper);
+  tickerInput.focus();
+  prefsModal.addEventListener('keydown', trapFocus);
 });
+
+prefGear.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    prefGear.click();
+  }
+});
+
 themeToggle.addEventListener('click', () => {
   prefs.themeMode = prefs.themeMode === 'light' ? 'dark' : 'light';
   applyThemeMode(prefs.themeMode);
   applyPreferences();
   savePrefsToStorage();
 });
+
+themeToggle.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    themeToggle.click();
+  }
+});
+
 onekoEnable.addEventListener('click', () => {
   prefs.onekoEnabled = true;
   loadOneko();
   savePrefsToStorage();
 });
+
+onekoEnable.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    onekoEnable.click();
+  }
+});
+
 onekoDisable.addEventListener('click', () => {
   prefs.onekoEnabled = false;
   unloadOneko();
   savePrefsToStorage();
 });
+
+onekoDisable.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    onekoDisable.click();
+  }
+});
+
 function handleClosePrefs(event) {
   event.preventDefault();
   event.stopPropagation();
-  console.log('Close button clicked');
-  prefsOverlay.classList.remove('show');
-  prefGear.classList.remove('spin');
-  prefsOverlay.setAttribute('aria-hidden', 'true');
-  prefGear.style.display = 'flex';
-  prefGear.style.opacity = '1';
-  prefGear.style.pointerEvents = 'auto';
+  prefsOverlay.classList.add('closing');
+  setTimeout(() => {
+    prefsOverlay.classList.remove('show', 'closing');
+    prefGear.classList.remove('spin');
+    prefsOverlay.setAttribute('aria-hidden', 'true');
+    prefGear.style.display = 'flex';
+    prefGear.style.opacity = '1';
+    prefGear.style.pointerEvents = 'auto';
+    prefsModal.removeEventListener('keydown', trapFocus);
+    if (lastFocusedElement) lastFocusedElement.focus();
+  }, 600); // Match the CSS transition duration (0.6s)
 }
+
 closePrefs.addEventListener('click', handleClosePrefs);
 closePrefs.addEventListener('touchend', handleClosePrefs);
+closePrefs.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    closePrefs.click();
+  }
+});
+
 wallUpload.addEventListener('change', async (e) => {
   const f = e.target.files[0];
   if (!f) return;
+  if (f.size > 5 * 1024 * 1024) {
+    showNotification('Image file too large (max 5MB)', 8000);
+    return;
+  }
   const reader = new FileReader();
   reader.onload = () => {
     prefs.wallpaper = reader.result;
@@ -807,9 +978,14 @@ wallUpload.addEventListener('change', async (e) => {
   };
   reader.readAsDataURL(f);
 });
+
 soundUpload.addEventListener('change', async (e) => {
   const f = e.target.files[0];
   if (!f) return;
+  if (f.size > 2 * 1024 * 1024) {
+    showNotification('Audio file too large (max 2MB)', 8000);
+    return;
+  }
   const reader = new FileReader();
   reader.onload = () => {
     prefs.customSound = reader.result;
@@ -817,6 +993,45 @@ soundUpload.addEventListener('change', async (e) => {
   };
   reader.readAsDataURL(f);
 });
+
+saveThemePreset.addEventListener('click', () => {
+  if (prefs.themePresets.length >= 3) {
+    showNotification('Maximum 3 theme presets allowed', 8000);
+    return;
+  }
+  const newPreset = {
+    primary: themePrimary.value,
+    accent: themeAccent.value,
+    notif: themeNotif.value
+  };
+  prefs.themePresets.push(newPreset);
+  updateThemePresets();
+  savePrefsToStorage();
+  showNotification('Theme preset saved', 5000);
+});
+
+saveThemePreset.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    saveThemePreset.click();
+  }
+});
+
+themePresetSelect.addEventListener('change', () => {
+  const index = parseInt(themePresetSelect.value);
+  if (!isNaN(index)) {
+    applyThemePreset(prefs.themePresets[index]);
+    savePrefsToStorage();
+  }
+});
+
+themePresetSelect.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    themePresetSelect.dispatchEvent(new Event('change'));
+  }
+});
+
 savePrefs.addEventListener('click', () => {
   prefs.ticker = tickerInput.value || DEFAULTS.ticker;
   prefs.pomDefault = parseInt(pomDefaultInput.value) || DEFAULTS.pomDefault;
@@ -827,13 +1042,17 @@ savePrefs.addEventListener('click', () => {
   savePrefsToStorage();
   applyPreferences();
   fetchWeather();
-  prefsOverlay.classList.remove('show');
-  prefGear.classList.remove('spin');
-  prefsOverlay.setAttribute('aria-hidden', 'true');
-  prefGear.style.display = 'flex';
-  prefGear.style.opacity = '1';
-  prefGear.style.pointerEvents = 'auto';
+  updateTickerAnimation();
+  handleClosePrefs(new Event('click'));
 });
+
+savePrefs.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    savePrefs.click();
+  }
+});
+
 clearPrefs.addEventListener('click', () => {
   if (!confirm('Reset preferences to defaults?')) return;
   localStorage.removeItem('mps_prefs');
@@ -844,6 +1063,8 @@ clearPrefs.addEventListener('click', () => {
   localStorage.removeItem('previousPrices');
   localStorage.removeItem('pomSessionCount');
   localStorage.removeItem('analytics');
+  localStorage.removeItem('pomLastUpdate');
+  localStorage.removeItem('installPromptCount');
   prefs = Object.assign({}, DEFAULTS);
   if (!prefs.onekoEnabled) unloadOneko(); else loadOneko();
   savePrefsToStorage();
@@ -853,14 +1074,32 @@ clearPrefs.addEventListener('click', () => {
   wallUpload.value = '';
   soundUpload.value = '';
   cityInput.value = DEFAULTS.city;
-  alert('Preferences reset to defaults. Wallpaper restored to default.');
+  showNotification('Preferences reset to defaults. Wallpaper restored to default.', 8000);
 });
+
+clearPrefs.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    clearPrefs.click();
+  }
+});
+
+let installPromptCount = JSON.parse(localStorage.getItem('installPromptCount') || '{"visits":0, "interactions":0}');
+function updateInstallPromptCount(type) {
+  if (type === 'visit') installPromptCount.visits++;
+  else if (type === 'interaction') installPromptCount.interactions++;
+  localStorage.setItem('installPromptCount', JSON.stringify(installPromptCount));
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   window.deferredPrompt = e;
-  floatingInstall.style.display = 'flex';
-  floatingInstall.setAttribute('aria-hidden', 'false');
+  if (installPromptCount.visits >= 3 || installPromptCount.interactions >= 5) {
+    floatingInstall.style.display = 'flex';
+    floatingInstall.setAttribute('aria-hidden', 'false');
+  }
 });
+
 floatingInstallBtn.addEventListener('click', () => {
   if (window.deferredPrompt) {
     window.deferredPrompt.prompt();
@@ -872,11 +1111,18 @@ floatingInstallBtn.addEventListener('click', () => {
     floatingInstall.style.display = 'none';
   }
 });
-tickerInput.addEventListener('input', () => {
-  const v = tickerInput.value || DEFAULTS.ticker;
-  tickerTextEl.textContent = v;
-  tickerTextDupEl.textContent = v;
+
+floatingInstallBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    floatingInstallBtn.click();
+  }
 });
+
+tickerInput.addEventListener('input', () => {
+  updateTickerAnimation();
+});
+
 function updateTime() {
   const now = new Date();
   document.getElementById('time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -884,10 +1130,12 @@ function updateTime() {
 }
 setInterval(updateTime, 1000);
 updateTime();
+
 const previousPrices = JSON.parse(localStorage.getItem("previousPrices") || '{}');
 async function fetchCrypto() {
   try {
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pi-network,tether&vs_currencies=usd&include_24hr_change=true");
+    if (!res.ok) throw new Error(`Crypto API failed: ${res.status}`);
     const data = await res.json();
     localStorage.setItem('lastCryptoData', JSON.stringify(data));
     function updateElement(id, coinData, symbol = '$') {
@@ -909,7 +1157,7 @@ async function fetchCrypto() {
     updateElement('usdt', data.tether);
     localStorage.setItem('previousPrices', JSON.stringify(previousPrices));
   } catch (err) {
-    console.error('Crypto fetch error', err);
+    showNotification(`Failed to fetch crypto prices: ${err.message}. Using cached data.`, 8000);
     const cachedData = localStorage.getItem('lastCryptoData');
     if (cachedData) {
       const data = JSON.parse(cachedData);
@@ -936,7 +1184,9 @@ async function fetchCrypto() {
 }
 fetchCrypto();
 setInterval(fetchCrypto, 120000);
+
 function cToF(c) { return (c * 9 / 5) + 32; }
+
 async function fetchWeather() {
   try {
     const CITY = (prefs && prefs.city) ? prefs.city : DEFAULTS.city;
@@ -949,24 +1199,25 @@ async function fetchWeather() {
           { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
         );
       }).catch((e) => {
-        console.warn('Geolocation failed, falling back to manual city', e);
-        showNotification('Geolocation unavailable, using default city.');
+        showNotification(`Geolocation failed: ${e.message}. Using default city: ${CITY}. Update in preferences if needed.`, 12000);
         return null;
       });
       if (coords) query = `${coords.lat},${coords.lon}`;
     }
-    if (!query) query = encodeURIComponent(CITY);
+    if (!query) {
+      if (!CITY) throw new Error('No city specified');
+      query = encodeURIComponent(CITY);
+    }
     const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${query}`);
-    if (!res.ok) throw new Error('Weather fetch failed');
+    if (!res.ok) throw new Error(`Weather API failed: ${res.status}`);
     const data = await res.json();
     localStorage.setItem('lastWeatherData', JSON.stringify(data));
     updateWeatherUI(data);
   } catch (e) {
-    console.error('Weather error', e);
+    showNotification(`Failed to fetch weather: ${e.message}. Using cached data or check city settings.`, 10000);
     const cachedData = localStorage.getItem('lastWeatherData');
     if (cachedData) {
       updateWeatherUI(JSON.parse(cachedData));
-      showNotification('Using cached weather data');
     } else {
       document.getElementById('temp').textContent = 'Weather unavailable';
       document.getElementById('humidity').textContent = 'Humidity: --%';
@@ -976,6 +1227,7 @@ async function fetchWeather() {
     }
   }
 }
+
 function updateWeatherUI(data) {
   if (!data || !data.current) throw new Error('Invalid weather response');
   let tempC = typeof data.current.temp_c === 'number' ? data.current.temp_c : NaN;
@@ -990,6 +1242,7 @@ function updateWeatherUI(data) {
 }
 fetchWeather();
 setInterval(fetchWeather, 1800000);
+
 const canvas = document.getElementById('pomCanvas');
 const ctx = canvas.getContext('2d');
 const pomDisplay = document.getElementById('dynamicIslandTime');
@@ -1001,7 +1254,9 @@ let started = localStorage.getItem('pomStarted') === 'true';
 let pomInterval = null;
 let animationFrameId = null;
 let sessionCount = parseInt(localStorage.getItem('pomSessionCount') || '0');
+let lastTimerUpdate = localStorage.getItem('pomLastUpdate') ? parseInt(localStorage.getItem('pomLastUpdate')) : null;
 let canvasWidth, canvasHeight, cx, cy, r;
+
 function resizeCanvas() {
   canvasWidth = canvas.offsetWidth;
   canvasHeight = canvas.offsetHeight;
@@ -1011,27 +1266,33 @@ function resizeCanvas() {
   cy = canvasHeight / 2;
   r = Math.min(canvasWidth, canvasHeight) / 2 - 10;
 }
+
 let resizeTimeout;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(resizeCanvas, 100);
 });
 resizeCanvas();
+
 function updatePomDisplay() {
   const m = Math.floor(pomTime / 60);
   const s = pomTime % 60;
   pomDisplay.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
+
 function updateSessionCount() {
   document.getElementById('pomSessionCount').textContent = `Sessions: ${sessionCount}`;
 }
+
 function savePomState() {
   localStorage.setItem('pomTotal', pomTotal);
   localStorage.setItem('pomTime', pomTime);
   localStorage.setItem('pomPaused', isPaused);
   localStorage.setItem('pomStarted', started);
   localStorage.setItem('pomSessionCount', sessionCount);
+  localStorage.setItem('pomLastUpdate', Date.now());
 }
+
 function drawPom(timestamp) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   const isLight = document.body.classList.contains('light');
@@ -1102,17 +1363,20 @@ function drawPom(timestamp) {
   }
   animationFrameId = requestAnimationFrame(drawPom);
 }
+
 function startPomAnimation() {
   if (!animationFrameId && document.visibilityState === 'visible') {
     animationFrameId = requestAnimationFrame(drawPom);
   }
 }
+
 function stopPomAnimation() {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
   }
 }
+
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') {
     stopPomAnimation();
@@ -1120,131 +1384,281 @@ document.addEventListener('visibilitychange', () => {
     startPomAnimation();
   }
 });
-function startPom() {
-  const raw = document.getElementById('pomCustomTime').value.trim();
-  const val = raw ? parseInt(raw.replace(/\D/g, ''), 10) : null;
-  if (val > 0) {
-    pomTotal = val * 60;
-    pomTime = pomTotal;
+
+function unlockAudio() {
+  if (isAudioUnlocked) return;
+  const context = new (window.AudioContext || window.webkitAudioContext)();
+  context.resume().then(() => {
+    isAudioUnlocked = true;
+    showNotification('Audio unlocked for notifications', 5000);
+  }).catch((e) => {
+    showNotification('Failed to unlock audio. Sound may not play.', 8000);
+  });
+}
+
+function playNotificationSound() {
+  if (!isAudioUnlocked) {
+    unlockAudio();
+    setTimeout(playNotificationSound, 100);
+    return;
   }
-  started = true;
-  isPaused = false;
-  savePomState();
-  dynamicIsland.classList.add('pulse');
-  document.getElementById('pomStartBtn').style.display = 'none';
-  document.getElementById('pomPauseBtn').style.display = 'inline-block';
-  document.getElementById('pomResetBtn').style.display = 'inline-block';
-  if (!pomInterval) {
+  if (prefs.customSound) {
+    notifAudio.src = prefs.customSound;
+    notifAudio.play().catch(() => {
+      showNotification('Audio playback blocked. Using fallback sound.', 8000);
+      fallbackWebAudio();
+    });
+  } else {
+    notifAudio.play().catch(() => {
+      showNotification('Audio playback blocked. Using fallback sound.', 8000);
+      fallbackWebAudio();
+    });
+  }
+}
+
+function fallbackWebAudio() {
+  if (!isAudioUnlocked) return;
+  const context = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(880, context.currentTime);
+  gainNode.gain.setValueAtTime(0.5, context.currentTime);
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start();
+  setTimeout(() => {
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.5);
+    oscillator.stop(context.currentTime + 0.5);
+  }, 2000);
+}
+
+async function requestNotificationPermission() {
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission !== 'denied') {
+    const permission = await Notification.requestPermission();
+    return permission === 'granted';
+  }
+  return false;
+}
+
+async function sendPushNotification(message) {
+  if (Notification.permission !== 'granted') return;
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'SHOW_NOTIFICATION',
+      title: 'My Private Space',
+      options: {
+        body: message,
+        icon: 'assets/icon.png',
+        badge: 'assets/badge.png'
+      }
+    });
+  }
+}
+
+function showNotification(text = 'Time Up!', duration = 10000) {
+  const notif = document.getElementById('notification');
+  const notifText = document.getElementById('notificationText');
+  const minutes = Math.floor(pomTotal / 60);
+  notifText.textContent = text;
+  notifText.setAttribute('aria-label', `${text} for Pomodoro timer of ${minutes} minutes`);
+  notif.classList.add('show');
+  setTimeout(() => notif.classList.remove('show'), duration);
+}
+
+const pomStartBtn = document.getElementById('pomStartBtn');
+const pomPauseBtn = document.getElementById('pomPauseBtn');
+const pomResetBtn = document.getElementById('pomResetBtn');
+const pomCustomTime = document.getElementById('pomCustomTime');
+const notifPauseBtn = document.getElementById('notifPauseBtn');
+const notifStopBtn = document.getElementById('notifStopBtn');
+let analytics = JSON.parse(localStorage.getItem('analytics') || '{"pageLoads":0,"timersStarted":0}');
+
+function updateAnalytics(type) {
+  if (type === 'pageLoad') analytics.pageLoads++;
+  else if (type === 'timerStart') analytics.timersStarted++;
+  localStorage.setItem('analytics', JSON.stringify(analytics));
+  analyticsDisplay.textContent = `Page loads: ${analytics.pageLoads} | Timers started: ${analytics.timersStarted}`;
+}
+updateAnalytics('pageLoad');
+
+pomStartBtn.addEventListener('click', () => {
+  updateInstallPromptCount('interaction');
+  if (!started && !isPaused) {
+    const customTime = parseInt(pomCustomTime.value);
+    if (customTime && customTime >= 1 && customTime <= 180) {
+      pomTotal = customTime * 60;
+      pomTime = pomTotal;
+    } else {
+      pomTotal = (prefs.pomDefault || DEFAULTS.pomDefault) * 60;
+      pomTime = pomTotal;
+    }
+    pomStartBtn.style.display = 'none';
+    pomPauseBtn.style.display = 'inline-block';
+    pomResetBtn.style.display = 'inline-block';
+    started = true;
+    isPaused = false;
+    dynamicIsland.classList.add('pulse');
+    updateAnalytics('timerStart');
     pomInterval = setInterval(() => {
-      if (!isPaused && started) {
+      if (pomTime > 0) {
         pomTime--;
-        if (pomTime <= 0) {
-          clearInterval(pomInterval);
-          pomInterval = null;
-          showNotification();
-          resetPom();
-        }
         updatePomDisplay();
         savePomState();
+      } else {
+        clearInterval(pomInterval);
+        pomInterval = null;
+        started = false;
+        sessionCount++;
+        updateSessionCount();
+        savePomState();
+        dynamicIsland.classList.remove('pulse');
+        showNotification('Time Up!', 10000);
+        playNotificationSound();
+        sendPushNotification('Pomodoro timer finished!');
+        pomStartBtn.style.display = 'inline-block';
+        pomPauseBtn.style.display = 'none';
+        pomResetBtn.style.display = 'none';
       }
     }, 1000);
-  }
-  startPomAnimation();
-  trackEvent('timer_start');
-}
-function pausePom() {
-  isPaused = !isPaused;
-  document.getElementById('pomPauseBtn').textContent = isPaused ? 'Resume' : 'Pause';
-  dynamicIsland.classList.toggle('pulse', !isPaused);
-  savePomState();
-  if (isPaused) {
-    stopPomAnimation();
-    drawPom(Date.now());
-  } else {
+    savePomState();
     startPomAnimation();
+    requestNotificationPermission();
   }
-}
-function resetPom() {
-  clearInterval(pomInterval);
-  pomInterval = null;
-  if (pomTime <= 0) {
-    sessionCount++;
-    updateSessionCount();
+});
+
+pomStartBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    pomStartBtn.click();
+  }
+});
+
+pomPauseBtn.addEventListener('click', () => {
+  updateInstallPromptCount('interaction');
+  if (started && !isPaused) {
+    isPaused = true;
+    clearInterval(pomInterval);
+    pomInterval = null;
+    pomPauseBtn.textContent = 'Resume';
+    savePomState();
+  } else if (started && isPaused) {
+    isPaused = false;
+    pomPauseBtn.textContent = 'Pause';
+    pomInterval = setInterval(() => {
+      if (pomTime > 0) {
+        pomTime--;
+        updatePomDisplay();
+        savePomState();
+      } else {
+        clearInterval(pomInterval);
+        pomInterval = null;
+        started = false;
+        sessionCount++;
+        updateSessionCount();
+        savePomState();
+        dynamicIsland.classList.remove('pulse');
+        showNotification('Time Up!', 10000);
+        playNotificationSound();
+        sendPushNotification('Pomodoro timer finished!');
+        pomStartBtn.style.display = 'inline-block';
+        pomPauseBtn.style.display = 'none';
+        pomResetBtn.style.display = 'none';
+      }
+    }, 1000);
     savePomState();
   }
+});
+
+pomPauseBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    pomPauseBtn.click();
+  }
+});
+
+pomResetBtn.addEventListener('click', () => {
+  updateInstallPromptCount('interaction');
+  clearInterval(pomInterval);
+  pomInterval = null;
+  pomTime = pomTotal;
   started = false;
   isPaused = false;
-  pomTime = pomTotal;
-  updatePomDisplay();
+  pomStartBtn.style.display = 'inline-block';
+  pomPauseBtn.style.display = 'none';
+  pomResetBtn.style.display = 'none';
+  pomPauseBtn.textContent = 'Pause';
   dynamicIsland.classList.remove('pulse');
-  document.getElementById('pomStartBtn').style.display = 'inline-block';
-  document.getElementById('pomPauseBtn').style.display = 'none';
-  document.getElementById('pomResetBtn').style.display = 'none';
-  stopPomAnimation();
-  startPomAnimation();
+  updatePomDisplay();
   savePomState();
-}
-let notifTimeout = null;
-function showNotification(text = 'Time Up!') {
-  const notif = document.getElementById('notification');
-  document.getElementById('notificationText').textContent = text;
-  notif.classList.add('show');
-  const notifPauseBtn = document.getElementById('notifPauseBtn');
-  notifPauseBtn.textContent = 'Pause';
-  if (notifTimeout) clearTimeout(notifTimeout);
-  notifTimeout = setTimeout(() => {
-    notif.classList.remove('show');
-    try { notifAudio.pause(); notifAudio.currentTime = 0; } catch (e) {}
-  }, 10000);
-}
-document.getElementById('notifPauseBtn').addEventListener('click', () => {
-  if (!notifAudio) return;
-  if (!notifAudio.paused) {
-    notifAudio.pause();
-    document.getElementById('notifPauseBtn').textContent = 'Resume';
-  } else {
-    notifAudio.play().catch(() => {});
-    document.getElementById('notifPauseBtn').textContent = 'Pause';
+});
+
+pomResetBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    pomResetBtn.click();
   }
 });
-document.getElementById('notifStopBtn').addEventListener('click', () => {
-  if (!notifAudio) return;
-  notifAudio.pause();
-  notifAudio.currentTime = 0;
-  document.getElementById('notification').classList.remove('show');
-  if (notifTimeout) {
-    clearTimeout(notifTimeout);
-    notifTimeout = null;
+
+notifPauseBtn.addEventListener('click', () => {
+  updateInstallPromptCount('interaction');
+  if (started && !isPaused) {
+    pomPauseBtn.click();
+    notifPauseBtn.textContent = 'Resume';
+  } else if (started && isPaused) {
+    pomPauseBtn.click();
+    notifPauseBtn.textContent = 'Pause';
   }
 });
-document.getElementById('pomStartBtn').addEventListener('click', startPom);
-document.getElementById('pomPauseBtn').addEventListener('click', pausePom);
-document.getElementById('pomResetBtn').addEventListener('click', resetPom);
+
+notifPauseBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    notifPauseBtn.click();
+  }
+});
+
+notifStopBtn.addEventListener('click', () => {
+  updateInstallPromptCount('interaction');
+  pomResetBtn.click();
+  showNotification('Timer stopped', 5000);
+});
+
+notifStopBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    notifStopBtn.click();
+  }
+});
+
+function checkMissedTime() {
+  if (lastTimerUpdate && started && !isPaused) {
+    const now = Date.now();
+    const elapsed = Math.floor((now - lastTimerUpdate) / 1000);
+    pomTime = Math.max(0, pomTime - elapsed);
+    if (pomTime <= 0) {
+      clearInterval(pomInterval);
+      pomInterval = null;
+      started = false;
+      sessionCount++;
+      updateSessionCount();
+      dynamicIsland.classList.remove('pulse');
+      showNotification('Time Up!', 10000);
+      playNotificationSound();
+      sendPushNotification('Pomodoro timer finished!');
+      pomStartBtn.style.display = 'inline-block';
+      pomPauseBtn.style.display = 'none';
+      pomResetBtn.style.display = 'none';
+    }
+    updatePomDisplay();
+    savePomState();
+  }
+}
+checkMissedTime();
 updatePomDisplay();
 updateSessionCount();
-if (started) startPom();
-else startPomAnimation();
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-}
-window.addEventListener('appinstalled', () => {
-  floatingInstall.style.display = 'none';
-  window.deferredPrompt = null;
-});
-let analytics = JSON.parse(localStorage.getItem('analytics') || '{"pageLoads":0, "timerStarts":0}');
-analytics.pageLoads++;
-localStorage.setItem('analytics', JSON.stringify(analytics));
-function updateAnalyticsDisplay() {
-  analyticsDisplay.textContent = `Page loads: ${analytics.pageLoads} | Timers started: ${analytics.timerStarts}`;
-}
-function trackEvent(event) {
-  if (event === 'timer_start') {
-    analytics.timerStarts++;
-    localStorage.setItem('analytics', JSON.stringify(analytics));
-    updateAnalyticsDisplay();
-  }
-}
-updateAnalyticsDisplay();
-  </script>
+startPomAnimation();
+</script>
 </body>
 </html>
