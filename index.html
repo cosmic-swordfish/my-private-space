@@ -315,20 +315,7 @@ body.dark::before {
 }
 #floatingInstall .fiTitle { font-weight: 700; font-size: 0.95rem; }
 #floatingInstall .fiBtn { margin-left: auto; padding: 6px 10px; border-radius: 10px; background: var(--primary-color); color: var(--text-color); cursor: pointer; }
-.footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 20px;
-  text-align: center;
-  font-size: clamp(0.85rem, 2vw, 1rem);
-  opacity: 0.75;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-  z-index: 100;
-}
+
 #pomSessionCount {
   padding: 6px 10px;
   border-radius: 10px;
@@ -450,7 +437,7 @@ input::placeholder { opacity: 0.8; color: var(--text-color); }
       <div><span class="material-icons-outlined icon">speed</span><span id="pressure">Pressure: -- hPa</span></div>
     </div>
   </div>
-  <div class="footer">🐾 Magic Mirror | Powered by oneko.js</div>
+
   <div id="notification" role="status" aria-live="assertive">
     <span id="notificationText">Time Up!</span>
     <div style="display:flex;gap:8px;align-items:center">
